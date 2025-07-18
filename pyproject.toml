@@ -5,7 +5,7 @@ description = "Generates a Python package from a source XTCE file."
 authors = [
     {name = "Nathan Miersen", email = "nrmiersen@gmail.com"},
 ]
-dependencies = []
+dependencies = ["pydantic>=2.11.7", "xsdata>=25.7"]
 requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}
@@ -14,7 +14,8 @@ license = {text = "MIT"}
 [tool.pdm]
 distribution = false
 
+
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
+    "xsdata[cli]>=25.7",
 ]
