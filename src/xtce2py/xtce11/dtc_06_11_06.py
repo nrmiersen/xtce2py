@@ -67,7 +67,8 @@ class AliasSetType:
 
 @dataclass
 class ByteOrderType:
-    """An ordered list of bytes where the order of the bytes is in stream order.
+    """An ordered list of bytes where the order of the bytes is in stream
+    order.
 
     Each byte has an attribute giving its significance.
     """
@@ -370,8 +371,8 @@ class ParityType(Enum):
 @dataclass
 class PhysicalAddressType:
     """
-    When it's important to know the physical address(s) on the spacecraft that this
-    parameter may be collected from, use this.
+    When it's important to know the physical address(s) on the spacecraft
+    that this parameter may be collected from, use this.
     """
 
     sub_address: Optional["PhysicalAddressType"] = field(
@@ -485,8 +486,8 @@ class SignificanceTypeConsequenceLevel(Enum):
 @dataclass
 class SplinePointType:
     """
-    A spline is a set on points from which a curve may be drawn to interpolate raw
-    to calibrated values.
+    A spline is a set on points from which a curve may be drawn to
+    interpolate raw to calibrated values.
     """
 
     order: int = field(
@@ -570,33 +571,35 @@ class TriggerSetType:
     :ivar trigger_rate:
     """
 
-    on_parameter_update_trigger: list["TriggerSetType.OnParameterUpdateTrigger"] = (
-        field(
-            default_factory=list,
-            metadata={
-                "name": "OnParameterUpdateTrigger",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
-    )
-    on_container_update_trigger: list["TriggerSetType.OnContainerUpdateTrigger"] = (
-        field(
-            default_factory=list,
-            metadata={
-                "name": "OnContainerUpdateTrigger",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
-    )
-    on_periodic_rate_trigger: list["TriggerSetType.OnPeriodicRateTrigger"] = field(
+    on_parameter_update_trigger: list[
+        "TriggerSetType.OnParameterUpdateTrigger"
+    ] = field(
         default_factory=list,
         metadata={
-            "name": "OnPeriodicRateTrigger",
+            "name": "OnParameterUpdateTrigger",
             "type": "Element",
             "namespace": "http://www.omg.org/space/xtce",
         },
+    )
+    on_container_update_trigger: list[
+        "TriggerSetType.OnContainerUpdateTrigger"
+    ] = field(
+        default_factory=list,
+        metadata={
+            "name": "OnContainerUpdateTrigger",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
+    )
+    on_periodic_rate_trigger: list["TriggerSetType.OnPeriodicRateTrigger"] = (
+        field(
+            default_factory=list,
+            metadata={
+                "name": "OnPeriodicRateTrigger",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     name: Optional[str] = field(
         default=None,
@@ -649,7 +652,8 @@ class TriggerSetType:
 @dataclass
 class UnitType:
     """
-    Used to hold the unit(s) plus possibly the exponent and factor for the units.
+    Used to hold the unit(s) plus possibly the exponent and factor for the
+    units.
     """
 
     power: Decimal = field(
@@ -766,8 +770,8 @@ class AlarmRangesType:
 
 @dataclass
 class DescriptionType:
-    """An abstract type definition used as the base for NameDescriptionType or
-    OptionalNameDescriptionType.
+    """An abstract type definition used as the base for NameDescriptionType
+    or OptionalNameDescriptionType.
 
     The short description is intended to be used for quick "memory
     jogger" descriptions of the object.
@@ -822,7 +826,9 @@ class DescriptionType:
             type.  Data may be included  or given as an href.
         """
 
-        ancillary_data: list["DescriptionType.AncillaryDataSet.AncillaryData"] = field(
+        ancillary_data: list[
+            "DescriptionType.AncillaryDataSet.AncillaryData"
+        ] = field(
             default_factory=list,
             metadata={
                 "name": "AncillaryData",
@@ -1069,8 +1075,8 @@ class ParameterInstanceRefType(ParameterRefType):
 @dataclass
 class RateInStreamType:
     """
-    Used in packaging to define the expected rate that any individual container
-    will be in a Stream.
+    Used in packaging to define the expected rate that any individual
+    container will be in a Stream.
     """
 
     basis: RateInStreamTypeBasis = field(
@@ -1204,8 +1210,8 @@ class ComparisonType(ParameterInstanceRefType):
 
 @dataclass
 class DataEncodingType:
-    """Describes how a particular piece of data is sent or received from some non-
-    native, off-platform device.
+    """Describes how a particular piece of data is sent or received from
+    some non-native, off-platform device.
 
     (e.g. a spacecraft)
 
@@ -1246,8 +1252,8 @@ class DataEncodingType:
 @dataclass
 class DecimalValueType:
     """
-    Contains a Numeric value; value may be provided directly or via the value in a
-    parameter.
+    Contains a Numeric value; value may be provided directly or via the
+    value in a parameter.
 
     :ivar fixed_value:
     :ivar dynamic_value: Uses a parameter instance to obtain the value.
@@ -1321,8 +1327,8 @@ class DecimalValueType:
 
 @dataclass
 class MathOperationType:
-    """Postfix (aka Reverse Polish Notation (RPN)) notation is used to describe
-    mathmatical equations.
+    """Postfix (aka Reverse Polish Notation (RPN)) notation is used to
+    describe mathmatical equations.
 
     It uses a stack where operands (either fixed values or
     ParameterInstances) are pushed onto the stack from first to last in
@@ -1384,8 +1390,8 @@ class MathOperationType:
 @dataclass
 class NameDescriptionType(DescriptionType):
     """
-    The type definition used by most elements that require a name with optional
-    descriptions.
+    The type definition used by most elements that require a name with
+    optional descriptions.
     """
 
     name: Optional[str] = field(
@@ -1401,8 +1407,8 @@ class NameDescriptionType(DescriptionType):
 @dataclass
 class OptionalNameDescriptionType(DescriptionType):
     """
-    The type definition used by most elements that have an optional name with
-    optional descriptions.
+    The type definition used by most elements that have an optional name
+    with optional descriptions.
     """
 
     name: Optional[str] = field(
@@ -1416,8 +1422,8 @@ class OptionalNameDescriptionType(DescriptionType):
 
 @dataclass
 class ReferenceTimeType:
-    """Most time values are relative to another time e.g. seconds are relative to
-    minutes, minutes are relative to hours.
+    """Most time values are relative to another time e.g. seconds are
+    relative to minutes, minutes are relative to hours.
 
     This type is used to describe this relationship starting with the
     least significant time Parameter to and progressing to the most
@@ -1444,8 +1450,8 @@ class ReferenceTimeType:
 
 @dataclass
 class TimeAssociationType(ParameterInstanceRefType):
-    """Telemetry parameter instances are oftentimes "time-tagged" with a timing
-    signal either provided on the ground or on  the space system.
+    """Telemetry parameter instances are oftentimes "time-tagged" with a
+    timing signal either provided on the ground or on  the space system.
 
     This data element allows one to specify which of possibly many
     AbsoluteTimeParameters to use to "time-tag" parameter instances
@@ -1477,8 +1483,8 @@ class TimeAssociationType(ParameterInstanceRefType):
 
 @dataclass
 class AndedConditionsType:
-    """A list of boolean comparisons, or boolean groups that are logically ANDed
-    together.
+    """A list of boolean comparisons, or boolean groups that are logically
+    ANDed together.
 
     Any ORed conditions in the list are evaluated first.
     """
@@ -1569,8 +1575,8 @@ class AggregateDataType(NameDescriptionType):
 @dataclass
 class ArrayDataTypeType(NameDescriptionType):
     """
-    An array of values of the type referenced in 'arrayTypeRef' and have the number
-    of array dimensions as specified in 'numberOfDimensions'.
+    An array of values of the type referenced in 'arrayTypeRef' and have the
+    number of array dimensions as specified in 'numberOfDimensions'.
     """
 
     array_type_ref: Optional[str] = field(
@@ -1594,8 +1600,8 @@ class ArrayDataTypeType(NameDescriptionType):
 @dataclass
 class CalibratorType(OptionalNameDescriptionType):
     """
-    Calibrators are normally used to convert to and from bit compacted numerical
-    data.
+    Calibrators are normally used to convert to and from bit compacted
+    numerical data.
 
     :ivar spline_calibrator: A calibration type where a segmented line
         in a raw vs calibrated plane is described using a set of points.
@@ -1816,8 +1822,8 @@ class NumberToStringType(OptionalNameDescriptionType):
 @dataclass
 class PcmstreamType(NameDescriptionType):
     """
-    A PCM Stream Type is the high level definition for all Pulse Code Modulated
-    (PCM) (i.e., binary) streams.
+    A PCM Stream Type is the high level definition for all Pulse Code
+    Modulated (PCM) (i.e., binary) streams.
     """
 
     class Meta:
@@ -1848,8 +1854,8 @@ class PcmstreamType(NameDescriptionType):
 @dataclass
 class ParameterToSetType:
     """
-    Used by Meta Command to indicate ground Parameters that should be set after
-    completion of a command.
+    Used by Meta Command to indicate ground Parameters that should be set
+    after completion of a command.
     """
 
     parameter_ref: Optional[ParameterRefType] = field(
@@ -1875,7 +1881,8 @@ class ParameterToSetType:
 @dataclass
 class ServiceType(NameDescriptionType):
     """
-    Holds a set of services, logical groups of containers  OR messages (not both).
+    Holds a set of services, logical groups of containers  OR messages (not
+    both).
     """
 
     message_ref_set: Optional["ServiceType.MessageRefSet"] = field(
@@ -1922,9 +1929,9 @@ class ServiceType(NameDescriptionType):
 
 @dataclass
 class SimpleAlgorithmType(NameDescriptionType):
-    """The simplest form of algorithm, a SimpleAlgorithmType contains an area for a
-    free-form pseudo code description of the algorithm plus a Set of references to
-    external algorithms.
+    """The simplest form of algorithm, a SimpleAlgorithmType contains an
+    area for a free-form pseudo code description of the algorithm plus a Set
+    of references to external algorithms.
 
     External algorithms are usually unique to a ground system type.
     Multiple external algorithms are possible because XTCE documents may
@@ -1944,15 +1951,15 @@ class SimpleAlgorithmType(NameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    external_algorithm_set: Optional["SimpleAlgorithmType.ExternalAlgorithmSet"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "ExternalAlgorithmSet",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    external_algorithm_set: Optional[
+        "SimpleAlgorithmType.ExternalAlgorithmSet"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "ExternalAlgorithmSet",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
 
     @dataclass
@@ -2130,8 +2137,8 @@ class InputAlgorithmType(SimpleAlgorithmType):
 
 @dataclass
 class OredConditionsType:
-    """A list of boolean comparisons, or boolean groups that are logically ORed
-    together.
+    """A list of boolean comparisons, or boolean groups that are logically
+    ORed together.
 
     Any ANDed conditions in the list are evaluated first.
     """
@@ -2248,8 +2255,8 @@ class InputOutputAlgorithmType(InputAlgorithmType):
 
 @dataclass
 class SyncStrategyType:
-    """A Sync Strategy specifies the strategy on how to find frames within a stream
-    of PCM data.
+    """A Sync Strategy specifies the strategy on how to find frames within a
+    stream of PCM data.
 
     The sync strategy is based upon a state machine that begins in the
     'Search' state until the first sync marker is found.  Then it goes
@@ -2323,8 +2330,8 @@ class SyncStrategyType:
 
 @dataclass
 class CommandVerifierType(OptionalNameDescriptionType):
-    """A command verifier is used to check that the command has been successfully
-    executed.
+    """A command verifier is used to check that the command has been
+    successfully executed.
 
     Command Verifiers may be either a Custom Algorithm or a Boolean
     Check or the presence of a Container for a relative change in the
@@ -2359,15 +2366,15 @@ class CommandVerifierType(OptionalNameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    parameter_value_change: Optional["CommandVerifierType.ParameterValueChange"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "ParameterValueChange",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    parameter_value_change: Optional[
+        "CommandVerifierType.ParameterValueChange"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "ParameterValueChange",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     custom_algorithm: Optional[InputAlgorithmType] = field(
         default=None,
@@ -2401,15 +2408,15 @@ class CommandVerifierType(OptionalNameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    check_window_algorithms: Optional["CommandVerifierType.CheckWindowAlgorithms"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "CheckWindowAlgorithms",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    check_window_algorithms: Optional[
+        "CommandVerifierType.CheckWindowAlgorithms"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "CheckWindowAlgorithms",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
 
     @dataclass
@@ -2435,14 +2442,16 @@ class CommandVerifierType(OptionalNameDescriptionType):
                 "required": True,
             },
         )
-        change: Optional["CommandVerifierType.ParameterValueChange.Change"] = field(
-            default=None,
-            metadata={
-                "name": "Change",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "required": True,
-            },
+        change: Optional["CommandVerifierType.ParameterValueChange.Change"] = (
+            field(
+                default=None,
+                metadata={
+                    "name": "Change",
+                    "type": "Element",
+                    "namespace": "http://www.omg.org/space/xtce",
+                    "required": True,
+                },
+            )
         )
 
         @dataclass
@@ -2504,8 +2513,8 @@ class CommandVerifierType(OptionalNameDescriptionType):
 
 @dataclass
 class CustomStreamType(PcmstreamType):
-    """A stream type where some level of custom processing (e.g. convolutional,
-    encryption, compression) is performed.
+    """A stream type where some level of custom processing (e.g.
+    convolutional, encryption, compression) is performed.
 
     Has a reference to external algorithms for encoding and decoding
     algorithms.
@@ -2555,8 +2564,8 @@ class CustomStreamType(PcmstreamType):
 
 @dataclass
 class FixedFrameStreamType(FrameStreamType):
-    """For streams that contain a series of frames with a fixed frame length where
-    the frames are found by looking for a marker in the data.
+    """For streams that contain a series of frames with a fixed frame length
+    where the frames are found by looking for a marker in the data.
 
     This marker is sometimes called the frame sync pattern and sometimes
     the Asynchronous Sync Marker (ASM).  This marker need not be
@@ -2600,7 +2609,9 @@ class FixedFrameStreamType(FrameStreamType):
             synchronization.
         """
 
-        sync_pattern: Optional["FixedFrameStreamType.SyncStrategy.SyncPattern"] = field(
+        sync_pattern: Optional[
+            "FixedFrameStreamType.SyncStrategy.SyncPattern"
+        ] = field(
             default=None,
             metadata={
                 "name": "SyncPattern",
@@ -2664,7 +2675,8 @@ class FixedFrameStreamType(FrameStreamType):
 @dataclass
 class InputOutputTriggerAlgorithmType(InputOutputAlgorithmType):
     """
-    A set of labeled triggers is added to the SimpleInputOutputAlgorithmType.
+    A set of labeled triggers is added to the
+    SimpleInputOutputAlgorithmType.
 
     :ivar trigger_set:
     :ivar trigger_container: First telemetry container from which the
@@ -2699,8 +2711,9 @@ class InputOutputTriggerAlgorithmType(InputOutputAlgorithmType):
 @dataclass
 class MatchCriteriaType:
     """
-    Contains either a simple Comparison, a ComparisonList, an arbitrarily complex
-    BooleanExpression or an escape to an externally defined algorithm.
+    Contains either a simple Comparison, a ComparisonList, an arbitrarily
+    complex BooleanExpression or an escape to an externally defined
+    algorithm.
 
     :ivar comparison: A simple comparison check
     :ivar comparison_list: All comparisons must be true
@@ -2756,9 +2769,9 @@ class MatchCriteriaType:
 
 @dataclass
 class VariableFrameStreamType(FrameStreamType):
-    """For streams that contain a series of frames with a variable frame length
-    where the frames are found by looking for a series of one's or zero's (usually
-    one's).
+    """For streams that contain a series of frames with a variable frame
+    length where the frames are found by looking for a series of one's or
+    zero's (usually one's).
 
     The series is called the flag.   in the PCM stream that are usually
     made to be illegal in the PCM stream by zero or one bit insertion.
@@ -2911,8 +2924,8 @@ class ContextCalibratorType:
 @dataclass
 class IntegerValueType:
     """
-    Contains an Integer value; value may be provided directly or via the value in a
-    parameter.
+    Contains an Integer value; value may be provided directly or via the
+    value in a parameter.
 
     :ivar fixed_value:
     :ivar dynamic_value: Uses a parameter instance to obtain the value.
@@ -2941,13 +2954,15 @@ class IntegerValueType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    discrete_lookup_list: Optional["IntegerValueType.DiscreteLookupList"] = field(
-        default=None,
-        metadata={
-            "name": "DiscreteLookupList",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    discrete_lookup_list: Optional["IntegerValueType.DiscreteLookupList"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "DiscreteLookupList",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
 
     @dataclass
@@ -2996,16 +3011,16 @@ class IntegerValueType:
 
     @dataclass
     class DiscreteLookupList:
-        discrete_lookup: list["IntegerValueType.DiscreteLookupList.DiscreteLookup"] = (
-            field(
-                default_factory=list,
-                metadata={
-                    "name": "DiscreteLookup",
-                    "type": "Element",
-                    "namespace": "http://www.omg.org/space/xtce",
-                    "min_occurs": 1,
-                },
-            )
+        discrete_lookup: list[
+            "IntegerValueType.DiscreteLookupList.DiscreteLookup"
+        ] = field(
+            default_factory=list,
+            metadata={
+                "name": "DiscreteLookup",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "min_occurs": 1,
+            },
         )
 
         @dataclass
@@ -3060,15 +3075,15 @@ class ParameterPropertiesType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    physical_address_set: Optional["ParameterPropertiesType.PhysicalAddressSet"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "PhysicalAddressSet",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    physical_address_set: Optional[
+        "ParameterPropertiesType.PhysicalAddressSet"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "PhysicalAddressSet",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     time_association: Optional[TimeAssociationType] = field(
         default=None,
@@ -3187,8 +3202,8 @@ class AlarmType:
 
 @dataclass
 class BinaryDataEncodingType(DataEncodingType):
-    """For binary data or for integer, float, string, or time data that is not in
-    any of the known encoding formats.
+    """For binary data or for integer, float, string, or time data that is
+    not in any of the known encoding formats.
 
     For any data that is not encoded in any of the known integer, float,
     string, or time data formats use a To/From transform algorithm.
@@ -3248,15 +3263,15 @@ class FloatDataEncodingType(DataEncodingType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    context_calibrator_list: Optional["FloatDataEncodingType.ContextCalibratorList"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "ContextCalibratorList",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    context_calibrator_list: Optional[
+        "FloatDataEncodingType.ContextCalibratorList"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "ContextCalibratorList",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     encoding: FloatDataEncodingTypeEncoding = field(
         default=FloatDataEncodingTypeEncoding.IEEE754_1985,
@@ -3346,8 +3361,8 @@ class IntegerDataEncodingType(DataEncodingType):
 @dataclass
 class ParameterSetType:
     """
-    Used by both the TelemetryMetaData and the CommandMetaData components each may
-    be built independently.
+    Used by both the TelemetryMetaData and the CommandMetaData components
+    each may be built independently.
 
     :ivar parameter:
     :ivar parameter_ref: Used to include a Parameter defined in another
@@ -3506,7 +3521,9 @@ class StringDataEncodingType(DataEncodingType):
                 "format": "base16",
             },
         )
-        leading_size: Optional["StringDataEncodingType.SizeInBits.LeadingSize"] = field(
+        leading_size: Optional[
+            "StringDataEncodingType.SizeInBits.LeadingSize"
+        ] = field(
             default=None,
             metadata={
                 "name": "LeadingSize",
@@ -3529,8 +3546,8 @@ class StringDataEncodingType(DataEncodingType):
 @dataclass
 class BaseDataType(NameDescriptionType):
     """
-    An abstract type used by within the schema to derive other data types by the
-    ground system.
+    An abstract type used by within the schema to derive other data types by
+    the ground system.
 
     :ivar unit_set:
     :ivar binary_data_encoding:
@@ -3606,8 +3623,8 @@ class BaseDataType(NameDescriptionType):
 @dataclass
 class BaseTimeDataType(NameDescriptionType):
     """
-    An abstract type used by within the schema to describe derive other data types
-    by the ground system.
+    An abstract type used by within the schema to describe derive other data
+    types by the ground system.
 
     :ivar encoding: Scale and offset are used in a y =mx +b type
         relationship (m is the scale and b is the offset) to make
@@ -3706,8 +3723,8 @@ class BooleanAlarmType(AlarmType):
 @dataclass
 class ContainerType(NameDescriptionType):
     """
-    An abstract block of data; used as the base type for more specific container
-    types.
+    An abstract block of data; used as the base type for more specific
+    container types.
 
     :ivar default_rate_in_stream:
     :ivar rate_in_stream_set:
@@ -3743,14 +3760,16 @@ class ContainerType(NameDescriptionType):
 
     @dataclass
     class RateInStreamSet:
-        rate_in_stream: list["ContainerType.RateInStreamSet.RateInStream"] = field(
-            default_factory=list,
-            metadata={
-                "name": "RateInStream",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "min_occurs": 1,
-            },
+        rate_in_stream: list["ContainerType.RateInStreamSet.RateInStream"] = (
+            field(
+                default_factory=list,
+                metadata={
+                    "name": "RateInStream",
+                    "type": "Element",
+                    "namespace": "http://www.omg.org/space/xtce",
+                    "min_occurs": 1,
+                },
+            )
         )
 
         @dataclass
@@ -3771,16 +3790,16 @@ class EnumerationAlarmType(AlarmType):
     Alarm conditions for Enumerations.
     """
 
-    enumeration_alarm_list: Optional["EnumerationAlarmType.EnumerationAlarmList"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "EnumerationAlarmList",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "required": True,
-            },
-        )
+    enumeration_alarm_list: Optional[
+        "EnumerationAlarmType.EnumerationAlarmList"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "EnumerationAlarmList",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+            "required": True,
+        },
     )
     default_alarm_level: AlarmLevels = field(
         default=AlarmLevels.NORMAL,
@@ -3854,13 +3873,15 @@ class NumericAlarmType(AlarmType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    change_alarm_ranges: Optional["NumericAlarmType.ChangeAlarmRanges"] = field(
-        default=None,
-        metadata={
-            "name": "ChangeAlarmRanges",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    change_alarm_ranges: Optional["NumericAlarmType.ChangeAlarmRanges"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "ChangeAlarmRanges",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
 
     @dataclass
@@ -3996,14 +4017,16 @@ class StringAlarmType(AlarmType):
         :ivar string_alarm: Pattern may be a regular expression
         """
 
-        string_alarm: list["StringAlarmType.StringAlarmList.StringAlarm"] = field(
-            default_factory=list,
-            metadata={
-                "name": "StringAlarm",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "min_occurs": 1,
-            },
+        string_alarm: list["StringAlarmType.StringAlarmList.StringAlarm"] = (
+            field(
+                default_factory=list,
+                metadata={
+                    "name": "StringAlarm",
+                    "type": "Element",
+                    "namespace": "http://www.omg.org/space/xtce",
+                    "min_occurs": 1,
+                },
+            )
         )
 
         @dataclass
@@ -4121,14 +4144,16 @@ class ArrayParameterRefEntryType(SequenceEntryType):
     :ivar last_entry_for_this_array_instance:
     """
 
-    dimension_list: Optional["ArrayParameterRefEntryType.DimensionList"] = field(
-        default=None,
-        metadata={
-            "name": "DimensionList",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-            "required": True,
-        },
+    dimension_list: Optional["ArrayParameterRefEntryType.DimensionList"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "DimensionList",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "required": True,
+            },
+        )
     )
     parameter_ref: Optional[str] = field(
         default=None,
@@ -4154,7 +4179,9 @@ class ArrayParameterRefEntryType(SequenceEntryType):
             specified.  Indexes are zero based.
         """
 
-        dimension: list["ArrayParameterRefEntryType.DimensionList.Dimension"] = field(
+        dimension: list[
+            "ArrayParameterRefEntryType.DimensionList.Dimension"
+        ] = field(
             default_factory=list,
             metadata={
                 "name": "Dimension",
@@ -4262,8 +4289,8 @@ class ContainerRefEntryType(SequenceEntryType):
 
 @dataclass
 class ContainerSegmentRefEntryType(SequenceEntryType):
-    """An entry that is only a portion of a container indicating that the entire
-    container must be assembled from other container segments.
+    """An entry that is only a portion of a container indicating that the
+    entire container must be assembled from other container segments.
 
     It is assumed that container segments happen sequentially in time,
     that is the first part of a container is first, however (and there's
@@ -4385,7 +4412,8 @@ class NumericContextAlarmType(NumericAlarmType):
 @dataclass
 class NumericDataType(BaseDataType):
     """
-    An abstract type that is a super type of either an Integer or Float Data type.
+    An abstract type that is a super type of either an Integer or Float Data
+    type.
     """
 
     to_string: Optional[NumberToStringType] = field(
@@ -4423,8 +4451,9 @@ class ParameterRefEntryType(SequenceEntryType):
 
 @dataclass
 class ParameterSegmentRefEntryType(SequenceEntryType):
-    """An entry that is only a portion of a parameter value indicating that the
-    entire parameter value must be assembled from other parameter segments.
+    """An entry that is only a portion of a parameter value indicating that
+    the entire parameter value must be assembled from other parameter
+    segments.
 
     It is assumed that parameter segments happen sequentially in time,
     that is the first part if a telemetry parameter first, however (and
@@ -4485,11 +4514,11 @@ class RelativeTimeDataType(BaseTimeDataType):
 @dataclass
 class StreamSegmentEntryType(SequenceEntryType):
     """
-    An entry that is a portion of a stream (streams are by definition, assumed
-    continuous)   It is assumed that stream segments happen sequentially in time,
-    that is the first part if a steam first, however, if this is not the case the
-    order of the stream segments may be supplied with the order attribute where the
-    first segment order="0".
+    An entry that is a portion of a stream (streams are by definition,
+    assumed continuous)   It is assumed that stream segments happen
+    sequentially in time, that is the first part if a steam first, however,
+    if this is not the case the order of the stream segments may be supplied
+    with the order attribute where the first segment order="0".
     """
 
     stream_ref: Optional[str] = field(
@@ -4638,7 +4667,9 @@ class CommandContainerEntryListType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    argument_ref_entry: list["CommandContainerEntryListType.ArgumentRefEntry"] = field(
+    argument_ref_entry: list[
+        "CommandContainerEntryListType.ArgumentRefEntry"
+    ] = field(
         default_factory=list,
         metadata={
             "name": "ArgumentRefEntry",
@@ -4654,7 +4685,9 @@ class CommandContainerEntryListType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    fixed_value_entry: list["CommandContainerEntryListType.FixedValueEntry"] = field(
+    fixed_value_entry: list[
+        "CommandContainerEntryListType.FixedValueEntry"
+    ] = field(
         default_factory=list,
         metadata={
             "name": "FixedValueEntry",
@@ -4863,13 +4896,15 @@ class ArgumentTypeSetType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    integer_argument_type: list["ArgumentTypeSetType.IntegerArgumentType"] = field(
-        default_factory=list,
-        metadata={
-            "name": "IntegerArgumentType",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    integer_argument_type: list["ArgumentTypeSetType.IntegerArgumentType"] = (
+        field(
+            default_factory=list,
+            metadata={
+                "name": "IntegerArgumentType",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     binary_argument_type: list[BinaryDataType] = field(
         default_factory=list,
@@ -5099,25 +5134,29 @@ class ParameterTypeSetType:
         of these data items is defined here as a 'Member'
     """
 
-    string_parameter_type: list["ParameterTypeSetType.StringParameterType"] = field(
-        default_factory=list,
-        metadata={
-            "name": "StringParameterType",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
-    )
-    enumerated_parameter_type: list["ParameterTypeSetType.EnumeratedParameterType"] = (
+    string_parameter_type: list["ParameterTypeSetType.StringParameterType"] = (
         field(
             default_factory=list,
             metadata={
-                "name": "EnumeratedParameterType",
+                "name": "StringParameterType",
                 "type": "Element",
                 "namespace": "http://www.omg.org/space/xtce",
             },
         )
     )
-    integer_parameter_type: list["ParameterTypeSetType.IntegerParameterType"] = field(
+    enumerated_parameter_type: list[
+        "ParameterTypeSetType.EnumeratedParameterType"
+    ] = field(
+        default_factory=list,
+        metadata={
+            "name": "EnumeratedParameterType",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
+    )
+    integer_parameter_type: list[
+        "ParameterTypeSetType.IntegerParameterType"
+    ] = field(
         default_factory=list,
         metadata={
             "name": "IntegerParameterType",
@@ -5125,23 +5164,29 @@ class ParameterTypeSetType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    binary_parameter_type: list["ParameterTypeSetType.BinaryParameterType"] = field(
-        default_factory=list,
-        metadata={
-            "name": "BinaryParameterType",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    binary_parameter_type: list["ParameterTypeSetType.BinaryParameterType"] = (
+        field(
+            default_factory=list,
+            metadata={
+                "name": "BinaryParameterType",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
-    float_parameter_type: list["ParameterTypeSetType.FloatParameterType"] = field(
-        default_factory=list,
-        metadata={
-            "name": "FloatParameterType",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    float_parameter_type: list["ParameterTypeSetType.FloatParameterType"] = (
+        field(
+            default_factory=list,
+            metadata={
+                "name": "FloatParameterType",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
-    boolean_parameter_type: list["ParameterTypeSetType.BooleanParameterType"] = field(
+    boolean_parameter_type: list[
+        "ParameterTypeSetType.BooleanParameterType"
+    ] = field(
         default_factory=list,
         metadata={
             "name": "BooleanParameterType",
@@ -5474,8 +5519,8 @@ class ParameterTypeSetType:
 
 @dataclass
 class SequenceContainerType(ContainerType):
-    """A list of raw parameters, parameter segments, stream segments, containers,
-    or container segments.
+    """A list of raw parameters, parameter segments, stream segments,
+    containers, or container segments.
 
     Sequence containers may inherit from other sequence containers; when
     they do, the sequence in the parent SequenceContainer is 'inherited'
@@ -5695,15 +5740,15 @@ class MetaCommandType(NameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    context_significance_list: Optional["MetaCommandType.ContextSignificanceList"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "ContextSignificanceList",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    context_significance_list: Optional[
+        "MetaCommandType.ContextSignificanceList"
+    ] = field(
+        default=None,
+        metadata={
+            "name": "ContextSignificanceList",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     interlock: Optional["MetaCommandType.Interlock"] = field(
         default=None,
@@ -5721,13 +5766,15 @@ class MetaCommandType(NameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    parameter_to_set_list: Optional["MetaCommandType.ParameterToSetList"] = field(
-        default=None,
-        metadata={
-            "name": "ParameterToSetList",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    parameter_to_set_list: Optional["MetaCommandType.ParameterToSetList"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "ParameterToSetList",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     parameters_to_suspend_alarms_on_set: Optional[
         "MetaCommandType.ParametersToSuspendAlarmsOnSet"
@@ -6047,7 +6094,9 @@ class MetaCommandType(NameDescriptionType):
                 "namespace": "http://www.omg.org/space/xtce",
             },
         )
-        complete_verifier: list["MetaCommandType.VerifierSet.CompleteVerifier"] = field(
+        complete_verifier: list[
+            "MetaCommandType.VerifierSet.CompleteVerifier"
+        ] = field(
             default_factory=list,
             metadata={
                 "name": "CompleteVerifier",
@@ -6094,16 +6143,16 @@ class MetaCommandType(NameDescriptionType):
             verified (all verifications have passed)
         """
 
-        parameter_to_set: list["MetaCommandType.ParameterToSetList.ParameterToSet"] = (
-            field(
-                default_factory=list,
-                metadata={
-                    "name": "ParameterToSet",
-                    "type": "Element",
-                    "namespace": "http://www.omg.org/space/xtce",
-                    "min_occurs": 1,
-                },
-            )
+        parameter_to_set: list[
+            "MetaCommandType.ParameterToSetList.ParameterToSet"
+        ] = field(
+            default_factory=list,
+            metadata={
+                "name": "ParameterToSet",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "min_occurs": 1,
+            },
         )
 
         @dataclass
@@ -6495,8 +6544,8 @@ class TelemetryMetaDataType:
 
 @dataclass
 class SpaceSystemType(NameDescriptionType):
-    """SpaceSystem is a collection of SpaceSystem(s) including space assets, ground
-    assets, multi-satellite systems and sub-systems.
+    """SpaceSystem is a collection of SpaceSystem(s) including space assets,
+    ground assets, multi-satellite systems and sub-systems.
 
     A SpaceSystem is the root element for the set of data necessary to monitor and command an arbitrary space device - this includes the binary decomposition the data streams going into and out of a device.
 

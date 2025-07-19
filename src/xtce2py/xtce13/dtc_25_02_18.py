@@ -9,8 +9,8 @@ __NAMESPACE__ = "http://www.omg.org/spec/XTCE/20250214"
 
 @dataclass
 class AlgorithmTextType:
-    """This optional element may be used to enter Pseudo or actual code for the
-    algorithm.
+    """This optional element may be used to enter Pseudo or actual code for
+    the algorithm.
 
     The language for the algorithm is specified with the language
     attribute
@@ -120,7 +120,8 @@ class AncillaryDataType:
 
 @dataclass
 class ArgumentAssignmentType:
-    """Describe an assignment of an argument with a calibrated/engineering value.
+    """Describe an assignment of an argument with a calibrated/engineering
+    value.
 
     See ArgumentAssignmentListType.
 
@@ -157,8 +158,8 @@ class ArgumentAssignmentType:
 @dataclass
 class ArgumentInstanceRefType:
     """
-    An argument instance is the name of an argument as the reference is always
-    resolved locally to the metacommand.
+    An argument instance is the name of an argument as the reference is
+    always resolved locally to the metacommand.
 
     :ivar argument_ref: Give the name of the argument.  There is no
         path, this is a local reference.
@@ -207,24 +208,24 @@ class AuthorSetType:
 @dataclass
 class BaseComparisonType:
     """
-    A base type for comparison related elements that improves the mapping produced
-    by data binding tools.
+    A base type for comparison related elements that improves the mapping
+    produced by data binding tools.
     """
 
 
 @dataclass
 class BaseConditionsType:
     """
-    A base type for boolean expression related elements that improves the mapping
-    produced by data binding tools.
+    A base type for boolean expression related elements that improves the
+    mapping produced by data binding tools.
     """
 
 
 @dataclass
 class BaseTriggerType:
     """
-    A base type for the various triggers, purely to improve the mappings created by
-    data binding compilers.
+    A base type for the various triggers, purely to improve the mappings
+    created by data binding compilers.
     """
 
 
@@ -274,8 +275,8 @@ class ChangeBasisType(Enum):
 
 
 class ChangeSpanType(Enum):
-    """Defines a changePerSecond and changePerSample for use in rate of change
-    alarms.
+    """Defines a changePerSecond and changePerSample for use in rate of
+    change alarms.
 
     Used by ChangeAlarmRangesType.
     """
@@ -587,8 +588,8 @@ class FloatEncodingType(Enum):
 
 @dataclass
 class FloatRangeType:
-    """Describe a floating point based range, several types of ranges are supported
-    -- one sided and two sided, inclusive or exclusive.
+    """Describe a floating point based range, several types of ranges are
+    supported -- one sided and two sided, inclusive or exclusive.
 
     It would not make sense to set two mins or maxes. Used in a number
     of locations related to ranges: ValidFloatRangeSetType or
@@ -701,8 +702,8 @@ class IntegerRangeType:
 
 @dataclass
 class LeadingSizeType:
-    """Like PASCAL strings, the size of the string is given as an integer at the
-    start of the string.
+    """Like PASCAL strings, the size of the string is given as an integer at
+    the start of the string.
 
     SizeTag must be an unsigned Integer
     """
@@ -719,8 +720,8 @@ class LeadingSizeType:
 
 @dataclass
 class LinearAdjustmentType:
-    """A slope and intercept may be applied to scale or shift the value of the
-    parameter in the dynamic value.
+    """A slope and intercept may be applied to scale or shift the value of
+    the parameter in the dynamic value.
 
     The default of slope=1 and intercept=0 results in no change to the
     value.
@@ -933,7 +934,8 @@ class ParityFormType(Enum):
 
 @dataclass
 class PhysicalAddressType:
-    """Describe the physical address(s) that this parameter is collected from.
+    """Describe the physical address(s) that this parameter is collected
+    from.
 
     Examples of physical addresses include a memory location on the
     spacecraft or a location on a data collection bus, with the source
@@ -992,12 +994,12 @@ class RadixType(Enum):
 
 class RangeFormType(Enum):
     """
-    Defines inside and outside enumerated terms, where the term outside means the
-    range is (-inf,  minimum) and (maximum, inf) -- that is a range where
-    acceptable values must be less than the minimum and greater than the maximum,
-    and the term inside means the range is (minimum, maximum) -- that is acceptable
-    values are between the minimum and maximum (either the min or max may be
-    inclusive or exclusive).
+    Defines inside and outside enumerated terms, where the term outside
+    means the range is (-inf,  minimum) and (maximum, inf) -- that is a
+    range where acceptable values must be less than the minimum and greater
+    than the maximum, and the term inside means the range is (minimum,
+    maximum) -- that is acceptable values are between the minimum and
+    maximum (either the min or max may be inclusive or exclusive).
     """
 
     OUTSIDE = "outside"
@@ -1005,10 +1007,10 @@ class RangeFormType(Enum):
 
 
 class ReferenceLocationType(Enum):
-    """The location may be relative to the start of the container (containerStart),
-    relative to the end of the previous entry (previousEntry), relative to the end
-    of the container (containerEnd), or relative to the entry that follows this one
-    (nextEntry).
+    """The location may be relative to the start of the container
+    (containerStart), relative to the end of the previous entry
+    (previousEntry), relative to the end of the container (containerEnd), or
+    relative to the entry that follows this one (nextEntry).
 
     If going forward (containerStart and previousEntry) then the
     location refers to the start of the
@@ -1047,8 +1049,8 @@ class ServiceRefType:
 @dataclass
 class SplinePointType:
     """
-    A spline, or piecewise defined function, is a set on points from which a curve
-    may be drawn to interpolate raw to calibrated values.
+    A spline, or piecewise defined function, is a set on points from which a
+    curve may be drawn to interpolate raw to calibrated values.
 
     :ivar order: The order of a SplineCalibrator refers to the
         interpolation function.  Order 0 is a flat line from the defined
@@ -1202,8 +1204,8 @@ class SyncPatternType:
 
 
 class SystemTypeType(Enum):
-    """The type attribute represents what from a space enterprise this SpaceSystem
-    element represents.
+    """The type attribute represents what from a space enterprise this
+    SpaceSystem element represents.
 
     See the enumerations for specific details.  Unknown is the default
     for backwards compatibility, though it should be avoided in newer
@@ -1320,8 +1322,8 @@ class TimeWindowIsRelativeToType(Enum):
 
 
 class UnitFormType(Enum):
-    """Defines enumerated values to categorize a unit associated with a telemetered
-    value.
+    """Defines enumerated values to categorize a unit associated with a
+    telemetered value.
 
     Typically the unit refers to the calibrated (engineering) value.  In
     some cases the unit may be associated with the uncalibrated or raw
@@ -1357,7 +1359,8 @@ class ValidationStatusType(Enum):
 @dataclass
 class ValueEnumerationType:
     """
-    Describe a value and an associated string label, see EnumerationListType.
+    Describe a value and an associated string label, see
+    EnumerationListType.
 
     :ivar value: Numeric raw/uncalibrated value to associate with a
         string enumeration label.
@@ -1420,8 +1423,8 @@ class VerifierEnumerationType(Enum):
 @dataclass
 class AliasSetType:
     """
-    Contains an unordered collection of Alias elements to describe alternate names
-    or IDs for this named item.
+    Contains an unordered collection of Alias elements to describe alternate
+    names or IDs for this named item.
 
     :ivar alias: An alternate name, ID number, and sometimes flight
         software variable name in the code for this item.
@@ -1463,8 +1466,8 @@ class AncillaryDataSetType:
 
 @dataclass
 class ArgumentAssignmentListType:
-    """Argument Assignments specialize a MetaCommand or BlockMetaCommand when
-    inheriting from another MetaCommand.
+    """Argument Assignments specialize a MetaCommand or BlockMetaCommand
+    when inheriting from another MetaCommand.
 
     General argument values can be restricted to specific values to
     further specialize the MetaCommand.  Use it to "narrow" a
@@ -1852,7 +1855,8 @@ class HeaderType:
 
 @dataclass
 class InterlockType:
-    """Describe a type of constraint on the next command, rather than this command.
+    """Describe a type of constraint on the next command, rather than this
+    command.
 
     Interlocks apply only to the next command.  An interlock will block
     successive commands until this command has reached a certain stage
@@ -1917,9 +1921,9 @@ class MessageRefSetType:
 
 @dataclass
 class MultiRangeType(FloatRangeType):
-    """The alarm multi-range element type permits users to define multiple alarm
-    ranges in a sequence that goes beyond the more typical "inside" and "outside"
-    range definitions.
+    """The alarm multi-range element type permits users to define multiple
+    alarm ranges in a sequence that goes beyond the more typical "inside"
+    and "outside" range definitions.
 
     It can be thought of as a "barber pole" definition.
 
@@ -2105,8 +2109,8 @@ class NumberFormatType:
 
 @dataclass
 class OnContainerUpdateTriggerType(BaseTriggerType):
-    """Describe a reference to container that triggers an event when the telemetry
-    container referred to is updated (processed).
+    """Describe a reference to container that triggers an event when the
+    telemetry container referred to is updated (processed).
 
     See TriggerSetType.
 
@@ -2127,8 +2131,8 @@ class OnContainerUpdateTriggerType(BaseTriggerType):
 
 @dataclass
 class OnParameterUpdateTriggerType(BaseTriggerType):
-    """Describe a reference to parameter that triggers an event when the telemetry
-    parameter referred to is updated (processed) with a new value.
+    """Describe a reference to parameter that triggers an event when the
+    telemetry parameter referred to is updated (processed) with a new value.
 
     See TriggerSetType.
 
@@ -2215,8 +2219,8 @@ class ParameterInstanceRefType(ParameterRefType):
 @dataclass
 class ParameterToSuspendAlarmsOnType(ParameterRefType):
     """
-    Will suspend all Alarms associated with this Parameter for the given suspense
-    time after the given verifier.
+    Will suspend all Alarms associated with this Parameter for the given
+    suspense time after the given verifier.
     """
 
     suspense_time: Optional[XmlDuration] = field(
@@ -2339,8 +2343,9 @@ class PhysicalAddressSetType:
 
 @dataclass
 class RateInStreamType:
-    """Define the expected appearance (rate) of a container in a stream where the
-    rate is defined on either a perSecond or perContainer update basis.
+    """Define the expected appearance (rate) of a container in a stream
+    where the rate is defined on either a perSecond or perContainer update
+    basis.
 
     Many programs and platforms have variable reporting rates for
     containers and these can be commanded.  As a result, this element is
@@ -2480,7 +2485,8 @@ class SizeInBitsType:
 
 @dataclass
 class StringAlarmLevelType:
-    """Describe a string alarm condition based on matching a regular expression.
+    """Describe a string alarm condition based on matching a regular
+    expression.
 
     The level and regular expression are described.  The specific
     implementation of the regular expression syntax is not specified in
@@ -2576,7 +2582,8 @@ class UnitType:
 
 @dataclass
 class ValidFloatRangeSetType:
-    """Numerical ranges that define the universe of valid values for this argument.
+    """Numerical ranges that define the universe of valid values for this
+    argument.
 
     A single range is the most common, although it is possible to define
     multiple ranges when the valid values are not contiguous.
@@ -2615,7 +2622,8 @@ class ValidFloatRangeSetType:
 
 @dataclass
 class ValidIntegerRangeSetType:
-    """Numerical ranges that define the universe of valid values for this argument.
+    """Numerical ranges that define the universe of valid values for this
+    argument.
 
     A single range is the most common, although it is possible to define
     multiple ranges when the valid values are not contiguous.
@@ -2700,7 +2708,8 @@ class Xortype:
 @dataclass
 class ArgumentComparisonCheckType(BaseComparisonType):
     """
-    Identical to ComparisonCheckType but supports argument instance references.
+    Identical to ComparisonCheckType but supports argument instance
+    references.
 
     :ivar parameter_instance_ref: Left hand side parameter instance.
     :ivar argument_instance_ref: Left hand side argument instance.
@@ -2918,8 +2927,8 @@ class ArgumentMathOperationType:
 
 @dataclass
 class BaseAlarmType:
-    """Supplies an optional non-reference-able name and short description for
-    alarms.
+    """Supplies an optional non-reference-able name and short description
+    for alarms.
 
     Also includes an optional ancillary data for any special local
     flags, note that these may not necessarily transfer to another
@@ -2956,8 +2965,8 @@ class BaseAlarmType:
 
 @dataclass
 class BaseCalibratorType:
-    """Supplies an optional non-reference-able name and short description for
-    calibrators.
+    """Supplies an optional non-reference-able name and short description
+    for calibrators.
 
     Also includes an optional ancillary data for any special local
     flags, note that these may not necessarily transfer to another
@@ -2995,8 +3004,8 @@ class BaseCalibratorType:
 
 @dataclass
 class BaseMetaCommandType:
-    """When specified, a BaseMetaCommand element identifies that this MetaCommand
-    inherits (extends) another MetaCommand.
+    """When specified, a BaseMetaCommand element identifies that this
+    MetaCommand inherits (extends) another MetaCommand.
 
     It's required ArgumentAssignmentList narrows or this command from
     the parent.  This is typically used when specializing a generic
@@ -3032,8 +3041,8 @@ class BaseMetaCommandType:
 @dataclass
 class ComparisonCheckType(BaseComparisonType):
     """
-    Describe the comparison between the instance (value) of a parameter against
-    either a specified value or another parameter instance.
+    Describe the comparison between the instance (value) of a parameter
+    against either a specified value or another parameter instance.
 
     :ivar parameter_instance_ref: Left hand side parameter instance.
     :ivar comparison_operator: Comparison operator.
@@ -3117,9 +3126,9 @@ class ComparisonType(ParameterInstanceRefType):
 
 @dataclass
 class DescriptionType:
-    """Defines an abstract schema type used as basis for NameDescriptionType and
-    OptionalNameDescriptionType, includes an attribute for a short description and
-    an element for a longer unbounded description.
+    """Defines an abstract schema type used as basis for NameDescriptionType
+    and OptionalNameDescriptionType, includes an attribute for a short
+    description and an element for a longer unbounded description.
 
     This type also provides alias set and ancillary data set  See
     AliasSetType and AncillaryDataSetType.
@@ -3245,8 +3254,8 @@ class InputParameterInstanceRefType(ParameterInstanceRefType):
 
 @dataclass
 class MetaCommandStepType:
-    """Describe a MetaCommand step, consisting MetaCommand reference and argument
-    list.
+    """Describe a MetaCommand step, consisting MetaCommand reference and
+    argument list.
 
     See MetaCommandStepListType and NameReferenceType.
     """
@@ -3302,8 +3311,9 @@ class ParametersToSuspendAlarmsOnSetType:
 
 @dataclass
 class RateInStreamWithStreamNameType(RateInStreamType):
-    """Define the expected appearance (rate) of a container in a named stream where
-    the rate is defined on either a perSecond or perContainer update basis.
+    """Define the expected appearance (rate) of a container in a named
+    stream where the rate is defined on either a perSecond or perContainer
+    update basis.
 
     Many programs and platforms have variable reporting rates for
     containers and these can be commanded.  As a result, this element is
@@ -3328,8 +3338,8 @@ class RateInStreamWithStreamNameType(RateInStreamType):
 
 @dataclass
 class ReferenceTimeType:
-    """Most time values are relative to another time e.g. seconds are relative to
-    minutes, minutes are relative to hours.
+    """Most time values are relative to another time e.g. seconds are
+    relative to minutes, minutes are relative to hours.
 
     This type is used to describe this relationship starting with the
     least significant time Parameter to and progressing to the most
@@ -3362,7 +3372,8 @@ class ReferenceTimeType:
 
 @dataclass
 class StringAlarmListType:
-    """Describe an ordered collection of string alarms, where duplicates are valid.
+    """Describe an ordered collection of string alarms, where duplicates are
+    valid.
 
     Evaluate the alarms in list order. The first to evaluate to true
     takes precedence.  See StringAlarmLevelType.
@@ -3381,8 +3392,8 @@ class StringAlarmListType:
 
 @dataclass
 class TimeAssociationType(ParameterInstanceRefType):
-    """Describes a time association consisting of an instance of an absolute time
-    parameter (parameterRef) and this entry.
+    """Describes a time association consisting of an instance of an absolute
+    time parameter (parameterRef) and this entry.
 
     Because telemetry parameter instances are oftentimes "time-tagged"
     with a timing signal either provided on the ground or on the space
@@ -3568,8 +3579,8 @@ class AndedConditionsType(BaseConditionsType):
 class AlarmMultiRangesType(BaseAlarmType):
     """Describe any number of alarm ranges, each with its own level (normal,
     warning, watch, distress, critical, severe) and range form (inside --
-    (min,max), [min,max), (min, max], [min, max], or outside -- (-inf, min) or
-    (-inf,min] and [max, +inf) or (max,+inf).
+    (min,max), [min,max), (min, max], [min, max], or outside -- (-inf, min)
+    or (-inf,min] and [max, +inf) or (max,+inf).
 
     Ranges may overlap, be disjoint and so forth. Ranges within the
     value spectrum non-specified are non-normal. The most severe range
@@ -3600,9 +3611,9 @@ class AlarmMultiRangesType(BaseAlarmType):
 
 @dataclass
 class AlarmRangesType(BaseAlarmType):
-    """Describe up to six ranges where either less severe ranges are a subset of
-    more severe ranges (outside), or more severe ranges are a subset of less severe
-    ranges (inside).
+    """Describe up to six ranges where either less severe ranges are a
+    subset of more severe ranges (outside), or more severe ranges are a
+    subset of less severe ranges (inside).
 
     In both forms, the undefined least severe range is normal. Range
     values are in calibrated engineering units. See FloatRangeType.
@@ -3685,7 +3696,8 @@ class AlarmRangesType(BaseAlarmType):
 @dataclass
 class ArgumentAndedConditionsType(BaseConditionsType):
     """
-    Identical to ANDedConditionsType but supports argument instance references.
+    Identical to ANDedConditionsType but supports argument instance
+    references.
 
     :ivar condition: Condition elements describe a test similar to the
         Comparison element except that the arguments/parameters used
@@ -3722,7 +3734,8 @@ class ArgumentAndedConditionsType(BaseConditionsType):
 @dataclass
 class ArgumentComparisonListType:
     """
-    Identical to ComparisonListType but supports argument instance references.
+    Identical to ComparisonListType but supports argument instance
+    references.
 
     :ivar comparison: List of Comparison elements must all be true for
         the comparison to evaluate to true.
@@ -3882,7 +3895,8 @@ class MathOperationCalibratorType(BaseCalibratorType):
 
 @dataclass
 class MetaCommandStepListType:
-    """Describe the list of MetaCommand definitions that form the block command.
+    """Describe the list of MetaCommand definitions that form the block
+    command.
 
     Contains an ordered list of MetaCommandSteps where each step is a
     MetaCommand with associated arguments, duplicates are valid.  See
@@ -3929,8 +3943,8 @@ class NameDescriptionType(DescriptionType):
 @dataclass
 class OptionalNameDescriptionType(DescriptionType):
     """
-    The type definition used by most elements that have an optional name with
-    optional descriptions.
+    The type definition used by most elements that have an optional name
+    with optional descriptions.
 
     :ivar name: Optional name of this defined item.  See NameType for
         restriction information.
@@ -3948,8 +3962,8 @@ class OptionalNameDescriptionType(DescriptionType):
 @dataclass
 class ParameterToSetType(ParameterRefType):
     """
-    Sets a Parameter to a new value (either from a derivation or explicitly) after
-    the command has been verified (all verifications have passed).
+    Sets a Parameter to a new value (either from a derivation or explicitly)
+    after the command has been verified (all verifications have passed).
 
     :ivar derivation: Specify a simple algorithm to use to set the
         target Parameter value.  See ArgumentMathOperationType.
@@ -3993,8 +4007,8 @@ class ParameterToSetType(ParameterRefType):
 
 @dataclass
 class PercentCompleteType:
-    """Describe a percentage complete that is fixed from 0 to 100, or as value from
-    a parameter.
+    """Describe a percentage complete that is fixed from 0 to 100, or as
+    value from a parameter.
 
     See ExecutionVerifierType.
 
@@ -4066,7 +4080,8 @@ class RateInStreamSetType:
 
 @dataclass
 class SplineCalibratorType(BaseCalibratorType):
-    """Describe a spline function for calibration using a set of at least 2 points.
+    """Describe a spline function for calibration using a set of at least 2
+    points.
 
     Raw values are converted to calibrated values by finding a position
     on the line corresponding to the raw value.  The line may be
@@ -4113,7 +4128,8 @@ class SplineCalibratorType(BaseCalibratorType):
 @dataclass
 class ArgumentOredConditionsType(BaseConditionsType):
     """
-    Identical to ORedConditionsType but supports argument instance references.
+    Identical to ORedConditionsType but supports argument instance
+    references.
 
     :ivar condition: Condition elements describe a test similar to the
         Comparison element except that the arguments/parameters used
@@ -4149,8 +4165,8 @@ class ArgumentOredConditionsType(BaseConditionsType):
 
 @dataclass
 class ArgumentType(NameDescriptionType):
-    """An Argument has a name and can take on values with the underlying value type
-    described by the ArgumentTypeRef.
+    """An Argument has a name and can take on values with the underlying
+    value type described by the ArgumentTypeRef.
 
     Describe the properties of a command argument referring to a data
     type (argument type). The bulk of properties associated with a
@@ -4231,8 +4247,8 @@ class ArrayDataTypeType(NameDescriptionType):
 
 @dataclass
 class BlockMetaCommandType(NameDescriptionType):
-    """Describe an ordered grouping of MetaCommands into a list, duplicates are
-    valid.
+    """Describe an ordered grouping of MetaCommands into a list, duplicates
+    are valid.
 
     The block contains argument values fully specified.  See
     MetaCommandStepListType.
@@ -4255,9 +4271,9 @@ class BlockMetaCommandType(NameDescriptionType):
 @dataclass
 class CalibratorType(BaseCalibratorType):
     """
-    Describe a calibrator to transform a source data type raw/uncalibrated value
-    (e.g. an integer count from a spacecraft) to an engineering unit/calibrated
-    value for users (e.g. a float).
+    Describe a calibrator to transform a source data type raw/uncalibrated
+    value (e.g. an integer count from a spacecraft) to an engineering
+    unit/calibrated value for users (e.g. a float).
 
     :ivar spline_calibrator: Describes a calibrator in the form of a
         piecewise defined function
@@ -4295,8 +4311,8 @@ class CalibratorType(BaseCalibratorType):
 
 @dataclass
 class ChangeAlarmRangesType(AlarmRangesType):
-    """Describe an alarm when the parameter value's rate-of-change is either too
-    fast or too slow.
+    """Describe an alarm when the parameter value's rate-of-change is either
+    too fast or too slow.
 
     The change may be with respect to time (the default) or with respect
     to samples (delta alarms). Use the changeType attribute to select
@@ -4355,8 +4371,8 @@ class ChangeAlarmRangesType(AlarmRangesType):
 
 @dataclass
 class MathOperationType(MathOperationCalibratorType):
-    """Postfix (aka Reverse Polish Notation (RPN)) notation is used to describe
-    mathmatical equations.
+    """Postfix (aka Reverse Polish Notation (RPN)) notation is used to
+    describe mathmatical equations.
 
     It uses a stack where operands (either fixed values or
     ParameterInstances) are pushed onto the stack from first to last in
@@ -4451,8 +4467,8 @@ class OredConditionsType(BaseConditionsType):
 @dataclass
 class PcmstreamType(NameDescriptionType):
     """
-    A PCM Stream Type is the high level definition for all Pulse Code Modulated
-    (PCM) (i.e., binary) streams.
+    A PCM Stream Type is the high level definition for all Pulse Code
+    Modulated (PCM) (i.e., binary) streams.
     """
 
     class Meta:
@@ -4482,7 +4498,8 @@ class PcmstreamType(NameDescriptionType):
 
 @dataclass
 class ParameterToSetListType:
-    """Parameters that are set with a new value after the command has been sent.
+    """Parameters that are set with a new value after the command has been
+    sent.
 
     Appended to the Base Command list
     """
@@ -4501,7 +4518,8 @@ class ParameterToSetListType:
 @dataclass
 class ServiceType(NameDescriptionType):
     """
-    Holds a set of services, logical groups of containers  OR messages (not both).
+    Holds a set of services, logical groups of containers  OR messages (not
+    both).
     """
 
     message_ref_set: Optional[MessageRefSetType] = field(
@@ -4524,9 +4542,9 @@ class ServiceType(NameDescriptionType):
 
 @dataclass
 class SimpleAlgorithmType(NameDescriptionType):
-    """The simplest form of algorithm, a SimpleAlgorithmType contains an area for a
-    free-form pseudo code description of the algorithm plus a Set of references to
-    external algorithms.
+    """The simplest form of algorithm, a SimpleAlgorithmType contains an
+    area for a free-form pseudo code description of the algorithm plus a Set
+    of references to external algorithms.
 
     External algorithms are usually unique to a ground system type.
     Multiple external algorithms are possible because XTCE documents may
@@ -4569,7 +4587,8 @@ class TimeAlarmRangesType(AlarmRangesType):
 @dataclass
 class ArgumentBooleanExpressionType:
     """
-    Identical to BooleanExpressionType but supports argument instance references.
+    Identical to BooleanExpressionType but supports argument instance
+    references.
 
     :ivar condition: Condition elements describe a test similar to the
         Comparison element except that the arguments/parameters used
@@ -4611,7 +4630,8 @@ class ArgumentBooleanExpressionType:
 @dataclass
 class ArgumentInputAlgorithmType(SimpleAlgorithmType):
     """
-    Identical to InputAlgorithmType but supports argument instance references.
+    Identical to InputAlgorithmType but supports argument instance
+    references.
 
     :ivar input_set: The InputSet describes the list of arguments and/or
         parameters that should be made available as input arguments to
@@ -4752,8 +4772,8 @@ class InputAlgorithmType(SimpleAlgorithmType):
 
 @dataclass
 class MemberListType:
-    """Order is important only if the name of the AggregateParameter or Aggregate
-    Argument is directly referenced in SequenceContainers.
+    """Order is important only if the name of the AggregateParameter or
+    Aggregate Argument is directly referenced in SequenceContainers.
 
     In this case the members are assued to be added sequentially (in the
     order listed here) into the Container.
@@ -4858,7 +4878,8 @@ class AggregateDataType(NameDescriptionType):
 @dataclass
 class ArgumentMatchCriteriaType:
     """
-    Identical to MatchCriteriaType but supports argument instance references.
+    Identical to MatchCriteriaType but supports argument instance
+    references.
 
     :ivar comparison: A simple comparison check involving a single test
         of an argument or parameter value.
@@ -4908,8 +4929,9 @@ class ArgumentMatchCriteriaType:
 
 @dataclass
 class AutoInvertType:
-    """After searching for the frame sync marker for some number of bits, it may be
-    desirable to invert the incoming data, and then look for frame sync.
+    """After searching for the frame sync marker for some number of bits, it
+    may be desirable to invert the incoming data, and then look for frame
+    sync.
 
     In some cases this will require an external algorithm
     """
@@ -5078,8 +5100,9 @@ class InputOutputAlgorithmType(InputAlgorithmType):
 @dataclass
 class MatchCriteriaType:
     """
-    Contains either a simple Comparison, a ComparisonList, an arbitrarily complex
-    BooleanExpression or an escape to an externally defined algorithm.
+    Contains either a simple Comparison, a ComparisonList, an arbitrarily
+    complex BooleanExpression or an escape to an externally defined
+    algorithm.
 
     :ivar comparison: A simple comparison check involving a single test
         of a parameter value.
@@ -5263,8 +5286,8 @@ class ArgumentDiscreteLookupType(ArgumentMatchCriteriaType):
 
 @dataclass
 class CommandVerifierType(OptionalNameDescriptionType):
-    """A command verifier is used to check that the command has been successfully
-    executed.
+    """A command verifier is used to check that the command has been
+    successfully executed.
 
     Command Verifiers may be either a Custom Algorithm or a Boolean
     Check or the presence of a Container for a relative change in the
@@ -5380,8 +5403,8 @@ class ContextMatchType(MatchCriteriaType):
 
 @dataclass
 class CustomStreamType(PcmstreamType):
-    """A stream type where some level of custom processing (e.g. convolutional,
-    encryption, compression) is performed.
+    """A stream type where some level of custom processing (e.g.
+    convolutional, encryption, compression) is performed.
 
     Has a reference to external algorithms for encoding and decoding
     algorithms.
@@ -5434,8 +5457,8 @@ class CustomStreamType(PcmstreamType):
 @dataclass
 class DiscreteLookupType(MatchCriteriaType):
     """
-    Describe a discrete value lookup and the value associated when the lookup
-    evaluates to true.
+    Describe a discrete value lookup and the value associated when the
+    lookup evaluates to true.
 
     :ivar value: Value to use when the lookup conditions are true.
     """
@@ -5451,8 +5474,8 @@ class DiscreteLookupType(MatchCriteriaType):
 
 @dataclass
 class ErrorDetectCorrectType:
-    """Describe CRC, Checksum, Parity, or XOR for error detection and correction
-    algorithm calculation.
+    """Describe CRC, Checksum, Parity, or XOR for error detection and
+    correction algorithm calculation.
 
     See CRCType, ChecksumType, ParityType, and XORType.
 
@@ -5660,7 +5683,8 @@ class ParameterPropertiesType:
 
 @dataclass
 class RestrictionCriteriaType(MatchCriteriaType):
-    """Define one or more conditions (constraints) for container inheritance.
+    """Define one or more conditions (constraints) for container
+    inheritance.
 
     A container is instantiable if its constraints are true.  Constraint
     conditions may be a comparison, a list of comparisons, a boolean
@@ -5685,8 +5709,8 @@ class RestrictionCriteriaType(MatchCriteriaType):
 
 @dataclass
 class SyncStrategyType:
-    """A Sync Strategy specifies the strategy on how to find frames within a stream
-    of PCM data.
+    """A Sync Strategy specifies the strategy on how to find frames within a
+    stream of PCM data.
 
     The sync strategy is based upon a state machine that begins in the
     'Search' state until the first sync marker is found.  Then it goes
@@ -5743,9 +5767,9 @@ class SyncStrategyType:
 @dataclass
 class TransmissionConstraintType(MatchCriteriaType):
     """
-    A CommandTransmission constraint is used to check that the command can be run
-    in the current operating mode and may block the transmission of the command if
-    the constraint condition is true.
+    A CommandTransmission constraint is used to check that the command can
+    be run in the current operating mode and may block the transmission of
+    the command if the constraint condition is true.
 
     :ivar argument_restriction_list: Optional list of argument values
         that manifest this pre-transmission constraint parameter value
@@ -5787,8 +5811,8 @@ class AcceptedVerifierType(CommandVerifierType):
 
 @dataclass
 class AlarmType(BaseAlarmType):
-    """Defines a base schema type used to build up the other data type specific
-    alarm types.
+    """Defines a base schema type used to build up the other data type
+    specific alarm types.
 
     The definition includes a count to go into alarm (minViolations - the counts to go out of alarm is the same), a condition style alarm and a custom alarm. See AlarmConditionType, CustomAlgorithmType, BinaryAlarmConditionType, BooleanAlarmType, BinaryContextAlarmType, EnumerationAlarmType, NumericAlarmType, StringAlarmType, TimeAlarmType, TimeAlarmConditionType.
 
@@ -5876,7 +5900,8 @@ class AlgorithmSetType:
 @dataclass
 class ArgumentDiscreteLookupListType:
     """
-    Identical to DiscreteLookupListType but supports argument instance references.
+    Identical to DiscreteLookupListType but supports argument instance
+    references.
 
     :ivar discrete_lookup: Describe a lookup condition set using
         discrete values from arguments and/or parameters.
@@ -6022,8 +6047,8 @@ class ContextSignificanceType:
 
 @dataclass
 class DataEncodingType:
-    """Describes how a particular piece of data is sent or received from some non-
-    native, off-platform device.
+    """Describes how a particular piece of data is sent or received from
+    some non-native, off-platform device.
 
     (e.g. a spacecraft)
 
@@ -6060,8 +6085,8 @@ class DataEncodingType:
 
 @dataclass
 class DiscreteLookupListType:
-    """Describe an ordered table of integer values and associated conditions,
-    forming a lookup table.
+    """Describe an ordered table of integer values and associated
+    conditions, forming a lookup table.
 
     The list may have duplicates.  The table is evaluated from first to
     last, the first condition to be true returns the value associated
@@ -6130,8 +6155,8 @@ class FailedVerifierType(CommandVerifierType):
 
 @dataclass
 class FixedFrameSyncStrategyType(SyncStrategyType):
-    """Describe a sync pattern and an optional reference to an algorithm used to
-    invert the stream if the frame sync pattern is not found.
+    """Describe a sync pattern and an optional reference to an algorithm
+    used to invert the stream if the frame sync pattern is not found.
 
     See FixedFrameStreamType.
 
@@ -6165,8 +6190,8 @@ class MessageSetType(OptionalNameDescriptionType):
 
 @dataclass
 class ParameterType(NameDescriptionType):
-    """Describe the properties of a telemetry parameter, including its data type
-    (parameter type).
+    """Describe the properties of a telemetry parameter, including its data
+    type (parameter type).
 
     The bulk of properties associated with a telemetry parameter are in
     its parameter type. The initial value specified here, overrides the
@@ -6225,7 +6250,8 @@ class ParameterType(NameDescriptionType):
 @dataclass
 class QueuedVerifierType(CommandVerifierType):
     """
-    A verifer that means the command is scheduled for execution by the destination.
+    A verifer that means the command is scheduled for execution by the
+    destination.
     """
 
 
@@ -6238,8 +6264,9 @@ class ReceivedVerifierType(CommandVerifierType):
 
 @dataclass
 class SentFromRangeVerifierType(CommandVerifierType):
-    """Sent from range means the command has been transmitted to the spacecraft by
-    the network that connects the ground system to the spacecraft.
+    """Sent from range means the command has been transmitted to the
+    spacecraft by the network that connects the ground system to the
+    spacecraft.
 
     Typically, this verifier would come from something other than the
     spacecraft, such as a modem or front end processor.
@@ -6248,8 +6275,8 @@ class SentFromRangeVerifierType(CommandVerifierType):
 
 @dataclass
 class TransferredToRangeVerifierType(CommandVerifierType):
-    """Transferred to range means the command has been received to the network that
-    connects the ground system to the spacecraft.
+    """Transferred to range means the command has been received to the
+    network that connects the ground system to the spacecraft.
 
     Typically, this verifier would come from something other than the
     spacecraft, such as a modem or front end processor.
@@ -6334,7 +6361,8 @@ class ArgumentIntegerValueType:
 @dataclass
 class ArgumentVariableStringType:
     """
-    Identical to VariableStringType but supports argument instance references.
+    Identical to VariableStringType but supports argument instance
+    references.
 
     :ivar dynamic_value: Determine the container size in bits by
         interrogating an instance of a parameter or argument.
@@ -6402,8 +6430,8 @@ class ArgumentVariableStringType:
 @dataclass
 class BinaryAlarmType(AlarmType):
     """
-    Describe alarm conditions specific to the binary data type, extends the basic
-    AlarmType.
+    Describe alarm conditions specific to the binary data type, extends the
+    basic AlarmType.
     """
 
 
@@ -6468,8 +6496,8 @@ class ContextSignificanceListType:
 
 @dataclass
 class EnumerationAlarmType(AlarmType):
-    """Describe alarm conditions specific to the enumeration data type, extends the
-    basic AlarmType with an EnumerationAlarmList.
+    """Describe alarm conditions specific to the enumeration data type,
+    extends the basic AlarmType with an EnumerationAlarmList.
 
     The alarms are described using the label (engineering/calibrated
     value) of the enumerated parameter. Enumeration labels may represent
@@ -6509,8 +6537,8 @@ class EnumerationAlarmType(AlarmType):
 
 @dataclass
 class FixedFrameStreamType(FrameStreamType):
-    """For streams that contain a series of frames with a fixed frame length where
-    the frames are found by looking for a marker in the data.
+    """For streams that contain a series of frames with a fixed frame length
+    where the frames are found by looking for a marker in the data.
 
     This marker is sometimes called the frame sync pattern and sometimes
     the Asynchronous Sync Marker (ASM).  This marker need not be
@@ -6552,8 +6580,8 @@ class FixedFrameStreamType(FrameStreamType):
 @dataclass
 class IntegerValueType:
     """
-    Contains an Integer value; value may be provided directly or via the value in a
-    parameter.
+    Contains an Integer value; value may be provided directly or via the
+    value in a parameter.
 
     :ivar fixed_value: Use a fixed integer value.
     :ivar dynamic_value: Determine the value by interrogating an
@@ -6591,8 +6619,8 @@ class IntegerValueType:
 
 @dataclass
 class NumericAlarmType(AlarmType):
-    """Describe alarm conditions specific to the numeric data types, extends the
-    basic AlarmType with StaticAlarmRanges and ChangeAlarmRanges.
+    """Describe alarm conditions specific to the numeric data types, extends
+    the basic AlarmType with StaticAlarmRanges and ChangeAlarmRanges.
 
     See FloatParameterType and IntegerParameterType.
 
@@ -6633,8 +6661,8 @@ class NumericAlarmType(AlarmType):
 
 @dataclass
 class ParameterSetType:
-    """Describe an unordered collection of parameters where duplicates defined by
-    the Parameter name attribute are invalid.
+    """Describe an unordered collection of parameters where duplicates
+    defined by the Parameter name attribute are invalid.
 
     The ParameterSet exists in both the TelemetryMetaData and the
     CommandMetaData element so that each may be built independently but
@@ -6667,7 +6695,8 @@ class ParameterSetType:
 @dataclass
 class StringAlarmType(AlarmType):
     """Describe alarms specific to the string data type, extends the basic
-    AlarmType, while adding a StringAlarmList and defaultAlarmLevel attribute.
+    AlarmType, while adding a StringAlarmList and defaultAlarmLevel
+    attribute.
 
     The string alarm list is evaluated in list order. See
     ConcernsLevelsType and StringAlarmListType.
@@ -6723,9 +6752,9 @@ class TimeAlarmType(AlarmType):
 
 @dataclass
 class VariableFrameStreamType(FrameStreamType):
-    """For streams that contain a series of frames with a variable frame length
-    where the frames are found by looking for a series of one's or zero's (usually
-    one's).
+    """For streams that contain a series of frames with a variable frame
+    length where the frames are found by looking for a series of one's or
+    zero's (usually one's).
 
     The series is called the flag.   in the PCM stream that are usually
     made to be illegal in the PCM stream by zero or one bit insertion.
@@ -6928,7 +6957,8 @@ class VerifierSetType:
 @dataclass
 class ArgumentBinaryDataEncodingType(DataEncodingType):
     """
-    Identical to BinaryDataEncodingType but supports argument instance references.
+    Identical to BinaryDataEncodingType but supports argument instance
+    references.
 
     :ivar size_in_bits: Number of bits this value occupies on the stream
         being encoded/decoded.
@@ -7001,8 +7031,8 @@ class ArgumentDimensionType:
 @dataclass
 class ArgumentLocationInContainerInBitsType(ArgumentIntegerValueType):
     """
-    Identical to LocationInContainerInBitsType but supports argument instance
-    references.
+    Identical to LocationInContainerInBitsType but supports argument
+    instance references.
     """
 
     reference_location: ReferenceLocationType = field(
@@ -7046,7 +7076,8 @@ class ArgumentRepeatType:
 @dataclass
 class ArgumentStringDataEncodingType(DataEncodingType):
     """
-    Identical to StringDataEncodingType but supports argument instance references.
+    Identical to StringDataEncodingType but supports argument instance
+    references.
 
     :ivar size_in_bits: Static length strings do not change in overall
         length between samples.   They may terminate before the end of
@@ -7104,8 +7135,8 @@ class BinaryContextAlarmType(BinaryAlarmType):
 
 @dataclass
 class BinaryDataEncodingType(DataEncodingType):
-    """Describe binary data that is unmolested in the decoding/encoding or cannot
-    be represented in any of the other data encoding formats.
+    """Describe binary data that is unmolested in the decoding/encoding or
+    cannot be represented in any of the other data encoding formats.
 
     Optionally use the FromBinaryTransformAlgorithm and
     ToBinaryTransformAlgorithm element to describe the transformation
@@ -7161,8 +7192,9 @@ class BooleanContextAlarmType(BooleanAlarmType):
 
 @dataclass
 class ContainerBinaryDataEncodingType:
-    """Describe container binary data that is unmolested in the decoding/encoding
-    or cannot be represented in any of the other data encoding formats.
+    """Describe container binary data that is unmolested in the
+    decoding/encoding or cannot be represented in any of the other data
+    encoding formats.
 
     Optionally use the FromBinaryTransformAlgorithm and
     ToBinaryTransformAlgorithm element to describe the transformation
@@ -7217,8 +7249,8 @@ class ContainerBinaryDataEncodingType:
 
 @dataclass
 class DimensionType:
-    """For partial entries of an array, the starting and ending index for each
-    dimension, OR the Size must be specified.
+    """For partial entries of an array, the starting and ending index for
+    each dimension, OR the Size must be specified.
 
     Indexes are zero based.
 
@@ -7248,7 +7280,8 @@ class DimensionType:
 
 @dataclass
 class EnumerationContextAlarmType(EnumerationAlarmType):
-    """Describe a context that when true the alarm condition may be evaluated.
+    """Describe a context that when true the alarm condition may be
+    evaluated.
 
     See ContextMatchType and EnumerationAlarmType.
 
@@ -7398,7 +7431,8 @@ class IntegerDataEncodingType(DataEncodingType):
 
 @dataclass
 class LocationInContainerInBitsType(IntegerValueType):
-    """Describe the absolute or relative bit location of an entry in a container.
+    """Describe the absolute or relative bit location of an entry in a
+    container.
 
     The "referenceLocation" attribute specifies the starting bit anchor.  If no referenceLocation value is given, the entry is assumed to begin at the first bit position after the previous entry.  Each container starts at bit 0, thus "containerStart" is an offset from 0.  Negative container start bits are before the container and are implementation dependent - these should be flagged as likely errors.  "containerEnd" is given as a positive offset from the end of the container, thus a container end of 0 is exactly at the end of the container.  Negative container end addresses are after the container and are implementation dependent - these should be flagged as likely errors.  Positive "previouEntry" values are offsets from the previous entry - zero (0) is the default which means it follows contiguously from the last occupied bit of the previous entry.  A value of one means it is offset 1-bit from the previous entry, and a value of negative 1 (-1) means it overlaps the previous entry by one bit, and so forth. The "nextEntry" attribute value is proposed for deprecation and should be avoided.  See SequenceEntryType.
 
@@ -7418,8 +7452,8 @@ class LocationInContainerInBitsType(IntegerValueType):
 
 @dataclass
 class NumericContextAlarmType(NumericAlarmType):
-    """Describe a parameter dependent context, that when evaluates to true, enables
-    the use of this alarm definition.
+    """Describe a parameter dependent context, that when evaluates to true,
+    enables the use of this alarm definition.
 
     See ContextMatchType and NumericAlarmType.
 
@@ -7668,7 +7702,8 @@ class ArgumentBaseDataType(NameDescriptionType):
 @dataclass
 class ArgumentDimensionListType:
     """
-    Identical to DimensionListType but supports argument instance references.
+    Identical to DimensionListType but supports argument instance
+    references.
     """
 
     dimension: list[ArgumentDimensionType] = field(
@@ -7685,7 +7720,8 @@ class ArgumentDimensionListType:
 @dataclass
 class ArgumentSequenceEntryType:
     """
-    Identical to a SequenceEntryType but supports argument instance references.
+    Identical to a SequenceEntryType but supports argument instance
+    references.
 
     :ivar location_in_container_in_bits: The start bit 0 position for
         each container is local to the container, but does include space
@@ -7758,8 +7794,9 @@ class ArgumentSequenceEntryType:
 @dataclass
 class BaseDataType(NameDescriptionType):
     """An abstract schema type used by within the schema to derive the other
-    simple/primitive engineering form data types:  BooleanDataType, BinaryDataType,
-    StringDataType, EnumeratedDataType, FloatDataType and IntegerDataType.
+    simple/primitive engineering form data types:  BooleanDataType,
+    BinaryDataType, StringDataType, EnumeratedDataType, FloatDataType and
+    IntegerDataType.
 
     The encoding elements are optional because they describe the raw
     wire encoded form of the data type.  Encoding is only necessary when
@@ -7838,8 +7875,8 @@ class BaseDataType(NameDescriptionType):
 
 @dataclass
 class BinaryContextAlarmListType:
-    """Describe an ordered collection of context binary alarms, duplicates are
-    valid.
+    """Describe an ordered collection of context binary alarms, duplicates
+    are valid.
 
     Process the contexts in list order.  See BinaryContextAlarmType.
 
@@ -7863,8 +7900,8 @@ class BinaryContextAlarmListType:
 
 @dataclass
 class BooleanContextAlarmListType:
-    """Describe an ordered collection of context boolean alarms, duplicates are
-    valid.
+    """Describe an ordered collection of context boolean alarms, duplicates
+    are valid.
 
     Process the contexts in list order.  See BooleanContextAlarmType.
 
@@ -7889,8 +7926,8 @@ class BooleanContextAlarmListType:
 @dataclass
 class ContainerType(NameDescriptionType):
     """
-    An abstract block of data; used as the base type for more specific container
-    types.
+    An abstract block of data; used as the base type for more specific
+    container types.
 
     :ivar default_rate_in_stream:
     :ivar rate_in_stream_set:
@@ -8028,8 +8065,8 @@ class EncodingType:
 
 @dataclass
 class EnumerationContextAlarmListType:
-    """Describe an ordered collection of context enumeration alarms, duplicates are
-    valid.
+    """Describe an ordered collection of context enumeration alarms,
+    duplicates are valid.
 
     Process the contexts in list order. See EnumerationContextAlarmType.
 
@@ -8173,8 +8210,8 @@ class SequenceEntryType:
 
 @dataclass
 class StringContextAlarmListType:
-    """Describe an ordered collection of context string alarms, duplicates are
-    valid.
+    """Describe an ordered collection of context string alarms, duplicates
+    are valid.
 
     Process the contexts in list order. See StringContextAlarmType.
 
@@ -8225,7 +8262,8 @@ class TimeContextAlarmListType:
 @dataclass
 class ArgumentArgumentRefEntryType(ArgumentSequenceEntryType):
     """
-    Identical to ArgumentRefEntryType but supports argument instance references.
+    Identical to ArgumentRefEntryType but supports argument instance
+    references.
     """
 
     argument_ref: Optional[str] = field(
@@ -8414,7 +8452,8 @@ class ArgumentBooleanDataType(ArgumentBaseDataType):
 @dataclass
 class ArgumentContainerRefEntryType(ArgumentSequenceEntryType):
     """
-    Identical to ContainerRefEntryType but supports argument instance references.
+    Identical to ContainerRefEntryType but supports argument instance
+    references.
     """
 
     container_ref: Optional[str] = field(
@@ -8465,7 +8504,8 @@ class ArgumentContainerSegmentRefEntryType(ArgumentSequenceEntryType):
 @dataclass
 class ArgumentEnumeratedDataType(ArgumentBaseDataType):
     """
-    Identical to EnumeratedDataType but supports argument instance references.
+    Identical to EnumeratedDataType but supports argument instance
+    references.
 
     :ivar enumeration_list: Unordered list of label/value pairs where
         values cannot be duplicated.
@@ -8495,7 +8535,8 @@ class ArgumentEnumeratedDataType(ArgumentBaseDataType):
 @dataclass
 class ArgumentFixedValueEntryType(ArgumentSequenceEntryType):
     """
-    Identical to FixedValueEntryType but supports argument instance references.
+    Identical to FixedValueEntryType but supports argument instance
+    references.
 
     :ivar name: An optional name for the fixed/constant field in the
         sequence.
@@ -8580,8 +8621,8 @@ class ArgumentFloatDataType(ArgumentBaseDataType):
 @dataclass
 class ArgumentIndirectParameterRefEntryType(ArgumentSequenceEntryType):
     """
-    Identical to IndirectParameterRefEntryType but supports argument instance
-    references.
+    Identical to IndirectParameterRefEntryType but supports argument
+    instance references.
     """
 
     parameter_instance: Optional[ParameterInstanceRefType] = field(
@@ -8659,7 +8700,8 @@ class ArgumentIntegerDataType(ArgumentBaseDataType):
 @dataclass
 class ArgumentParameterRefEntryType(ArgumentSequenceEntryType):
     """
-    Identical to ParameterRefEntryType but supports argument instance references.
+    Identical to ParameterRefEntryType but supports argument instance
+    references.
     """
 
     parameter_ref: Optional[str] = field(
@@ -8710,7 +8752,8 @@ class ArgumentParameterSegmentRefEntryType(ArgumentSequenceEntryType):
 @dataclass
 class ArgumentStreamSegmentEntryType(ArgumentSequenceEntryType):
     """
-    Identical to StreamRefEntryType but supports argument instance references.
+    Identical to StreamRefEntryType but supports argument instance
+    references.
     """
 
     stream_ref: Optional[str] = field(
@@ -8906,8 +8949,8 @@ class BaseTimeDataType(NameDescriptionType):
 
 @dataclass
 class BinaryDataType(BaseDataType):
-    """A base schema type for describing a binary data engineering/calibrated type
-    (often called "blob type").
+    """A base schema type for describing a binary data
+    engineering/calibrated type (often called "blob type").
 
     The binary data may be of fixed or variable length, and has an
     optional encoding and decoding algorithm that may be defined to
@@ -8983,8 +9026,8 @@ class ContainerRefEntryType(SequenceEntryType):
 
 @dataclass
 class ContainerSegmentRefEntryType(SequenceEntryType):
-    """An entry that is only a portion of a container indicating that the entire
-    container must be assembled from other container segments.
+    """An entry that is only a portion of a container indicating that the
+    entire container must be assembled from other container segments.
 
     It is assumed that container segments happen sequentially in time,
     that is the first part of a container is first, however (and there's
@@ -9056,8 +9099,8 @@ class EnumeratedDataType(BaseDataType):
 
 @dataclass
 class FloatDataType(BaseDataType):
-    """A base schema type for describing a floating point engineering/calibrated
-    data type.
+    """A base schema type for describing a floating point
+    engineering/calibrated data type.
 
     Several encodings are supported.  Calibrated integer to float
     relationships should be described with this data type. Use the data
@@ -9283,8 +9326,9 @@ class ParameterRefEntryType(SequenceEntryType):
 
 @dataclass
 class ParameterSegmentRefEntryType(SequenceEntryType):
-    """An entry that is only a portion of a parameter value indicating that the
-    entire parameter value must be assembled from other parameter segments.
+    """An entry that is only a portion of a parameter value indicating that
+    the entire parameter value must be assembled from other parameter
+    segments.
 
     It is assumed that parameter segments happen sequentially in time,
     that is the first part if a telemetry parameter first, however (and
@@ -9323,11 +9367,11 @@ class ParameterSegmentRefEntryType(SequenceEntryType):
 @dataclass
 class StreamSegmentEntryType(SequenceEntryType):
     """
-    An entry that is a portion of a stream (streams are by definition, assumed
-    continuous)   It is assumed that stream segments happen sequentially in time,
-    that is the first part if a steam first, however, if this is not the case the
-    order of the stream segments may be supplied with the order attribute where the
-    first segment order="0".
+    An entry that is a portion of a stream (streams are by definition,
+    assumed continuous)   It is assumed that stream segments happen
+    sequentially in time, that is the first part if a steam first, however,
+    if this is not the case the order of the stream segments may be supplied
+    with the order attribute where the first segment order="0".
     """
 
     stream_ref: Optional[str] = field(
@@ -9359,9 +9403,9 @@ class StreamSegmentEntryType(SequenceEntryType):
 
 @dataclass
 class StringDataType(BaseDataType):
-    """Defines a base schema type for StringParameterType and StringArgumentType,
-    adding initial value, restriction pattern, character width, and size range in
-    characters.
+    """Defines a base schema type for StringParameterType and
+    StringArgumentType, adding initial value, restriction pattern, character
+    width, and size range in characters.
 
     The initial value if set is the initial value of all instances of
     the child types.  The restriction pattern is a regular expression
@@ -9485,8 +9529,8 @@ class ArgumentRelativeTimeDataType(ArgumentBaseTimeDataType):
 
 @dataclass
 class BinaryArgumentType(ArgumentBinaryDataType):
-    """Defines a binary engineering/calibrated argument type (often called "blob
-    type").
+    """Defines a binary engineering/calibrated argument type (often called
+    "blob type").
 
     The binary data may be of fixed or variable length, and has an
     optional encoding and decoding algorithm that may be defined to
@@ -9498,8 +9542,8 @@ class BinaryArgumentType(ArgumentBinaryDataType):
 
 @dataclass
 class BinaryParameterType(BinaryDataType):
-    """Describe a binary engineering/calibrated parameter type (sometimes called a
-    "blob type").
+    """Describe a binary engineering/calibrated parameter type (sometimes
+    called a "blob type").
 
     It may be of fixed or variable length, and has an optional encoding
     and decoding algorithm that may be defined to transform the data
@@ -9571,8 +9615,8 @@ class BooleanParameterType(BooleanDataType):
 
 @dataclass
 class CommandContainerEntryListType:
-    """Describe an entry list for a CommandContainer which is associated with a
-    MetaCommand.
+    """Describe an entry list for a CommandContainer which is associated
+    with a MetaCommand.
 
     The entry list for a MetaCommand CommandContainer element operates
     in a similar fashion as the entry list element for a
@@ -10052,8 +10096,8 @@ class StringParameterType(StringDataType):
 
 @dataclass
 class AbsoluteTimeArgumentType(ArgumentAbsoluteTimeDataType):
-    """Describe an absolute time argument type relative to a known epoch (such as
-    TAI).
+    """Describe an absolute time argument type relative to a known epoch
+    (such as TAI).
 
     The string representation of this time should use the [ISO 8601] extended format CCYY-MM-DDThh:mm:ss where "CC" represents the century, "YY" the year, "MM" the month and "DD" the day, preceded by an optional leading "-" sign to indicate a negative number. If the sign is omitted, "+" is assumed. The letter "T" is the date/time separator and "hh", "mm", "ss" represent hour, minute and second respectively. Additional digits can be used to increase the precision of fractional seconds if desired i.e. the format ss.ss... with any number of digits after the decimal point is supported.  See TAIType, IntegerDataEncoding and AbsoluteTimeDataType.
     """
@@ -10061,8 +10105,8 @@ class AbsoluteTimeArgumentType(ArgumentAbsoluteTimeDataType):
 
 @dataclass
 class AbsoluteTimeParameterType(AbsoluteTimeDataType):
-    """Describe an absolute time parameter type relative to a known epoch (such as
-    TAI).
+    """Describe an absolute time parameter type relative to a known epoch
+    (such as TAI).
 
     The string representation of this time should use the [ISO 8601] extended format CCYY-MM-DDThh:mm:ss where "CC" represents the century, "YY" the year, "MM" the month and "DD" the day, preceded by an optional leading "-" sign to indicate a negative number. If the sign is omitted, "+" is assumed. The letter "T" is the date/time separator and "hh", "mm", "ss" represent hour, minute and second respectively. Additional digits can be used to increase the precision of fractional seconds if desired i.e. the format ss.ss... with any number of digits after the decimal point is supported.  See TAIType, IntegerDataEncoding and AbsoluteTimeDataType.
     """
@@ -10162,9 +10206,9 @@ class RelativeTimeParameterType(RelativeTimeDataType):
 
 @dataclass
 class SequenceContainerType(ContainerType):
-    """Describes the binary layout/packing of data and also related properties,
-    including an entry list of parameters, parameter segments, array parameters,
-    stream segments, containers, and container segments.
+    """Describes the binary layout/packing of data and also related
+    properties, including an entry list of parameters, parameter segments,
+    array parameters, stream segments, containers, and container segments.
 
     Sequence containers may extend other sequence containers (see
     BaseContainerType).   The parent container's entries are placed
@@ -10375,8 +10419,9 @@ class ContainerSetType:
 
 @dataclass
 class MetaCommandType(NameDescriptionType):
-    """Describe a command which consists of an abstract portion (MetaCommand) and
-    an optional packaging portion (MetaCommand CommandContainer).
+    """Describe a command which consists of an abstract portion
+    (MetaCommand) and an optional packaging portion (MetaCommand
+    CommandContainer).
 
     An argument list is provided. MetaCommand may extend other
     MetaCommands and their CommandContainer may extend other
@@ -10849,8 +10894,8 @@ class CommandMetaDataType:
 
 @dataclass
 class SpaceSystemType(NameDescriptionType):
-    """SpaceSystem is a collection of SpaceSystem(s) including space assets, ground
-    assets, multi-satellite systems and sub-systems.
+    """SpaceSystem is a collection of SpaceSystem(s) including space assets,
+    ground assets, multi-satellite systems and sub-systems.
 
     A SpaceSystem is the root element for the set of data necessary to monitor and command an arbitrary space device - this includes the binary decomposition the data streams going into and out of a device.
 

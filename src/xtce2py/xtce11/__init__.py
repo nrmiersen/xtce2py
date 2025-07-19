@@ -136,8 +136,10 @@ from .dtc_06_11_06 import (
     VariableFrameStreamType,
     VerifierEnumerationType,
 )
+from .parser import XtceParser
 
 __all__ = [
+    "XtceParser",
     "AndedConditionsType",
     "AbsoluteTimeDataType",
     "AggregateDataType",

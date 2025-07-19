@@ -1,4 +1,4 @@
-from src.xtce2py.xtce13.dtc_25_02_18 import (
+from .dtc_25_02_18 import (
     AbsoluteTimeArgumentType,
     AbsoluteTimeDataType,
     AbsoluteTimeParameterType,
@@ -320,8 +320,10 @@ from src.xtce2py.xtce13.dtc_25_02_18 import (
     VerifierSetType,
     Xortype,
 )
+from .parser import XtceParser
 
 __all__ = [
+    "XtceParser",
     "AndedConditionsType",
     "AbsoluteTimeArgumentType",
     "AbsoluteTimeDataType",
