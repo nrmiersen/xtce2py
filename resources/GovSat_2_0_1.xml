@@ -13996,7 +13996,7 @@
 					</xtce:AncillaryDataSet>
 					<xtce:EntryList>
 						<xtce:ArgumentRefEntry argumentRef="SBAND1DataLength"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="SBAND1DataBuffer">
+						<xtce:ArrayArgumentRefEntry parameterRef="SBAND1DataBuffer">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -14270,7 +14270,7 @@
 					</xtce:AncillaryDataSet>
 					<xtce:EntryList>
 						<xtce:ArgumentRefEntry argumentRef="UHF1DataLength"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="UHF1DataBuffer">
+						<xtce:ArrayArgumentRefEntry parameterRef="UHF1DataBuffer">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -15611,7 +15611,7 @@
 						<xtce:ArgumentRefEntry argumentRef="ESM2TempBattCoef"/>
 						<xtce:ArgumentRefEntry argumentRef="ESM2BattCurrCoef"/>
 						<xtce:ArgumentRefEntry argumentRef="ESM2TempPwmCoef"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="ESM2BattCellMuxCoef">
+						<xtce:ArrayArgumentRefEntry parameterRef="ESM2BattCellMuxCoef">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -15962,7 +15962,7 @@
 						<xtce:AncillaryData name="VCID">19</xtce:AncillaryData>
 					</xtce:AncillaryDataSet>
 					<xtce:EntryList>
-						<xtce:ArrayArgumentRefEntry argumentRef="VS0SpacecraftCenterOfMass">
+						<xtce:ArrayArgumentRefEntry parameterRef="VS0SpacecraftCenterOfMass">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -15993,7 +15993,7 @@
 						<xtce:AncillaryData name="VCID">19</xtce:AncillaryData>
 					</xtce:AncillaryDataSet>
 					<xtce:EntryList>
-						<xtce:ArrayArgumentRefEntry argumentRef="VS0SpacecraftInertiaMatrix">
+						<xtce:ArrayArgumentRefEntry parameterRef="VS0SpacecraftInertiaMatrix">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -16215,7 +16215,7 @@
 					</xtce:AncillaryDataSet>
 					<xtce:EntryList>
 						<xtce:ArgumentRefEntry argumentRef="VS2TrajectoryId"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="VS2InsertionVelocity">
+						<xtce:ArrayArgumentRefEntry parameterRef="VS2InsertionVelocity">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -16227,7 +16227,7 @@
 								</xtce:Dimension>
 							</xtce:DimensionList>
 						</xtce:ArrayArgumentRefEntry>
-						<xtce:ArrayArgumentRefEntry argumentRef="VS2InsertionPosition">
+						<xtce:ArrayArgumentRefEntry parameterRef="VS2InsertionPosition">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -17089,7 +17089,7 @@
 					</xtce:AncillaryDataSet>
 					<xtce:EntryList>
 						<xtce:ArgumentRefEntry argumentRef="DC1DataLength"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="DC1DataBuffer">
+						<xtce:ArrayArgumentRefEntry parameterRef="DC1DataBuffer">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -17323,7 +17323,7 @@
 					<xtce:EntryList>
 						<xtce:ArgumentRefEntry argumentRef="WFCam0StartTime"/>
 						<xtce:ArgumentRefEntry argumentRef="WFCam0DurationSubS"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="WFCam0GatePosition">
+						<xtce:ArrayArgumentRefEntry parameterRef="WFCam0GatePosition">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -17338,7 +17338,7 @@
 						<xtce:ArgumentRefEntry argumentRef="WFCam0ImageMode"/>
 						<xtce:ArgumentRefEntry argumentRef="WFCam0WideColorMode"/>
 						<xtce:ArgumentRefEntry argumentRef="WFCam0ImageRate"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="WFCam0GateSize">
+						<xtce:ArrayArgumentRefEntry parameterRef="WFCam0GateSize">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -17411,7 +17411,7 @@
 					<xtce:EntryList>
 						<xtce:ArgumentRefEntry argumentRef="WFCam2StartTime"/>
 						<xtce:ArgumentRefEntry argumentRef="WFCam2TrackMode"/>
-						<xtce:ArrayArgumentRefEntry argumentRef="WFCam2GatePosition">
+						<xtce:ArrayArgumentRefEntry parameterRef="WFCam2GatePosition">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -17423,7 +17423,7 @@
 								</xtce:Dimension>
 							</xtce:DimensionList>
 						</xtce:ArrayArgumentRefEntry>
-						<xtce:ArrayArgumentRefEntry argumentRef="WFCam2GateSize">
+						<xtce:ArrayArgumentRefEntry parameterRef="WFCam2GateSize">
 							<xtce:DimensionList>
 								<xtce:Dimension>
 									<xtce:StartingIndex>
@@ -17799,19 +17799,19 @@
 						<xtce:BooleanExpression>
 							<xtce:ORedConditions>
 								<xtce:Condition>
-									<xtce:ParameterInstanceRef1 parameterRef="TCCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="TCCmdErr"/>
 									<xtce:ComparisonOperator>!=</xtce:ComparisonOperator>
-									<xtce:ParameterInstanceRef2 parameterRef="CmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="CmdErr"/>
 								</xtce:Condition>
 								<xtce:Condition>
-									<xtce:ParameterInstanceRef1 parameterRef="TCCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="TCCmdErr"/>
 									<xtce:ComparisonOperator>!=</xtce:ComparisonOperator>
-									<xtce:ParameterInstanceRef2 parameterRef="CmdRcv"/>
+									<xtce:ParameterInstanceRef parameterRef="CmdRcv"/>
 								</xtce:Condition>
 								<xtce:Condition>
-									<xtce:ParameterInstanceRef1 parameterRef="TCCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="TCCmdErr"/>
 									<xtce:ComparisonOperator>!=</xtce:ComparisonOperator>
-									<xtce:ParameterInstanceRef2 parameterRef="CmdRej"/>
+									<xtce:ParameterInstanceRef parameterRef="CmdRej"/>
 								</xtce:Condition>
 							</xtce:ORedConditions>
 						</xtce:BooleanExpression>
@@ -17821,19 +17821,19 @@
 						<xtce:BooleanExpression>
 							<xtce:ORedConditions>
 								<xtce:Condition>
-									<xtce:ParameterInstanceRef1 parameterRef="TCCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="TCCmdErr"/>
 									<xtce:ComparisonOperator>!=</xtce:ComparisonOperator>
-									<xtce:ParameterInstanceRef2 parameterRef="ExpCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="ExpCmdErr"/>
 								</xtce:Condition>
 								<xtce:Condition>
-									<xtce:ParameterInstanceRef1 parameterRef="TCCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="TCCmdErr"/>
 									<xtce:ComparisonOperator>!=</xtce:ComparisonOperator>
-									<xtce:ParameterInstanceRef2 parameterRef="ExpCmdRcv"/>
+									<xtce:ParameterInstanceRef parameterRef="ExpCmdRcv"/>
 								</xtce:Condition>
 								<xtce:Condition>
-									<xtce:ParameterInstanceRef1 parameterRef="TCCmdErr"/>
+									<xtce:ParameterInstanceRef parameterRef="TCCmdErr"/>
 									<xtce:ComparisonOperator>!=</xtce:ComparisonOperator>
-									<xtce:ParameterInstanceRef2 parameterRef="ExpCmdRej"/>
+									<xtce:ParameterInstanceRef parameterRef="ExpCmdRej"/>
 								</xtce:Condition>
 							</xtce:ORedConditions>
 						</xtce:BooleanExpression>
