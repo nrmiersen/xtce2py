@@ -571,35 +571,33 @@ class TriggerSetType:
     :ivar trigger_rate:
     """
 
-    on_parameter_update_trigger: list[
-        "TriggerSetType.OnParameterUpdateTrigger"
-    ] = field(
-        default_factory=list,
-        metadata={
-            "name": "OnParameterUpdateTrigger",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
-    )
-    on_container_update_trigger: list[
-        "TriggerSetType.OnContainerUpdateTrigger"
-    ] = field(
-        default_factory=list,
-        metadata={
-            "name": "OnContainerUpdateTrigger",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
-    )
-    on_periodic_rate_trigger: list["TriggerSetType.OnPeriodicRateTrigger"] = (
+    on_parameter_update_trigger: list["TriggerSetType.OnParameterUpdateTrigger"] = (
         field(
             default_factory=list,
             metadata={
-                "name": "OnPeriodicRateTrigger",
+                "name": "OnParameterUpdateTrigger",
                 "type": "Element",
                 "namespace": "http://www.omg.org/space/xtce",
             },
         )
+    )
+    on_container_update_trigger: list["TriggerSetType.OnContainerUpdateTrigger"] = (
+        field(
+            default_factory=list,
+            metadata={
+                "name": "OnContainerUpdateTrigger",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
+    )
+    on_periodic_rate_trigger: list["TriggerSetType.OnPeriodicRateTrigger"] = field(
+        default_factory=list,
+        metadata={
+            "name": "OnPeriodicRateTrigger",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     name: Optional[str] = field(
         default=None,
@@ -826,9 +824,7 @@ class DescriptionType:
             type.  Data may be included  or given as an href.
         """
 
-        ancillary_data: list[
-            "DescriptionType.AncillaryDataSet.AncillaryData"
-        ] = field(
+        ancillary_data: list["DescriptionType.AncillaryDataSet.AncillaryData"] = field(
             default_factory=list,
             metadata={
                 "name": "AncillaryData",
@@ -1951,15 +1947,15 @@ class SimpleAlgorithmType(NameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    external_algorithm_set: Optional[
-        "SimpleAlgorithmType.ExternalAlgorithmSet"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "ExternalAlgorithmSet",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    external_algorithm_set: Optional["SimpleAlgorithmType.ExternalAlgorithmSet"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "ExternalAlgorithmSet",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
 
     @dataclass
@@ -2366,15 +2362,15 @@ class CommandVerifierType(OptionalNameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    parameter_value_change: Optional[
-        "CommandVerifierType.ParameterValueChange"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "ParameterValueChange",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    parameter_value_change: Optional["CommandVerifierType.ParameterValueChange"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "ParameterValueChange",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     custom_algorithm: Optional[InputAlgorithmType] = field(
         default=None,
@@ -2408,15 +2404,15 @@ class CommandVerifierType(OptionalNameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    check_window_algorithms: Optional[
-        "CommandVerifierType.CheckWindowAlgorithms"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "CheckWindowAlgorithms",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    check_window_algorithms: Optional["CommandVerifierType.CheckWindowAlgorithms"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "CheckWindowAlgorithms",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
 
     @dataclass
@@ -2442,16 +2438,14 @@ class CommandVerifierType(OptionalNameDescriptionType):
                 "required": True,
             },
         )
-        change: Optional["CommandVerifierType.ParameterValueChange.Change"] = (
-            field(
-                default=None,
-                metadata={
-                    "name": "Change",
-                    "type": "Element",
-                    "namespace": "http://www.omg.org/space/xtce",
-                    "required": True,
-                },
-            )
+        change: Optional["CommandVerifierType.ParameterValueChange.Change"] = field(
+            default=None,
+            metadata={
+                "name": "Change",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "required": True,
+            },
         )
 
         @dataclass
@@ -2609,9 +2603,7 @@ class FixedFrameStreamType(FrameStreamType):
             synchronization.
         """
 
-        sync_pattern: Optional[
-            "FixedFrameStreamType.SyncStrategy.SyncPattern"
-        ] = field(
+        sync_pattern: Optional["FixedFrameStreamType.SyncStrategy.SyncPattern"] = field(
             default=None,
             metadata={
                 "name": "SyncPattern",
@@ -2954,15 +2946,13 @@ class IntegerValueType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    discrete_lookup_list: Optional["IntegerValueType.DiscreteLookupList"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "DiscreteLookupList",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    discrete_lookup_list: Optional["IntegerValueType.DiscreteLookupList"] = field(
+        default=None,
+        metadata={
+            "name": "DiscreteLookupList",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
 
     @dataclass
@@ -3011,16 +3001,16 @@ class IntegerValueType:
 
     @dataclass
     class DiscreteLookupList:
-        discrete_lookup: list[
-            "IntegerValueType.DiscreteLookupList.DiscreteLookup"
-        ] = field(
-            default_factory=list,
-            metadata={
-                "name": "DiscreteLookup",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "min_occurs": 1,
-            },
+        discrete_lookup: list["IntegerValueType.DiscreteLookupList.DiscreteLookup"] = (
+            field(
+                default_factory=list,
+                metadata={
+                    "name": "DiscreteLookup",
+                    "type": "Element",
+                    "namespace": "http://www.omg.org/space/xtce",
+                    "min_occurs": 1,
+                },
+            )
         )
 
         @dataclass
@@ -3075,15 +3065,15 @@ class ParameterPropertiesType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    physical_address_set: Optional[
-        "ParameterPropertiesType.PhysicalAddressSet"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "PhysicalAddressSet",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    physical_address_set: Optional["ParameterPropertiesType.PhysicalAddressSet"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "PhysicalAddressSet",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     time_association: Optional[TimeAssociationType] = field(
         default=None,
@@ -3263,15 +3253,15 @@ class FloatDataEncodingType(DataEncodingType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    context_calibrator_list: Optional[
-        "FloatDataEncodingType.ContextCalibratorList"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "ContextCalibratorList",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    context_calibrator_list: Optional["FloatDataEncodingType.ContextCalibratorList"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "ContextCalibratorList",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     encoding: FloatDataEncodingTypeEncoding = field(
         default=FloatDataEncodingTypeEncoding.IEEE754_1985,
@@ -3521,9 +3511,7 @@ class StringDataEncodingType(DataEncodingType):
                 "format": "base16",
             },
         )
-        leading_size: Optional[
-            "StringDataEncodingType.SizeInBits.LeadingSize"
-        ] = field(
+        leading_size: Optional["StringDataEncodingType.SizeInBits.LeadingSize"] = field(
             default=None,
             metadata={
                 "name": "LeadingSize",
@@ -3760,16 +3748,14 @@ class ContainerType(NameDescriptionType):
 
     @dataclass
     class RateInStreamSet:
-        rate_in_stream: list["ContainerType.RateInStreamSet.RateInStream"] = (
-            field(
-                default_factory=list,
-                metadata={
-                    "name": "RateInStream",
-                    "type": "Element",
-                    "namespace": "http://www.omg.org/space/xtce",
-                    "min_occurs": 1,
-                },
-            )
+        rate_in_stream: list["ContainerType.RateInStreamSet.RateInStream"] = field(
+            default_factory=list,
+            metadata={
+                "name": "RateInStream",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "min_occurs": 1,
+            },
         )
 
         @dataclass
@@ -3790,16 +3776,16 @@ class EnumerationAlarmType(AlarmType):
     Alarm conditions for Enumerations.
     """
 
-    enumeration_alarm_list: Optional[
-        "EnumerationAlarmType.EnumerationAlarmList"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "EnumerationAlarmList",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-            "required": True,
-        },
+    enumeration_alarm_list: Optional["EnumerationAlarmType.EnumerationAlarmList"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "EnumerationAlarmList",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "required": True,
+            },
+        )
     )
     default_alarm_level: AlarmLevels = field(
         default=AlarmLevels.NORMAL,
@@ -3873,15 +3859,13 @@ class NumericAlarmType(AlarmType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    change_alarm_ranges: Optional["NumericAlarmType.ChangeAlarmRanges"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "ChangeAlarmRanges",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    change_alarm_ranges: Optional["NumericAlarmType.ChangeAlarmRanges"] = field(
+        default=None,
+        metadata={
+            "name": "ChangeAlarmRanges",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
 
     @dataclass
@@ -4017,16 +4001,14 @@ class StringAlarmType(AlarmType):
         :ivar string_alarm: Pattern may be a regular expression
         """
 
-        string_alarm: list["StringAlarmType.StringAlarmList.StringAlarm"] = (
-            field(
-                default_factory=list,
-                metadata={
-                    "name": "StringAlarm",
-                    "type": "Element",
-                    "namespace": "http://www.omg.org/space/xtce",
-                    "min_occurs": 1,
-                },
-            )
+        string_alarm: list["StringAlarmType.StringAlarmList.StringAlarm"] = field(
+            default_factory=list,
+            metadata={
+                "name": "StringAlarm",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+                "min_occurs": 1,
+            },
         )
 
         @dataclass
@@ -4144,16 +4126,14 @@ class ArrayParameterRefEntryType(SequenceEntryType):
     :ivar last_entry_for_this_array_instance:
     """
 
-    dimension_list: Optional["ArrayParameterRefEntryType.DimensionList"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "DimensionList",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "required": True,
-            },
-        )
+    dimension_list: Optional["ArrayParameterRefEntryType.DimensionList"] = field(
+        default=None,
+        metadata={
+            "name": "DimensionList",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+            "required": True,
+        },
     )
     parameter_ref: Optional[str] = field(
         default=None,
@@ -4179,9 +4159,7 @@ class ArrayParameterRefEntryType(SequenceEntryType):
             specified.  Indexes are zero based.
         """
 
-        dimension: list[
-            "ArrayParameterRefEntryType.DimensionList.Dimension"
-        ] = field(
+        dimension: list["ArrayParameterRefEntryType.DimensionList.Dimension"] = field(
             default_factory=list,
             metadata={
                 "name": "Dimension",
@@ -4667,9 +4645,7 @@ class CommandContainerEntryListType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    argument_ref_entry: list[
-        "CommandContainerEntryListType.ArgumentRefEntry"
-    ] = field(
+    argument_ref_entry: list["CommandContainerEntryListType.ArgumentRefEntry"] = field(
         default_factory=list,
         metadata={
             "name": "ArgumentRefEntry",
@@ -4685,9 +4661,7 @@ class CommandContainerEntryListType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    fixed_value_entry: list[
-        "CommandContainerEntryListType.FixedValueEntry"
-    ] = field(
+    fixed_value_entry: list["CommandContainerEntryListType.FixedValueEntry"] = field(
         default_factory=list,
         metadata={
             "name": "FixedValueEntry",
@@ -4896,15 +4870,13 @@ class ArgumentTypeSetType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    integer_argument_type: list["ArgumentTypeSetType.IntegerArgumentType"] = (
-        field(
-            default_factory=list,
-            metadata={
-                "name": "IntegerArgumentType",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    integer_argument_type: list["ArgumentTypeSetType.IntegerArgumentType"] = field(
+        default_factory=list,
+        metadata={
+            "name": "IntegerArgumentType",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     binary_argument_type: list[BinaryDataType] = field(
         default_factory=list,
@@ -5134,29 +5106,25 @@ class ParameterTypeSetType:
         of these data items is defined here as a 'Member'
     """
 
-    string_parameter_type: list["ParameterTypeSetType.StringParameterType"] = (
+    string_parameter_type: list["ParameterTypeSetType.StringParameterType"] = field(
+        default_factory=list,
+        metadata={
+            "name": "StringParameterType",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
+    )
+    enumerated_parameter_type: list["ParameterTypeSetType.EnumeratedParameterType"] = (
         field(
             default_factory=list,
             metadata={
-                "name": "StringParameterType",
+                "name": "EnumeratedParameterType",
                 "type": "Element",
                 "namespace": "http://www.omg.org/space/xtce",
             },
         )
     )
-    enumerated_parameter_type: list[
-        "ParameterTypeSetType.EnumeratedParameterType"
-    ] = field(
-        default_factory=list,
-        metadata={
-            "name": "EnumeratedParameterType",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
-    )
-    integer_parameter_type: list[
-        "ParameterTypeSetType.IntegerParameterType"
-    ] = field(
+    integer_parameter_type: list["ParameterTypeSetType.IntegerParameterType"] = field(
         default_factory=list,
         metadata={
             "name": "IntegerParameterType",
@@ -5164,29 +5132,23 @@ class ParameterTypeSetType:
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    binary_parameter_type: list["ParameterTypeSetType.BinaryParameterType"] = (
-        field(
-            default_factory=list,
-            metadata={
-                "name": "BinaryParameterType",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    binary_parameter_type: list["ParameterTypeSetType.BinaryParameterType"] = field(
+        default_factory=list,
+        metadata={
+            "name": "BinaryParameterType",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
-    float_parameter_type: list["ParameterTypeSetType.FloatParameterType"] = (
-        field(
-            default_factory=list,
-            metadata={
-                "name": "FloatParameterType",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    float_parameter_type: list["ParameterTypeSetType.FloatParameterType"] = field(
+        default_factory=list,
+        metadata={
+            "name": "FloatParameterType",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
-    boolean_parameter_type: list[
-        "ParameterTypeSetType.BooleanParameterType"
-    ] = field(
+    boolean_parameter_type: list["ParameterTypeSetType.BooleanParameterType"] = field(
         default_factory=list,
         metadata={
             "name": "BooleanParameterType",
@@ -5740,15 +5702,15 @@ class MetaCommandType(NameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    context_significance_list: Optional[
-        "MetaCommandType.ContextSignificanceList"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "ContextSignificanceList",
-            "type": "Element",
-            "namespace": "http://www.omg.org/space/xtce",
-        },
+    context_significance_list: Optional["MetaCommandType.ContextSignificanceList"] = (
+        field(
+            default=None,
+            metadata={
+                "name": "ContextSignificanceList",
+                "type": "Element",
+                "namespace": "http://www.omg.org/space/xtce",
+            },
+        )
     )
     interlock: Optional["MetaCommandType.Interlock"] = field(
         default=None,
@@ -5766,15 +5728,13 @@ class MetaCommandType(NameDescriptionType):
             "namespace": "http://www.omg.org/space/xtce",
         },
     )
-    parameter_to_set_list: Optional["MetaCommandType.ParameterToSetList"] = (
-        field(
-            default=None,
-            metadata={
-                "name": "ParameterToSetList",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-            },
-        )
+    parameter_to_set_list: Optional["MetaCommandType.ParameterToSetList"] = field(
+        default=None,
+        metadata={
+            "name": "ParameterToSetList",
+            "type": "Element",
+            "namespace": "http://www.omg.org/space/xtce",
+        },
     )
     parameters_to_suspend_alarms_on_set: Optional[
         "MetaCommandType.ParametersToSuspendAlarmsOnSet"
@@ -6094,9 +6054,7 @@ class MetaCommandType(NameDescriptionType):
                 "namespace": "http://www.omg.org/space/xtce",
             },
         )
-        complete_verifier: list[
-            "MetaCommandType.VerifierSet.CompleteVerifier"
-        ] = field(
+        complete_verifier: list["MetaCommandType.VerifierSet.CompleteVerifier"] = field(
             default_factory=list,
             metadata={
                 "name": "CompleteVerifier",
@@ -6143,16 +6101,16 @@ class MetaCommandType(NameDescriptionType):
             verified (all verifications have passed)
         """
 
-        parameter_to_set: list[
-            "MetaCommandType.ParameterToSetList.ParameterToSet"
-        ] = field(
-            default_factory=list,
-            metadata={
-                "name": "ParameterToSet",
-                "type": "Element",
-                "namespace": "http://www.omg.org/space/xtce",
-                "min_occurs": 1,
-            },
+        parameter_to_set: list["MetaCommandType.ParameterToSetList.ParameterToSet"] = (
+            field(
+                default_factory=list,
+                metadata={
+                    "name": "ParameterToSet",
+                    "type": "Element",
+                    "namespace": "http://www.omg.org/space/xtce",
+                    "min_occurs": 1,
+                },
+            )
         )
 
         @dataclass

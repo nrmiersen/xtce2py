@@ -1,35 +1,56 @@
 [project]
 name = "xtce2py"
 version = "0.1.0"
-description = "A generator for creating Python parsers from XTCE files."
+description = "A generator for creating a Python package from an XTCE file."
 authors = [{ name = "Nathan Miersen", email = "nrmiersen@gmail.com" }]
 dependencies = [
     "pydantic>=2.11.7",
     "xsdata>=25.7",
-    "typer>=0.16.0",
-    "rich>=14.0.0",
     "jinja2>=3.1.6",
-    "black>=25.1.0",
+    "ruff>=0.12.4",
+    "docformatter>=1.7.7",
+    "typer[rich]>=0.16.0",
+    "setuptools>=80.9.0",
+    "lxml>=6.0.0",
+    "lxml-stubs>=0.5.1",
+    "pydantic-settings>=2.11.0",
 ]
 requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "MIT" }
 
-
 [dependency-groups]
 dev = ["xsdata[cli]>=25.7"]
 
+[tool.pdm.build]
+includes = [
+    "src/xtce2py/static/",
+    "src/xtce2py/templates/",
+    "src/xtce2py/xtce_1_1/dtc-06-11-06.xsd",
+    "src/xtce2py/xtce_1_2/dtc-18-02-04.xsd",
+    "src/xtce2py/xtce_1_3/dtc-25-02-18.xsd",
+]
 
 [tool.pdm.scripts]
 xtce2py = "python -m xtce2py.main"
 
 [tool.ruff]
 line-length = 88
+exclude = [
+    "src/xtce2py/xtce_1_1/dtc_06_11_06.py",
+    'src/xtce2py/xtce_1_2/dtc_18_02_04.py',
+    "src/xtce2py/xtce_1_3/dtc_25_02_18.py",
+]
 
 [tool.ruff.lint]
 select = [
     "D", # pydocstyle
     "I", # isort
+]
+
+ignore = [
+    "D203", # Conflicts with D211
+    "D213", # Conflicts with D212
 ]
 
 [tool.ruff.lint.isort]

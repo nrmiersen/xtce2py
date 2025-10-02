@@ -1,19 +1,58 @@
-"""Provides the command-line interface for the xtce2py generator.
+"""Provides the command-line interface for the xtce2py generator."""
 
-It uses Typer to create a user-friendly CLI and orchestrates the parsing
-and generation process.
-"""
-
+import enum
+import logging
+import shutil
 import subprocess
 from pathlib import Path
 
+import jinja2
 import typer
+from pydantic import ValidationError
 from rich.console import Console
+from rich.logging import RichHandler
 
-from . import generator, xtce_parser
+from . import config, generator, xtce
+from .context_models import InitContext, PyprojectContext, ReadMeContext
 
 app = typer.Typer()
 console = Console()
+
+
+class ExitCode(enum.IntEnum):
+    """Exit codes for the application."""
+
+    SUCCESS = 0
+    GENERAL_ERROR = 1
+    USAGE_ERROR = 2
+    IO_ERROR = 3
+
+
+def setup_logging(log_level: str, log_file: Path | None):
+    """Configure the logging system for the application."""
+    handlers = []
+
+    console_handler = RichHandler(
+        console=console,
+        show_time=False,
+        show_path=False,
+        rich_tracebacks=True,
+    )
+    handlers.append(console_handler)
+
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        file_handler.setFormatter(formatter)
+        handlers.append(file_handler)
+
+    logging.basicConfig(
+        level=log_level.upper(),
+        format="%(message)s",
+        handlers=handlers,
+    )
 
 
 @app.command()
@@ -25,59 +64,229 @@ def generate(
         "-o",
         help="The destination directory for the generated package.",
     ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show detailed errors.",
+        is_flag=True,
+    ),
+    package_version: str = typer.Option(
+        "",
+        "--package-version",
+        help="The version to assign to the generated package. If not provided, defaults to the XTCE header version.",
+    ),
+    package_name_suffix: str = typer.Option(
+        "",
+        "--package-name-suffix",
+        help="A suffix to append to the generated package name.",
+    ),
+    log_file: Path = typer.Option(
+        None,
+        "--log-file",
+        help="Path to save detailed logs. If not provided, logs go to console only.",
+    ),
+    log_level: str = typer.Option(
+        "INFO",
+        "--log-level",
+        help="Set the logging verbosity (DEBUG, INFO, WARNING, ERROR).",
+    ),
 ):
     """Generate a Python parser package from an XTCE file."""
-    console.print(f"Starting generator...")
+    # Check inputs
+    if not xtce_file.exists():
+        console.print(f"[bold red]ERROR: XTCE file not found: {xtce_file}[/bold red]")
+        raise typer.Exit(code=ExitCode.IO_ERROR)
+    if not xtce_file.is_file():
+        console.print(
+            f"[bold red]ERROR: XTCE path is not a file: {xtce_file}[/bold red]"
+        )
+        raise typer.Exit(code=ExitCode.IO_ERROR)
+    if not output_dir.parent.exists():
+        console.print(
+            f"[bold red]ERROR: Output directory parent does not exist: {output_dir.parent}[/bold red]"
+        )
+        raise typer.Exit(code=ExitCode.IO_ERROR)
+    if output_dir.exists() and not output_dir.is_dir():
+        console.print(
+            f"[bold red]ERROR: Output path exists and is not a directory: {output_dir}[/bold red]"
+        )
+        raise typer.Exit(code=ExitCode.IO_ERROR)
+
+    setup_logging(log_level, log_file)
+
+    console.print("Starting generator...")
     console.print(f"  - Input XTCE: [bold cyan]{xtce_file}[/bold cyan]")
     console.print(f"  - Output Dir: [bold cyan]{output_dir}[/bold cyan]")
 
-    console.print(f"Parsing '{xtce_file}'...")
-    parser = xtce_parser.get_xtce_parser(xtce_file)
-    space_system_metadata = parser.get_metadata()
-    console.print("✅ Parsed XTCE file.")
+    # Try to load configuration settings
+    toml_path = Path("xtce2py.toml")
+    if toml_path.exists():
+        console.print(f"  - Using TOML File: [bold cyan]{toml_path}[/bold cyan]")
+    try:
+        settings = config.get_settings()
+        console.print(
+            f"    - Current Settings: {settings.model_dump()}"
+        ) if verbose else None
+    except ValidationError as e:
+        console.print(
+            f"[bold red]ERROR: Invalid configuration in '{toml_path}'.[/bold red]"
+        )
+        console.print("\n[bold]Validation Details:[/bold]")
+        console.print(e)
+        raise typer.Exit(code=ExitCode.USAGE_ERROR)
 
-    dist_name, package_name = generator.create_project_names(
-        space_system_metadata["name"]
+    # Use settings
+    package_version = package_version or ""
+    package_name_suffix = package_name_suffix or settings.package_defaults.suffix
+
+    # Parse the XTCE file
+    console.print(f"Parsing XTCE '{xtce_file}'...")
+    try:
+        xtce_version = xtce.get_xtce_version(xtce_file)
+    except ValueError as e:
+        console.print(f"  [bold red]ERROR: {e}[/bold red]")
+        raise typer.Exit(code=ExitCode.USAGE_ERROR)
+    console.print(f"  - XTCE version: {xtce_version}")
+
+    # Validate the XTCE file
+    is_valid, errors = xtce.validate_xtce_file(xtce_file, xtce_version.xsd)
+    if is_valid:
+        console.print(f"  - XTCE validated against: '{xtce_version.xsd.name}'")
+    else:
+        console.print("[bold red]ERROR: XTCE file failed validation.[/bold red]")
+        if verbose:
+            console.print("\n[bold]Validation Errors:[/bold]")
+            console.print(errors)
+        else:
+            console.print("  (Hint: Use the --verbose flag to see detailed errors)")
+        raise typer.Exit(code=ExitCode.USAGE_ERROR)
+
+    # Get the appropriate parser for the XTCE version
+    xtce_parser = xtce.get_xtce_parser(xtce_file)
+    if not xtce_parser:
+        console.print(
+            f"[bold red]ERROR: Failed to create XTCE parser for XTCE version {xtce_version}.[/bold red]"
+        )
+        raise typer.Exit(code=ExitCode.GENERAL_ERROR)
+    if not xtce_parser.space_system:
+        console.print(
+            f"[bold red]ERROR: No SpaceSystem found in XTCE file '{xtce_file}'.[/bold red]"
+        )
+        raise typer.Exit(code=ExitCode.USAGE_ERROR)
+
+    # Perform custom validation
+    validation_errors = xtce_parser.validate()
+    if validation_errors:
+        console.print("[bold red]XTCE Content Validation Errors:[/bold red]")
+        for error in validation_errors:
+            console.print(f"  [red]- {error}[/red]")
+
+        if not verbose:
+            console.print("  (Use --verbose flag for more details)")
+        raise typer.Exit(code=ExitCode.USAGE_ERROR)
+    else:
+        console.print("[green]XTCE content validation passed[/green]")
+
+    # Get the XTCE metadata
+    space_system_metadata = xtce_parser.get_metadata()
+    console.print(f"  - SpaceSystem name: '{space_system_metadata.name}'")
+    console.print(f"  - SpaceSystem version: {space_system_metadata.version}")
+    console.print("  [green]Parsed XTCE file.[/green]")
+
+    # Set package versions
+    package_version = (
+        package_version
+        or space_system_metadata.version
+        or settings.package_defaults.version
     )
+
+    # Set package and distribution names
+    dist_name, package_name = generator.create_project_names(
+        space_system_metadata.name,
+        package_name_suffix=package_name_suffix,
+    )
+    console.print("Generating package...")
+    console.print(f"  - Package Name: [bold cyan]{package_name}[/bold cyan]")
+    console.print(f"  - Distribution Name: [bold cyan]{dist_name}[/bold cyan]")
+    console.print(f"  - Package Version: [bold cyan]{package_version}[/bold cyan]")
+
+    # Set directories
     package_dir = output_dir / package_name
-    generator.create_directory_structure(package_dir)
-    generator.generate_readme(package_dir, dist_name, space_system_metadata)
-    generator.generate_pyproject_toml(package_dir, dist_name, space_system_metadata)
-    console.print("✅ Rendered templates and saved to output directory.")
+    package_src_dir = package_dir / "src" / package_name
+    console.print(f"  - Package Dir: [bold cyan]{package_dir}[/bold cyan]")
 
-    # # 1. PARSE XTCE FILE
-    # # ------------------
-    # # Here you would call your xsdata logic to parse the xtce_file
-    # # and get back the `space_system` object.
-    # # space_system = parse_xtce(xtce_file)
-    # console.print("✅ Parsed XTCE file.")
+    # Generate files
+    try:
+        generator.create_directory_structure(
+            package_dir=package_dir, package_name=package_name, parser=xtce_parser
+        )
 
-    # # 2. TRANSFORM DATA FOR TEMPLATES
-    # # -----------------------------
-    # # Here you would transform the space_system object into the
-    # # simple 'db_context' dictionary that your templates expect.
-    # # context = transform_data(space_system)
-    # console.print("✅ Transformed data for templates.")
+        generator.copy_static_files(package_dir)
 
-    # # 3. RENDER & WRITE FILES
-    # # -----------------------
-    # # Here you would use Jinja2 to render your templates (*.py.j2)
-    # # with the 'context' and save them to the output_dir.
-    # # render_templates(context, output_dir)
-    # console.print("✅ Generated source files.")
+        readme_context = ReadMeContext(
+            dist_name=dist_name,
+            package_name=package_name,
+            xtce_version=str(xtce_version),
+            metadata=space_system_metadata,
+        )
+        generator.generate_readme(package_dir, readme_context)
 
-    # # 4. FORMAT THE OUTPUT
-    # # --------------------
-    # # Here you run Black on the generated code for clean formatting.
-    # try:
-    #     subprocess.run(["black", str(output_dir)], check=True)
-    #     console.print("✅ Formatted output with Black.")
-    # except Exception:
-    #     console.print("⚠️ Could not format with Black. Is it installed?")
+        pyproject_context = PyprojectContext(
+            dist_name=dist_name,
+            package_name=package_name,
+            version=package_version,
+            metadata=space_system_metadata,
+        )
+        generator.generate_pyproject_toml(package_dir, pyproject_context)
 
-    # console.print(
-    #     f"\n[bold green]✨ Success![/bold green] Parser package generated at {output_dir}"
-    # )
+        init_context = InitContext(metadata=space_system_metadata)
+        generator.generate_init(package_src_dir, init_context)
+
+        generator.generate_models(package_src_dir, xtce_parser)
+
+        generator.generate_parser(package_src_dir, xtce_parser)
+
+        console.print("[green]Generated package.[/green]")
+
+    except jinja2.TemplateError as e:
+        console.print(f"[bold red]ERROR: Template rendering error: {e}[/bold red]")
+        raise typer.Exit(code=ExitCode.GENERAL_ERROR)
+
+    except FileNotFoundError as e:
+        console.print(f"[bold red]ERROR: Failed to generate file: {e}[/bold red]")
+        raise typer.Exit(code=ExitCode.GENERAL_ERROR)
+
+    # Format the output
+    console.print("Formatting generated code...")
+    try:
+        # Run Ruff to format code, sort imports, and apply all auto-fixes.
+        ruff_format_cmd = ["ruff", "format", str(package_dir)]
+        subprocess.run(ruff_format_cmd, check=True, capture_output=True)
+
+        ruff_check_cmd = ["ruff", "check", "--fix", str(package_dir)]
+        subprocess.run(ruff_check_cmd, check=True, capture_output=True)
+
+        console.print("[green]Formatted code and sorted imports with Ruff.[/green]")
+
+    except subprocess.CalledProcessError as e:
+        console.print("[bold red]Error during formatting![/bold red]")
+        cmd_str = " ".join(e.cmd)
+        console.print(f"  - Command failed: `{cmd_str}`")
+        console.print(f"  - Exit Code: {e.returncode}")
+        if e.stdout:
+            console.print(f"  - Stdout: {e.stdout.decode()}")
+        if e.stderr:
+            console.print(f"  - Stderr: {e.stderr.decode()}")
+
+    except FileNotFoundError as e:
+        console.print(
+            f"[bold yellow]Could not format. Command not found: '{e.filename}'[/bold yellow]"
+        )
+
+    console.print(
+        f"\n[bold green]Success![/bold green] '{dist_name}' package generated at {package_dir}\n"
+    )
 
 
 if __name__ == "__main__":

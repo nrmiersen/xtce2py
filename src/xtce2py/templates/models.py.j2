@@ -1,0 +1,47 @@
+"""Contains pydantic models for telemetry containers."""
+
+from typing import {{ ", ".join(context.imports.typing) }}
+from pydantic import {{ ", ".join(context.imports.pydantic) }}
+
+
+class CalibratedParameter(BaseModel):
+    """A container for a single telemetry parameter."""
+
+    raw: int = Field(
+        ..., description="The raw, uncalibrated integer value from the packet."
+    )
+    calibrated: float = Field(
+        ..., description="The final, calibrated engineering value."
+    )
+    unit: str | None = Field(
+        None, description="The engineering unit for the calibrated value."
+    )
+
+
+class PacketBase(BaseModel):
+    """A base model for a telemetry packet."""
+
+    def items(self):
+        """Provide a way to iterate through the fields in a packet.
+        
+        Yields:
+            A tuple of (field_name, value) for each field in the model.
+
+        """
+        yield from self.model_dump().items()
+
+
+{% for container in context.containers -%}
+class {{container.name}}({{ container.parent }}):
+    """Represents the '{{ container.name }}' container.{% if container.description %}
+
+    {{ container.description }}{% endif %}
+    """
+
+    {% for entry in container.entries %}
+    {{ entry.name }}: {{entry.python_type.__name__}} = Field(
+        ...,
+        {% if entry.description %}description="{{ entry.description }}",{% endif %}
+    ){% endfor %}
+
+{% endfor %}

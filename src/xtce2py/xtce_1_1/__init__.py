@@ -1,3 +1,5 @@
+"""XTCE 1.1 module."""
+
 from .dtc_06_11_06 import (
     AbsoluteTimeDataType,
     AggregateDataType,

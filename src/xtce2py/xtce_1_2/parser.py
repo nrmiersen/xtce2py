@@ -1,4 +1,4 @@
-"""XTCE version 1.3 parser module."""
+"""XTCE version 1.2 parser module."""
 
 from pathlib import Path
 
@@ -9,10 +9,11 @@ from . import *
 
 
 class XtceParser:
-    """Parser for XTCE version 1.3 files."""
+    """Parser for XTCE version 1.2 files."""
 
     def __init__(self, xml: Path):
         """Initialize the parser with default configuration."""
+        self.xtce_version = "1.2"
         self.space_system = self.parse_xtce(xml)
 
     def parse_xtce(self, xml: Path) -> SpaceSystem:
