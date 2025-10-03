@@ -1,6 +1,7 @@
 """xtce2py utilities."""
 
 import re
+from typing import Optional
 
 from . import config
 
@@ -30,7 +31,7 @@ def to_pascal_case(name: str) -> str:
     return name
 
 
-def sanitize_description(description: str) -> str:
+def sanitize_description(description: str | None) -> Optional[str]:
     """Verify a description is formatted correctly.
 
     Args:
@@ -45,7 +46,7 @@ def sanitize_description(description: str) -> str:
         if stripped_description and not stripped_description.endswith("."):
             return stripped_description + "."
 
-    return description
+        return description
 
 
 def get_field_name(name: str | None) -> str:

@@ -12,6 +12,8 @@ def _check_is_{{ details.python_name }}(packet: bytes, context: dict) -> bool:
     """Predicate for the {{ name }} container."""
     {% if not details.restrictions %}
     return True
+    {% elif details.restrictions|length == 1 %}
+    return context["{{ details.restrictions[0].parameter_ref }}"] {{ details.restrictions[0].comparison_operator }} {{ details.restrictions[0].value }}
     {% else %}
     conditions = [
         {% for r in details.restrictions %}

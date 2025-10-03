@@ -35,7 +35,18 @@ integer_parameter_type_set.append(
         name="ExtensionCordLength_Type",
         unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["meter"])]),
         size_in_bits=16,
-        signed=False,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.UNSIGNED,
+            size_in_bits=16,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=0),
+                ],
+            ),
+        ),
     )
 )
 
@@ -179,7 +190,7 @@ container_set = ContainerSetType(
 space_system = SpaceSystem(
     name="ConkSat-1",
     short_description="ConkSat-1 XTCE Version 1.1",
-    long_description="The last remaining ConkSat satellite, ConkSat-1, is a testbed for various technologies.",
+    long_description="The first semi-functional ConkSat satellite, ConkSat-1, is a testbed for various technologies.",
     header=HeaderType(
         author_set=HeaderType.AuthorSet(
             author=[
@@ -189,7 +200,7 @@ space_system = SpaceSystem(
         ),
         note_set=HeaderType.NoteSet(
             note=[
-                "This is a test XTCE for ConkSat-3.",
+                "This is a test XTCE for ConkSat-1.",
                 "It includes various parameters and commands for testing purposes.",
             ]
         ),

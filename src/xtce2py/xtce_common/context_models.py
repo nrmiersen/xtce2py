@@ -31,8 +31,8 @@ class ParameterContext:
     """Context for a single Parameter."""
 
     name: str
-    format_specifier: str
     python_type: Any
+    encoding: EncodingContext
     description: str | None = None
 
 
@@ -49,7 +49,7 @@ class ContainerDetailsContext:
     @property
     def param_formats(self) -> list[str]:
         """Helper to get just the format strings for the template."""
-        return [p.format_specifier for p in self.parameters]
+        return [p.encoding.format_specifier for p in self.parameters]
 
     @property
     def param_names(self) -> list[str]:
@@ -64,7 +64,7 @@ class ContainerDetailsContext:
         for p in self.parameters:
             try:
                 # Extracts the number from a format like "uint:16"
-                total += int(p.format_specifier.split(":")[1])
+                total += int(p.encoding.format_specifier.split(":")[1])
             except (ValueError, IndexError):
                 pass  # Handle cases like 'pad' or invalid formats
         return total

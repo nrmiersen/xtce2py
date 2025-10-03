@@ -1,14 +1,34 @@
 """Global configuration settings."""
 
 import functools
+from pathlib import Path
+from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
     SettingsConfigDict,
     TomlConfigSettingsSource,
 )
+
+
+class LoggingSettings(BaseModel):
+    """Logging configuration settings."""
+
+    level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] | None = None
+    file: Path | None = None
+
+    @field_validator("file", mode="before")
+    @classmethod
+    def expand_path(cls, v):
+        """Expand user home directory and resolve path."""
+        if v is None:
+            return v
+        if isinstance(v, str):
+            # Expand ~ to user home directory
+            return Path(v).expanduser()
+        return v
 
 
 class AuthorSettings(BaseModel):
@@ -39,6 +59,7 @@ class Settings(BaseSettings):
     author: AuthorSettings = AuthorSettings()
     package_defaults: PackageDefaults = PackageDefaults()
     naming_convention: NamingSettings = NamingSettings()
+    logging: LoggingSettings = LoggingSettings()
 
     model_config = SettingsConfigDict(toml_file="xtce2py.toml")
 

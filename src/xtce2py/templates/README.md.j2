@@ -1,5 +1,7 @@
 # {{ context.metadata.name }} Space System Toolkit README
 
+{% if context.metadata.description %}{{ context.metadata.description }}{% endif %}
+
 ## Installation
 
 To install {{ context.dist_name }}, you can use pip:
@@ -16,9 +18,31 @@ Usage
 from {{ context.package_name }} import *
 ```
 
-## Details
+## XTCE Details
 
 - XTCE Version: {{ context.xtce_version }}
 - Space System Version: {{ context.metadata.version }}
+{% if context.metadata.date %}- Date: {{ context.metadata.date }}{% endif %}
+{% if context.metadata.classification %}- Classification: {{ context.metadata.classification }}{% endif %}
+{%- for author in context.metadata.authors %}
+{%- if loop.first %}
+- Authors:
+{%- endif %}
+  - {{ author }}
+{%- endfor %}
+
+{%- for note in context.metadata.notes %}
+{%- if loop.first %}
+- Notes:
+{%- endif %}
+  - {{ note }}
+{%- endfor %}
+
+{%- for entry in context.metadata.history %}
+{%- if loop.first %}
+- History:
+{%- endif %}
+  - {{ entry }}
+{%- endfor %}
 
 *Generated with [xtce2py](https://github.com/nrmiersen/xtce2py)*

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xtce:SpaceSystem xmlns:xtce="http://www.omg.org/space/xtce" shortDescription="ConkSat-1 XTCE Version 1.1" name="ConkSat-1">
-    <xtce:LongDescription>The last remaining ConkSat satellite, ConkSat-1, is a testbed for various technologies.</xtce:LongDescription>
+    <xtce:LongDescription>The first semi-functional ConkSat satellite, ConkSat-1, is a testbed for various technologies.</xtce:LongDescription>
     <xtce:Header version="1.0.0" date="2025-07-11T12:00:00Z" classification="NotClassified" validationStatus="Validated">
         <xtce:AuthorSet>
             <xtce:Author>John Conk</xtce:Author>
             <xtce:Author>Bill Sat</xtce:Author>
         </xtce:AuthorSet>
         <xtce:NoteSet>
-            <xtce:Note>This is a test XTCE for ConkSat-3.</xtce:Note>
+            <xtce:Note>This is a test XTCE for ConkSat-1.</xtce:Note>
             <xtce:Note>It includes various parameters and commands for testing purposes.</xtce:Note>
         </xtce:NoteSet>
         <xtce:HistorySet>
@@ -208,10 +208,16 @@
             <xtce:IntegerParameterType name="Int32" validRangeAppliesToCalibrated="true" sizeInBits="32" signed="true">
                 <xtce:UnitSet/>
             </xtce:IntegerParameterType>
-            <xtce:IntegerParameterType name="ExtensionCordLength_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+            <xtce:IntegerParameterType name="ExtensionCordLength_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="true">
                 <xtce:UnitSet>
                     <xtce:Unit power="1" factor="1">meter</xtce:Unit>
                 </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="unsigned" sizeInBits="16">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="1"/>
+                        <xtce:Byte byteSignificance="0"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
             </xtce:IntegerParameterType>
         </xtce:ParameterTypeSet>
         <xtce:ParameterSet>
