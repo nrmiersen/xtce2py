@@ -37,7 +37,7 @@ def setup_jinja_environment() -> jinja2.Environment:
 TEMPLATE_ENV = setup_jinja_environment()
 STATIC_FILE_MAP = [
     ("setup.py", "setup.py"),
-    ("_decoders.py", "src/{package_name}/_decoders.py"),
+    ("_decoding.py", "src/{package_name}/_decoding.py"),
 ]
 
 
@@ -126,11 +126,22 @@ def generate_pyproject_toml(
 def generate_init(
     package_src_dir: Path,
     init_context: InitContext,
+    parser: xtce_1_1.XtceParser,  # | xtce_1_2.XtceParser | xtce_1_3.XtceParser,
 ):
     """Generate a __init__.py file in the output src directory."""
     template = TEMPLATE_ENV.get_template("__init__.py.j2")
 
-    generated_code = template.render(context=init_context)
+    model_class_names = [
+        container.name for container in parser.generate_model_context()
+    ]
+    public_api_names = ["parse_packet", "parse_packets", "PacketBase"]
+    all_public_names = sorted(model_class_names + public_api_names)
+
+    generated_code = template.render(
+        context=init_context,
+        model_class_names=model_class_names,
+        all_public_names=all_public_names,
+    )
 
     output_filename = package_src_dir / "__init__.py"
     with open(output_filename, "w", encoding="utf-8") as f:

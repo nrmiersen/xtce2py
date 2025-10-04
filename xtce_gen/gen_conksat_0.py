@@ -33,19 +33,192 @@ for i in range(1, 33):
 integer_parameter_type_set.append(
     ParameterTypeSetType.IntegerParameterType(
         name="ExtensionCordLength_Type",
-        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["meter"])]),
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["m"])]),
         size_in_bits=16,
-        signed=True,
+        signed=False,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.UNSIGNED,
+            size_in_bits=16,
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordWidth_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["cm"])]),
+        size_in_bits=16,
+        signed=False,
         integer_data_encoding=IntegerDataEncodingType(
             bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
             encoding=IntegerDataEncodingTypeEncoding.UNSIGNED,
             size_in_bits=16,
             byte_order_list=ByteOrderType(
                 byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                ],
+            ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp1_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=16,
+        signed=False,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.UNSIGNED,
+            size_in_bits=16,
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp2_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=16,
+        signed=False,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.UNSIGNED,
+            size_in_bits=16,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=2),
+                    ByteOrderType.Byte(byte_significance=3),
+                    ByteOrderType.Byte(byte_significance=4),
+                ],
+            ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp3_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=16,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.ONES_COMPLIMENT,
+            size_in_bits=18,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=2),
+                    ByteOrderType.Byte(byte_significance=2),
+                    ByteOrderType.Byte(byte_significance=3),
+                ],
+            ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp4_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=16,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.ONES_COMPLIMENT,
+            size_in_bits=16,
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp5_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=16,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.TWOS_COMPLIMENT,
+            size_in_bits=16,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                ],
+            ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp6_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=16,
+        signed=False,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.TWOS_COMPLIMENT,
+            size_in_bits=16,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                ],
+            ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp7_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=13,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.TWOS_COMPLIMENT,
+            size_in_bits=13,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                ],
+            ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp8_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=19,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.ONES_COMPLIMENT,
+            size_in_bits=19,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=2),
                     ByteOrderType.Byte(byte_significance=1),
                     ByteOrderType.Byte(byte_significance=0),
                 ],
             ),
+        ),
+    )
+)
+integer_parameter_type_set.append(
+    ParameterTypeSetType.IntegerParameterType(
+        name="ExtensionCordTemp11_Type",
+        unit_set=BaseDataType.UnitSet(unit=[UnitType(content=["degC"])]),
+        size_in_bits=17,
+        signed=True,
+        integer_data_encoding=IntegerDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=IntegerDataEncodingTypeEncoding.PACKED_BCD,
+            size_in_bits=17,
         ),
     )
 )
@@ -105,6 +278,46 @@ parameter_set.parameter.append(
 parameter_set.parameter.append(
     ParameterSetType.Parameter(
         name="ExtensionCordLength", parameter_type_ref="ExtensionCordLength_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordWidth", parameter_type_ref="ExtensionCordWidth_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp1", parameter_type_ref="ExtensionCordTemp1_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp2", parameter_type_ref="ExtensionCordTemp2_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp3", parameter_type_ref="ExtensionCordTemp3_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp4", parameter_type_ref="ExtensionCordTemp4_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp5", parameter_type_ref="ExtensionCordTemp5_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp6", parameter_type_ref="ExtensionCordTemp10_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp11", parameter_type_ref="ExtensionCordTemp11_Type"
     )
 )
 
@@ -170,10 +383,34 @@ container_set = ContainerSetType(
                     ParameterRefEntryType(
                         parameter_ref="ExtensionCordLength",
                     ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordWidth",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp1",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp2",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp3",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp4",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp5",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp11",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="ExtensionCordTemp32",
+                    ),
                 ]
             ),
             base_container=SequenceContainerType.BaseContainer(
-                container_ref="SpacePacket",
+                container_ref="DoesNotExist",
                 restriction_criteria=SequenceContainerType.BaseContainer.RestrictionCriteria(
                     comparison=ComparisonType(
                         parameter_ref="ApplicationIdentifier",
@@ -244,7 +481,7 @@ config = SerializerConfig(pretty_print=True, pretty_print_indent="    ")
 serializer = XmlSerializer(config=config)
 
 # Serialize the object to a file
-output_file = Path("./xtce_gen/xtces/CONKSAT_1_XTCE.xml")
+output_file = Path("./xtce_gen/xtces/CONKSAT-0-XTCE.xml")
 with open(output_file, "w", encoding="utf-8") as f:
     serializer.write(f, space_system, ns_map={"xtce": dtc_06_11_06.__NAMESPACE__})
 

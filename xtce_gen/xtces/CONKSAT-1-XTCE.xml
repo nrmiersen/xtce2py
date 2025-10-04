@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xtce:SpaceSystem xmlns:xtce="http://www.omg.org/space/xtce" shortDescription="ConkSat-1 XTCE Version 1.1" name="ConkSat-1">
+    <xtce:LongDescription>The first semi-functional ConkSat satellite, ConkSat-1, is a testbed for various technologies.</xtce:LongDescription>
+    <xtce:Header version="1.0.0" date="2025-07-11T12:00:00Z" classification="NotClassified" validationStatus="Validated">
+        <xtce:AuthorSet>
+            <xtce:Author>John Conk</xtce:Author>
+            <xtce:Author>Bill Sat</xtce:Author>
+        </xtce:AuthorSet>
+        <xtce:NoteSet>
+            <xtce:Note>This is a test XTCE for ConkSat-1.</xtce:Note>
+            <xtce:Note>It includes various parameters and commands for testing purposes.</xtce:Note>
+        </xtce:NoteSet>
+        <xtce:HistorySet>
+            <xtce:History>RIP ConkSat-0, and the 17 interns it took with it.</xtce:History>
+        </xtce:HistorySet>
+    </xtce:Header>
+    <xtce:TelemetryMetaData>
+        <xtce:ParameterTypeSet>
+            <xtce:IntegerParameterType name="UInt1" validRangeAppliesToCalibrated="true" sizeInBits="1" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt2" validRangeAppliesToCalibrated="true" sizeInBits="2" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt3" validRangeAppliesToCalibrated="true" sizeInBits="3" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt4" validRangeAppliesToCalibrated="true" sizeInBits="4" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt5" validRangeAppliesToCalibrated="true" sizeInBits="5" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt6" validRangeAppliesToCalibrated="true" sizeInBits="6" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt7" validRangeAppliesToCalibrated="true" sizeInBits="7" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt8" validRangeAppliesToCalibrated="true" sizeInBits="8" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt9" validRangeAppliesToCalibrated="true" sizeInBits="9" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt10" validRangeAppliesToCalibrated="true" sizeInBits="10" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt11" validRangeAppliesToCalibrated="true" sizeInBits="11" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt12" validRangeAppliesToCalibrated="true" sizeInBits="12" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt13" validRangeAppliesToCalibrated="true" sizeInBits="13" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt14" validRangeAppliesToCalibrated="true" sizeInBits="14" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt15" validRangeAppliesToCalibrated="true" sizeInBits="15" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt16" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt17" validRangeAppliesToCalibrated="true" sizeInBits="17" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt18" validRangeAppliesToCalibrated="true" sizeInBits="18" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt19" validRangeAppliesToCalibrated="true" sizeInBits="19" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt20" validRangeAppliesToCalibrated="true" sizeInBits="20" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt21" validRangeAppliesToCalibrated="true" sizeInBits="21" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt22" validRangeAppliesToCalibrated="true" sizeInBits="22" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt23" validRangeAppliesToCalibrated="true" sizeInBits="23" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt24" validRangeAppliesToCalibrated="true" sizeInBits="24" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt25" validRangeAppliesToCalibrated="true" sizeInBits="25" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt26" validRangeAppliesToCalibrated="true" sizeInBits="26" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt27" validRangeAppliesToCalibrated="true" sizeInBits="27" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt28" validRangeAppliesToCalibrated="true" sizeInBits="28" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt29" validRangeAppliesToCalibrated="true" sizeInBits="29" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt30" validRangeAppliesToCalibrated="true" sizeInBits="30" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt31" validRangeAppliesToCalibrated="true" sizeInBits="31" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="UInt32" validRangeAppliesToCalibrated="true" sizeInBits="32" signed="false">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int1" validRangeAppliesToCalibrated="true" sizeInBits="1" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int2" validRangeAppliesToCalibrated="true" sizeInBits="2" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int3" validRangeAppliesToCalibrated="true" sizeInBits="3" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int4" validRangeAppliesToCalibrated="true" sizeInBits="4" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int5" validRangeAppliesToCalibrated="true" sizeInBits="5" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int6" validRangeAppliesToCalibrated="true" sizeInBits="6" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int7" validRangeAppliesToCalibrated="true" sizeInBits="7" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int8" validRangeAppliesToCalibrated="true" sizeInBits="8" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int9" validRangeAppliesToCalibrated="true" sizeInBits="9" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int10" validRangeAppliesToCalibrated="true" sizeInBits="10" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int11" validRangeAppliesToCalibrated="true" sizeInBits="11" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int12" validRangeAppliesToCalibrated="true" sizeInBits="12" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int13" validRangeAppliesToCalibrated="true" sizeInBits="13" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int14" validRangeAppliesToCalibrated="true" sizeInBits="14" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int15" validRangeAppliesToCalibrated="true" sizeInBits="15" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int16" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int17" validRangeAppliesToCalibrated="true" sizeInBits="17" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int18" validRangeAppliesToCalibrated="true" sizeInBits="18" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int19" validRangeAppliesToCalibrated="true" sizeInBits="19" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int20" validRangeAppliesToCalibrated="true" sizeInBits="20" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int21" validRangeAppliesToCalibrated="true" sizeInBits="21" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int22" validRangeAppliesToCalibrated="true" sizeInBits="22" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int23" validRangeAppliesToCalibrated="true" sizeInBits="23" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int24" validRangeAppliesToCalibrated="true" sizeInBits="24" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int25" validRangeAppliesToCalibrated="true" sizeInBits="25" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int26" validRangeAppliesToCalibrated="true" sizeInBits="26" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int27" validRangeAppliesToCalibrated="true" sizeInBits="27" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int28" validRangeAppliesToCalibrated="true" sizeInBits="28" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int29" validRangeAppliesToCalibrated="true" sizeInBits="29" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int30" validRangeAppliesToCalibrated="true" sizeInBits="30" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int31" validRangeAppliesToCalibrated="true" sizeInBits="31" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="Int32" validRangeAppliesToCalibrated="true" sizeInBits="32" signed="true">
+                <xtce:UnitSet/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordLength_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">m</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="unsigned" sizeInBits="16"/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordWidth_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">cm</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="unsigned" sizeInBits="16">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp1_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="unsigned" sizeInBits="16"/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp2_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="unsigned" sizeInBits="16">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp3_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="onesCompliment" sizeInBits="16">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp4_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="onesCompliment" sizeInBits="16"/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp5_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="twosCompliment" sizeInBits="16">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp6_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="twosCompliment" sizeInBits="16">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp7_Type" validRangeAppliesToCalibrated="true" sizeInBits="13" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="twosCompliment" sizeInBits="13"/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp8_Type" validRangeAppliesToCalibrated="true" sizeInBits="19" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="onesCompliment" sizeInBits="19"/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp9_Type" validRangeAppliesToCalibrated="true" sizeInBits="32" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="unsigned" sizeInBits="32">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="3"/>
+                        <xtce:Byte byteSignificance="2"/>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp10_Type" validRangeAppliesToCalibrated="true" sizeInBits="32" signed="true">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="onesCompliment" sizeInBits="32">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="2"/>
+                        <xtce:Byte byteSignificance="3"/>
+                        <xtce:Byte byteSignificance="1"/>
+                    </xtce:ByteOrderList>
+                </xtce:IntegerDataEncoding>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp11_Type" validRangeAppliesToCalibrated="true" sizeInBits="12" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="leastSignificantBitFirst" encoding="packedBCD" sizeInBits="12"/>
+            </xtce:IntegerParameterType>
+            <xtce:IntegerParameterType name="ExtensionCordTemp12_Type" validRangeAppliesToCalibrated="true" sizeInBits="16" signed="false">
+                <xtce:UnitSet>
+                    <xtce:Unit power="1" factor="1">degC</xtce:Unit>
+                </xtce:UnitSet>
+                <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="BCD" sizeInBits="16"/>
+            </xtce:IntegerParameterType>
+        </xtce:ParameterTypeSet>
+        <xtce:ParameterSet>
+            <xtce:Parameter shortDescription="Packet Version Number (PVN)" name="PacketVersion" parameterTypeRef="UInt3"/>
+            <xtce:Parameter name="PacketType" parameterTypeRef="UInt1"/>
+            <xtce:Parameter name="SecondaryHeaderFlag" parameterTypeRef="UInt1"/>
+            <xtce:Parameter name="ApplicationIdentifier" parameterTypeRef="UInt11"/>
+            <xtce:Parameter name="SequenceFlags" parameterTypeRef="UInt2"/>
+            <xtce:Parameter name="SequenceCount" parameterTypeRef="UInt14"/>
+            <xtce:Parameter name="PacketDataLength" parameterTypeRef="UInt16"/>
+            <xtce:Parameter name="ExtensionFlag" parameterTypeRef="UInt1"/>
+            <xtce:Parameter name="TimeCodeID" parameterTypeRef="UInt3"/>
+            <xtce:Parameter name="BasicTimeUnitOctets" parameterTypeRef="UInt2"/>
+            <xtce:Parameter name="FractionalTimeUnitOctets" parameterTypeRef="UInt2"/>
+            <xtce:Parameter name="TimestampSeconds" parameterTypeRef="UInt32"/>
+            <xtce:Parameter name="TimestampFractionalSeconds" parameterTypeRef="UInt24"/>
+            <xtce:Parameter name="ExtensionCordLength" parameterTypeRef="ExtensionCordLength_Type"/>
+            <xtce:Parameter name="ExtensionCordWidth" parameterTypeRef="ExtensionCordWidth_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp1" parameterTypeRef="ExtensionCordTemp1_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp2" parameterTypeRef="ExtensionCordTemp2_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp3" parameterTypeRef="ExtensionCordTemp3_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp4" parameterTypeRef="ExtensionCordTemp4_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp5" parameterTypeRef="ExtensionCordTemp5_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp6" parameterTypeRef="ExtensionCordTemp6_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp7" parameterTypeRef="ExtensionCordTemp7_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp8" parameterTypeRef="ExtensionCordTemp8_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp9" parameterTypeRef="ExtensionCordTemp9_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp10" parameterTypeRef="ExtensionCordTemp10_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp11" parameterTypeRef="ExtensionCordTemp11_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp12" parameterTypeRef="ExtensionCordTemp12_Type"/>
+        </xtce:ParameterSet>
+        <xtce:ContainerSet>
+            <xtce:SequenceContainer shortDescription="CCSDS Space Packet Primary Header" name="SpacePacket" abstract="true" idlePattern="0x0">
+                <xtce:LongDescription>This is the top level packet container.</xtce:LongDescription>
+                <xtce:EntryList>
+                    <xtce:ParameterRefEntry parameterRef="PacketVersion"/>
+                    <xtce:ParameterRefEntry parameterRef="PacketType"/>
+                    <xtce:ParameterRefEntry parameterRef="SecondaryHeaderFlag"/>
+                    <xtce:ParameterRefEntry parameterRef="ApplicationIdentifier"/>
+                    <xtce:ParameterRefEntry parameterRef="SequenceFlags"/>
+                    <xtce:ParameterRefEntry parameterRef="SequenceCount"/>
+                    <xtce:ParameterRefEntry parameterRef="PacketDataLength"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionFlag"/>
+                    <xtce:ParameterRefEntry parameterRef="TimeCodeID"/>
+                    <xtce:ParameterRefEntry parameterRef="BasicTimeUnitOctets"/>
+                    <xtce:ParameterRefEntry parameterRef="FractionalTimeUnitOctets"/>
+                    <xtce:ParameterRefEntry parameterRef="TimestampSeconds"/>
+                    <xtce:ParameterRefEntry parameterRef="TimestampFractionalSeconds"/>
+                </xtce:EntryList>
+            </xtce:SequenceContainer>
+            <xtce:SequenceContainer shortDescription="EPS Housekeeping Telemetry" name="EPS_HOUSEKEEPING" abstract="false" idlePattern="0x0">
+                <xtce:LongDescription>This container holds housekeeping telemetry data for the EPS subsystem.</xtce:LongDescription>
+                <xtce:EntryList>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordLength"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordWidth"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp1"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp2"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp3"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp4"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp5"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp6"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp7"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp8"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp9"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp10"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp11"/>
+                    <xtce:ParameterRefEntry parameterRef="ExtensionCordTemp12"/>
+                </xtce:EntryList>
+                <xtce:BaseContainer containerRef="SpacePacket">
+                    <xtce:RestrictionCriteria>
+                        <xtce:Comparison parameterRef="ApplicationIdentifier" instance="0" useCalibratedValue="true" comparisonOperator="==" value="1"/>
+                    </xtce:RestrictionCriteria>
+                </xtce:BaseContainer>
+            </xtce:SequenceContainer>
+        </xtce:ContainerSet>
+    </xtce:TelemetryMetaData>
+    <xtce:ServiceSet>
+        <xtce:Service shortDescription="Service for ConkSat operations" name="ConkSatService">
+            <xtce:LongDescription>This service handles various operations for the ConkSat satellite.</xtce:LongDescription>
+            <xtce:ContainerRefSet>
+                <xtce:ContainerRef containerRef="ConkSatTestContainer"/>
+            </xtce:ContainerRefSet>
+        </xtce:Service>
+    </xtce:ServiceSet>
+</xtce:SpaceSystem>

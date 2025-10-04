@@ -23,6 +23,8 @@ from xtce2py.xtce_1_1 import *
 from xtce2py.xtce_common.context_models import (
     ContainerDetailsContext,
     EncodingContext,
+    Endianness,
+    FinalDataType,
     ParameterContext,
     RestrictionContext,
 )
@@ -336,16 +338,44 @@ class XtceParser:
         for type_name, param_type in self.parameter_type_map.items():
             if isinstance(param_type, ParameterTypeSetType.StringParameterType):
                 pass
-            if isinstance(param_type, ParameterTypeSetType.EnumeratedParameterType):
+            elif isinstance(param_type, ParameterTypeSetType.EnumeratedParameterType):
                 pass
             elif isinstance(param_type, ParameterTypeSetType.IntegerParameterType):
                 encoding = getattr(param_type, "integer_data_encoding", None)
                 if not encoding:
                     continue
 
+                # TODO: check if valid range is consistent with bit size and signedness
+
+                # Check if the signed attribute is correct for the encoding type
+                is_signed_attribute = getattr(param_type, "signed", False)
+                encoding_type: IntegerDataEncodingTypeEncoding | None = getattr(
+                    encoding, "encoding", None
+                )
+                encoding_info = XTCE_ENCODING_MAP.get(encoding_type)
+                if encoding_type and encoding_info:
+                    if not is_signed_attribute and encoding_info.signed:
+                        yield ValidationResult(
+                            severity=ValidationSeverity.ERROR,
+                            message=(
+                                f"Inconsistent definition: ParameterType is marked as unsigned (signed='false'), "
+                                f"but its DataEncoding uses a signed format ('{encoding_type.value}')."
+                            ),
+                            location=f"ParameterType '{type_name}'",
+                        )
+                    if is_signed_attribute and not encoding_info.signed:
+                        yield ValidationResult(
+                            severity=ValidationSeverity.ERROR,
+                            message=(
+                                f"Inconsistent definition: ParameterType is marked as signed (signed='true'), "
+                                f"but its DataEncoding uses an unsigned format ('{encoding_type.value}')."
+                            ),
+                            location=f"ParameterType '{type_name}'",
+                        )
+
+                # Determine effective size in bits
                 param_size_bits = getattr(param_type, "size_in_bits", None)
                 encoding_size_bits = getattr(encoding, "size_in_bits", None)
-
                 effective_size_bits = encoding_size_bits or param_size_bits
                 if not effective_size_bits:
                     continue
@@ -362,10 +392,32 @@ class XtceParser:
                         location=f"ParameterType '{type_name}'",
                     )
 
+                # Check if size in bits is valid for the encoding type
+                if encoding_type == IntegerDataEncodingTypeEncoding.PACKED_BCD:
+                    if effective_size_bits % 4 != 0:
+                        yield ValidationResult(
+                            severity=ValidationSeverity.ERROR,
+                            message=(
+                                f"Invalid size for 'packedBCD' encoding. Size ({effective_size_bits} bits) "
+                                "must be a multiple of 4."
+                            ),
+                            location=f"ParameterType '{type_name}'",
+                        )
+                elif encoding_type == IntegerDataEncodingTypeEncoding.BCD:
+                    if effective_size_bits % 8 != 0:
+                        yield ValidationResult(
+                            severity=ValidationSeverity.ERROR,
+                            message=(
+                                f"Invalid size for 'BCD' encoding. Size ({effective_size_bits} bits) "
+                                "must be a multiple of 8."
+                            ),
+                            location=f"ParameterType '{type_name}'",
+                        )
+
                 # Check ByteOrderList if it exists
-                byte_order_list = getattr(encoding, "byte_order_list", None)
-                if byte_order_list:
-                    byte_elements = getattr(byte_order_list, "byte", [])
+                byte_significance_list = getattr(encoding, "byte_order_list", None)
+                if byte_significance_list:
+                    byte_elements = getattr(byte_significance_list, "byte", [])
                     expected_bytes = (effective_size_bits + 7) // 8
                     actual_bytes = len(byte_elements)
 
@@ -376,9 +428,30 @@ class XtceParser:
                             location=f"ParameterType '{type_name}'",
                         )
 
+                    # Check if byte-aligned
+                    is_byte_aligned = effective_size_bits % 8 == 0
+                    if not is_byte_aligned:
+                        order_indices = [b.byte_significance for b in byte_elements]
+                        num_bytes = (effective_size_bits + 7) // 8
+                        big_endian_pattern = list(range(num_bytes))[::-1]
+                        yield ValidationResult(
+                            severity=ValidationSeverity.ERROR,
+                            message=(
+                                f"A non-big-endian 'ByteOrderList' ({order_indices}) was specified for a "
+                                f"non-byte-aligned parameter ({effective_size_bits} bits). This is an ambiguous and "
+                                "unsupported combination. Only big-endian byte order is supported for non-byte-aligned fields."
+                            ),
+                            location=f"ParameterType '{type_name}'",
+                        )
+
                     # Check significance values for each byte in the list
+                    seen = set()
+                    duplicates = set()
                     for i, byte_elem in enumerate(byte_elements):
                         significance = getattr(byte_elem, "byte_significance", None)
+                        if significance in seen:
+                            duplicates.add(significance)
+                        seen.add(significance)
                         if significance is not None:
                             if significance >= expected_bytes:
                                 yield ValidationResult(
@@ -392,6 +465,12 @@ class XtceParser:
                                     message=f"Byte at index {i} has an invalid negative significance of {significance}.",
                                     location=f"ParameterType '{type_name}'",
                                 )
+                    if duplicates:
+                        yield ValidationResult(
+                            severity=ValidationSeverity.ERROR,
+                            message=f"Duplicate byte significance values: {sorted(duplicates)}",
+                            location=f"ParameterType '{type_name}'",
+                        )
             elif isinstance(param_type, ParameterTypeSetType.BinaryParameterType):
                 pass
             elif isinstance(param_type, ParameterTypeSetType.FloatParameterType):
@@ -478,17 +557,6 @@ class XtceParser:
             else []
         )
 
-    @staticmethod
-    def _get_description(obj: Any) -> Optional[str]:
-        """Extract a sanitized description from an object."""
-        long_desc = getattr(obj, "long_description", None)
-        short_desc = getattr(obj, "short_description", None)
-
-        description = (
-            sanitize_description(long_desc) or sanitize_description(short_desc) or None
-        )
-        return description
-
     def _get_parameter_context(
         self, parameter: ParameterSetType.Parameter
     ) -> Optional[ParameterContext]:
@@ -509,71 +577,151 @@ class XtceParser:
         self, param_type_obj: ParameterTypeSetType.IntegerParameterType
     ) -> EncodingContext:
         """Return an EncodingContext for the given parameter type."""
-
-        def complete_byte_order_list(
-            size_in_bits: int, byte_order_list: Optional[list[int]] = None
-        ) -> list[int]:
-            num_bytes = (size_in_bits + 7) // 8
-
-            # Default to big-endian if no byte order is provided
-            if not byte_order_list:
-                return list(range(num_bytes - 1, -1, -1))
-
-            if len(byte_order_list) == num_bytes:
-                return byte_order_list
-
-            # Fill in missing bytes with descending order of significance
-            all_significances = set(range(num_bytes))
-            used_significances = set(byte_order_list)
-            missing_significances = list(all_significances - used_significances)
-            completed_list = byte_order_list + missing_significances
-
-            return completed_list
+        if isinstance(param_type_obj, ParameterTypeSetType.StringParameterType):
+            pass
+        if isinstance(param_type_obj, ParameterTypeSetType.EnumeratedParameterType):
+            pass
 
         if isinstance(param_type_obj, ParameterTypeSetType.IntegerParameterType):
-            # Set defaults
-            signed = param_type_obj.signed
-            size_in_bits = param_type_obj.size_in_bits
-            format_specifier = f"uint:{size_in_bits}"
-            byte_order_list = complete_byte_order_list(size_in_bits)
-            reverse_bits = False
-            custom_byte_order = False
-            custom_decoder = None
+            return self._get_integer_encoding_context(param_type_obj)
 
-            # Override if encoding is specified
-            encoding_obj = param_type_obj.integer_data_encoding
-            if encoding_obj:
-                size_in_bits = encoding_obj.size_in_bits
-                format_specifier = f"uint:{size_in_bits}"
-                byte_order_list = complete_byte_order_list(size_in_bits)
-                reverse_bits = (
-                    encoding_obj.bit_order
-                    == DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST
+        # elif isinstance(param_type_obj, ParameterTypeSetType.BinaryParameterType):
+        #     pass
+        # check if 1 bit, if not make it complex
+        # elif isinstance(param_type_obj, ParameterTypeSetType.FloatParameterType):
+        #     pass
+        # elif isinstance(param_type_obj, ParameterTypeSetType.BooleanParameterType):
+        #     pass
+        # elif isinstance(param_type_obj, ParameterTypeSetType.RelativeTimeParameterType):
+        #     pass
+        # elif isinstance(param_type_obj, AbsoluteTimeDataType):
+        #     pass
+        # elif isinstance(param_type_obj, ArrayDataTypeType):
+        #     pass
+        # elif isinstance(param_type_obj, AggregateDataType):
+        #     pass
+
+    def _get_integer_encoding_context(
+        self,
+        param_type_obj: ParameterTypeSetType.IntegerParameterType,
+    ) -> EncodingContext:
+        log.debug(
+            f"Generating encoding context for IntegerParameterType '{param_type_obj.name}'"
+        )
+        # Set defaults
+        signed = param_type_obj.signed
+        size_in_bits = param_type_obj.size_in_bits
+        byte_significance_list = self._complete_byte_significance_list(size_in_bits)
+        final_type = FinalDataType.INT
+        reverse_bits = False
+        endianness = Endianness.BIG
+        custom_byte_order = False
+        custom_decoder = None
+
+        # Override if encoding is specified
+        encoding_obj = param_type_obj.integer_data_encoding
+        if encoding_obj:
+            log.debug(
+                f"- Found IntegerDataEncoding of type '{encoding_obj.encoding}' for ParameterType '{param_type_obj.name}'"
+            )
+            size_in_bits = encoding_obj.size_in_bits
+            byte_significance_list = self._complete_byte_significance_list(size_in_bits)
+            reverse_bits = (
+                encoding_obj.bit_order
+                == DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST
+            )
+            if encoding_obj.byte_order_list:
+                byte_significance_list = [
+                    byte.byte_significance
+                    for byte in encoding_obj.byte_order_list.byte
+                    if byte.byte_significance is not None
+                ]
+
+            # Handle encoding types with custom decoders
+            encoding_type = encoding_obj.encoding
+            log.debug(f"- Encoding type: {encoding_type}")
+            type_info = XTCE_ENCODING_MAP.get(encoding_type)
+            custom_decoder = type_info.custom_decoder if type_info else None
+            if custom_decoder:
+                log.debug(
+                    f"- Using custom decoder '{custom_decoder}' for encoding '{encoding_type}'"
                 )
-                if encoding_obj.byte_order_list:
-                    byte_order_list = [
-                        byte.byte_significance
-                        for byte in encoding_obj.byte_order_list.byte
-                        if byte.byte_significance is not None
-                    ]
 
-                # Handle encoding types with custom decoders
-                encoding_type = encoding_obj.encoding
-                type_info = XTCE_ENCODING_MAP.get(encoding_type)
-                custom_decoder = type_info.custom_decoder if type_info else None
+        # If byte_significance_list is ordered, just use BE or LE
+        if len(byte_significance_list) == 1:
+            endianness = Endianness.BIG
+            custom_byte_order = False
+        elif byte_significance_list == list(range(len(byte_significance_list))):
+            log.debug("- Detected little-endian byte order")
+            endianness = Endianness.LITTLE
+            custom_byte_order = False
+        elif byte_significance_list == list(range(len(byte_significance_list)))[::-1]:
+            log.debug("- Detected big-endian byte order")
+            endianness = Endianness.BIG
+            custom_byte_order = False
+        else:
+            log.debug(f"- Detected custom byte order: {byte_significance_list}")
+            custom_byte_order = True
+
+        # If BE, no need to reorder bytes
+        if (endianness == Endianness.LITTLE) or custom_byte_order:
+            needs_byte_reordering = True
+        else:
+            needs_byte_reordering = False
+
+        # Determine format specifier
+        needs_transform = reverse_bits or custom_byte_order
+        if needs_transform:
+            log.debug(
+                f"- Detected transformation needs: reverse_bits={reverse_bits}, custom_byte_order={custom_byte_order}"
+            )
+            format_specifier = f"bits:{size_in_bits}"
+        elif custom_decoder:
+            if size_in_bits > 8 and size_in_bits % 8 == 0:
+                format_specifier = f"uint{endianness}:{size_in_bits}"
             else:
-                prefix = "int" if signed else "uint"
+                format_specifier = f"uint:{size_in_bits}"
+        else:
+            prefix = "int" if signed else "uint"
+            if size_in_bits > 8 and size_in_bits % 8 == 0:
+                format_specifier = f"{prefix}{endianness}:{size_in_bits}"
+            else:
                 format_specifier = f"{prefix}:{size_in_bits}"
 
         return EncodingContext(
             signed=signed,
             size_in_bits=size_in_bits,
             format_specifier=format_specifier,
-            byte_order_list=byte_order_list,
+            byte_significance_list=byte_significance_list,
+            needs_byte_reordering=needs_byte_reordering,
+            final_type=final_type,
+            endianness=endianness,
+            needs_transform=needs_transform,
             reverse_bits=reverse_bits,
             custom_byte_order=custom_byte_order,
             custom_decoder=custom_decoder,
         )
+
+    @staticmethod
+    def _complete_byte_significance_list(
+        size_in_bits: int, byte_significance_list: Optional[list[int]] = None
+    ) -> list[int]:
+        num_bytes = (size_in_bits + 7) // 8
+
+        # Default to big-endian if no byte order is provided
+        if not byte_significance_list:
+            return list(range(num_bytes - 1, -1, -1))
+
+        if len(byte_significance_list) == num_bytes:
+            return byte_significance_list
+
+        # Fill in missing bytes with descending order of significance
+        all_significances = set(range(num_bytes))
+        used_significances = set(byte_significance_list)
+        missing_significances = list(all_significances - used_significances)
+        completed_list = byte_significance_list + missing_significances
+
+        return completed_list
 
     def _get_container_restrictions(self, container) -> list[RestrictionContext]:
         """Safely extracts all restriction criteria for a given container."""
@@ -635,3 +783,14 @@ class XtceParser:
                 )
             )
         return parameters
+
+    @staticmethod
+    def _get_description(obj: Any) -> Optional[str]:
+        """Extract a sanitized description from an object."""
+        long_desc = getattr(obj, "long_description", None)
+        short_desc = getattr(obj, "short_description", None)
+
+        description = (
+            sanitize_description(long_desc) or sanitize_description(short_desc) or None
+        )
+        return description

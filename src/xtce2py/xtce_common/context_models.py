@@ -1,7 +1,33 @@
 """Context models for XTCE objects."""
 
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Any
+
+
+class Endianness(str, Enum):
+    """Enumeration for byte order (endianness)."""
+
+    BIG = "be"
+    LITTLE = "le"
+
+    def __str__(self) -> str:
+        """Return the string representation of the enum value."""
+        return self.value
+
+
+class FinalDataType(str, Enum):
+    """Enumeration for the final Python data types a parameter can represent."""
+
+    INT = "int"
+    FLOAT = "float"
+    STRING = "str"
+    BINARY = "bytes"
+    BOOLEAN = "bool"
+
+    def __str__(self) -> str:
+        """Return the string representation of the enum value."""
+        return self.value
 
 
 @dataclass
@@ -11,7 +37,11 @@ class EncodingContext:
     signed: bool
     size_in_bits: int
     format_specifier: str
-    byte_order_list: list[int]
+    final_type: FinalDataType
+    byte_significance_list: list[int]
+    needs_byte_reordering: bool = False
+    endianness: Endianness = Endianness.BIG
+    needs_transform: bool = False
     reverse_bits: bool = False
     custom_byte_order: bool = False
     custom_decoder: str | None = None
@@ -58,13 +88,14 @@ class ContainerDetailsContext:
 
     @property
     def total_bits_at_this_level(self) -> int:
-        """Calculates total bits for pre-flight checks."""
-        # A real implementation would parse this from the format specifiers.
+        """Calculates total bits for all parameters defined at this level."""
         total = 0
         for p in self.parameters:
+            # Assumes format_specifier is like "uint:16", "pad:4", etc.
             try:
-                # Extracts the number from a format like "uint:16"
-                total += int(p.encoding.format_specifier.split(":")[1])
+                spec_parts = p.encoding.format_specifier.split(":")
+                if len(spec_parts) == 2:
+                    total += int(spec_parts[1])
             except (ValueError, IndexError):
-                pass  # Handle cases like 'pad' or invalid formats
+                pass  # Handle cases with no ':'
         return total

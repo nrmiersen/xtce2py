@@ -1,10 +1,15 @@
 """Parser."""
 
-from typing import Any, Callable, Dict, List, Tuple
-import bitstring
-from . import models
+import logging
+from typing import Generator, Iterable
 
-__all__ = ["parse_packet"]
+import bitstring
+
+from . import _decoding, models
+
+__all__ = ["parse_packet", "parse_packets"]
+
+log = logging.getLogger(__name__)
 
 {# Generate a predicate function for every container in the inheritance tree #}
 {% for name, details in context.container_details_map.items() %}
@@ -12,7 +17,7 @@ def _check_is_{{ details.python_name }}(packet: bytes, context: dict) -> bool:
     """Predicate for the {{ name }} container."""
     {% if not details.restrictions %}
     return True
-    {% elif details.restrictions|length == 1 %}
+    {% elif details.restrictions | length == 1 %}
     return context["{{ details.restrictions[0].parameter_ref }}"] {{ details.restrictions[0].comparison_operator }} {{ details.restrictions[0].value }}
     {% else %}
     conditions = [
@@ -33,16 +38,56 @@ def _parse_{{ details.python_name }}(packet: bytes, offset_bits: int) -> tuple[d
         return {}, offset_bits
 
     stream = bitstring.ConstBitStream(bytes=packet, offset=offset_bits)
-    
+
     {% if details.parameters %}
     format_string = (
-        "{{ details.param_formats | join(', ') }}"
+        {{ details.param_formats | map('tojson') | join(', ') }}
     )
     field_names = [
         {{ details.param_names | map('tojson') | join(', ') }}
     ]
-    values = stream.readlist(format_string)
-    parsed_data = dict(zip(field_names, values))
+    raw_values = stream.readlist(format_string)
+
+    parsed_data = {}
+
+    for i, name in enumerate(field_names):
+        raw_value = raw_values[i]
+        final_value = raw_value
+
+        {% for param in details.parameters if param.encoding.needs_transform or param.encoding.custom_decoder %}
+        {%- if loop.first %}
+        if name == "{{ param.name }}":
+        {%- else %}
+        elif name == "{{ param.name }}":
+        {%- endif %}
+            {%- set current_expression = "raw_value" %}
+
+            {%- if param.encoding.needs_transform %}
+                {%- if param.encoding.needs_byte_reordering %}
+                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
+                {%- else %}
+                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
+                {%- endif %}
+            {%- endif %}
+
+            {%- if param.encoding.needs_transform %}
+                {%- if param.encoding.final_type == "float" %}
+                    {%- set current_expression = current_expression ~ ".floatbe" %}
+                {%- elif param.encoding.signed %}
+                    {%- set current_expression = current_expression ~ ".intbe" %}
+                {%- else %}
+                    {%- set current_expression = current_expression ~ ".uintbe" %}
+                {%- endif %}
+            {%- endif %}
+
+            {%- if param.encoding.custom_decoder %}
+                {%- set current_expression = "_decoders." ~ param.encoding.custom_decoder ~ "(" ~ current_expression ~ ", " ~ param.encoding.size_in_bits ~ ")" %}
+            {%- endif %}
+
+            final_value = {{ current_expression }}
+        {% endfor %}
+        parsed_data[name] = final_value
+
     {% else %}
     parsed_data = {}
     {% endif %}
@@ -60,16 +105,68 @@ def _create_{{ details.python_name }}(final_context: dict) -> models.{{ details.
     {% if details.parameters %}
     packet_bytes = final_context["raw_packet"]
     offset_bits = final_context["offset_bits"]
+
+    expected_bits = {{ details.total_bits_at_this_level }}
+    available_bits = len(packet_bytes) * 8 - offset_bits
+    if available_bits < expected_bits:
+        log.warning(
+            f"Packet too short for '{{ details.python_name }}'. "
+            f"Expected {expected_bits} bits but only {available_bits} available."
+        )
+        return None
+
     stream = bitstring.ConstBitStream(bytes=packet_bytes, offset=offset_bits)
 
     format_string = (
-        "{{ details.param_formats | join(', ') }}"
+        {{ details.param_formats | map('tojson') | join(', ') }}
     )
     field_names = [
         {{ details.param_names | map('tojson') | join(', ') }}
     ]
-    values = stream.readlist(format_string)
-    payload_data = dict(zip(field_names, values))
+    raw_values = stream.readlist(format_string)
+
+    payload_data = {}
+
+    for i, name in enumerate(field_names):
+        raw_value = raw_values[i]
+        final_value = raw_value
+
+        {% for param in details.parameters if param.encoding.needs_transform or param.encoding.custom_decoder %}
+        {%- if loop.first %}
+        if name == "{{ param.name }}":
+        {%- else %}
+        elif name == "{{ param.name }}":
+        {%- endif %}
+            {%- set current_expression = "raw_value" %}
+
+            {%- if param.encoding.needs_transform %}
+                {%- if param.encoding.needs_byte_reordering %}
+                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
+                {%- else %}
+                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
+                {%- endif %}
+            {%- endif %}
+
+            {%- if param.encoding.needs_transform %}
+                {%- if param.encoding.final_type == "float" %}
+                    {%- set current_expression = current_expression ~ ".floatbe" %}
+                {%- elif param.encoding.custom_decoder %}
+                    {%- set current_expression = current_expression ~ ".uint" %}
+                {%- elif param.encoding.signed %}
+                    {%- set current_expression = current_expression ~ ".intbe" %}
+                {%- else %}
+                    {%- set current_expression = current_expression ~ ".uintbe" %}
+                {%- endif %}
+            {%- endif %}
+
+            {%- if param.encoding.custom_decoder %}
+                {%- set current_expression = "_decoding." ~ param.encoding.custom_decoder ~ "(" ~ current_expression ~ ", " ~ param.encoding.size_in_bits ~ ")" %}
+            {%- endif %}
+
+            final_value = {{ current_expression }}
+        {% endfor %}
+        payload_data[name] = final_value
+
     final_context.update(payload_data)
     {% endif %}
     return models.{{ details.python_name }}(**final_context)
@@ -123,7 +220,7 @@ def _traverse_node(packet: bytes, node: dict, decoded_context: dict, offset_bits
             )
             new_context = decoded_context.copy()
             new_context.update(child_decoded_data)
-            
+
             # Check for deeper matches first
             deeper_match = _traverse_node(packet, child_node, new_context, new_offset)
             if deeper_match:
@@ -134,12 +231,40 @@ def _traverse_node(packet: bytes, node: dict, decoded_context: dict, offset_bits
                 new_context["raw_packet"] = packet
                 new_context["offset_bits"] = new_offset
                 return child_node["final_parser"](new_context)
-                 
+
     return None
 
 
-def parse_packet(packet: bytes):
-    """Identify and parse a raw packet by trying each possible root container."""
+def parse_packet(packet: bytes) -> models.PacketBase | None:
+    r"""Identify and parse a raw packet by trying each possible root container.
+
+    This function attempts to identify the packet type by testing the packet data
+    against predicate functions for each root container in the XTCE specification.
+    Once a matching container is found, it parses the packet according to that
+    container's structure and returns the appropriate parsed model.
+
+    Args:
+        packet: Raw packet data as bytes to be parsed and identified.
+
+    Returns:
+        A parsed Pydantic model instance corresponding to the identified packet
+        type, or None if no matching container could be identified or if parsing
+        failed.
+
+    Note:
+        The function uses a dispatcher tree approach, testing root containers
+        in order until one matches. The first successful match determines the
+        packet type and parsing strategy.
+
+    Example:
+        >>> raw_data = b'\x01\x02\x03\x04'
+        >>> parsed = parse_packet(raw_data)
+        >>> if parsed:
+        ...     print(f"Parsed packet: {parsed}")
+        ... else:
+        ...     print("Unknown packet type")
+
+    """
     for root_node in MASTER_DISPATCHER_TREE:
         if root_node["predicate"](packet, {}):
             root_decoded_data, initial_offset = root_node["base_parser"](packet, 0)
@@ -152,3 +277,36 @@ def parse_packet(packet: bytes):
                 return result
     return None
 
+def parse_packets(packets: Iterable[bytes]) -> Generator[models.PacketBase, None, None]:
+    r"""Parse an iterable of raw packets and yield the resulting models.
+
+    This function processes multiple raw packets in sequence, attempting to
+    identify and parse each one using the same dispatcher tree approach as
+    parse_packet(). Only successfully parsed packets are yielded - unidentified
+    or malformed packets are silently skipped.
+
+    Args:
+        packets: An iterable (e.g., list, file handle) of raw packet bytes
+            to be processed sequentially.
+
+    Yields:
+        A parsed Pydantic model instance for each successfully identified and
+        parsed packet. The specific model type depends on the packet contents
+        and XTCE container hierarchy.
+
+    Note:
+        This is a generator function that processes packets lazily. Failed
+        parsing attempts do not stop iteration - only valid packets are yielded.
+
+    Example:
+        >>> packet_data = [b'\\x01\\x02', b'\\x03\\x04', b'\\x05\\x06']
+        >>> for parsed in parse_packets(packet_data):
+        ...     print(f"Parsed: {type(parsed).__name__}")
+        Parsed: TelemetryPacketA
+        Parsed: TelemetryPacketB
+
+    """
+    for raw_packet in packets:
+        parsed_packet = parse_packet(raw_packet)
+        if parsed_packet:
+            yield parsed_packet

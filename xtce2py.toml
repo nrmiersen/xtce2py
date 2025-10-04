@@ -12,4 +12,4 @@ acronyms = ["CCSDS", "EPS"]
 
 [logging]
 level = "DEBUG"
-file = "~/xtce2py_output/xtce2py.log"
+# file = "~/xtce2py_output/xtce2py.log"

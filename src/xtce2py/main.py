@@ -220,7 +220,7 @@ def generate(
     space_system_metadata = xtce_parser.metadata
     console.print(f"  - SpaceSystem name: '{space_system_metadata.name}'")
     console.print(f"  - SpaceSystem version: {space_system_metadata.version}")
-    console.print("  [green]Parsed XTCE file.[/green]")
+    console.print("[green]Parsed XTCE file.[/green]")
 
     # Set package versions
     package_version = (
@@ -269,7 +269,7 @@ def generate(
         generator.generate_pyproject_toml(package_dir, pyproject_context)
 
         init_context = InitContext(metadata=space_system_metadata)
-        generator.generate_init(package_src_dir, init_context)
+        generator.generate_init(package_src_dir, init_context, xtce_parser)
 
         generator.generate_models(package_src_dir, xtce_parser)
 
@@ -290,12 +290,22 @@ def generate(
     try:
         # Run Ruff to format code, sort imports, and apply all auto-fixes.
         ruff_format_cmd = ["ruff", "format", str(package_dir)]
-        subprocess.run(ruff_format_cmd, check=True, capture_output=True)
+        subprocess.run(
+            ruff_format_cmd,
+            check=True,
+            capture_output=True,
+            cwd=package_dir,
+        )
 
         ruff_check_cmd = ["ruff", "check", "--fix", str(package_dir)]
-        subprocess.run(ruff_check_cmd, check=True, capture_output=True)
+        subprocess.run(
+            ruff_check_cmd,
+            check=True,
+            capture_output=True,
+            cwd=package_dir,
+        )
 
-        console.print("[green]Formatted code and sorted imports with Ruff.[/green]")
+        console.print("[green]Formatted code with Ruff.[/green]")
 
     except subprocess.CalledProcessError as e:
         console.print("[bold red]Error during formatting![/bold red]")

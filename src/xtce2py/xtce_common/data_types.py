@@ -12,25 +12,33 @@ class TypeMappingInfo:
 
     python_type: Any
     custom_decoder: str | None = None
+    signed: bool = False
 
 
 XTCE_ENCODING_MAP = {
     # Integer Types
     xtce_1_1.IntegerDataEncodingTypeEncoding.UNSIGNED: TypeMappingInfo(int),
     xtce_1_1.IntegerDataEncodingTypeEncoding.SIGN_MAGNITUDE: TypeMappingInfo(
-        int, custom_decoder="_decode_sign_magnitude"
+        int,
+        custom_decoder="_decode_sign_magnitude",
+        signed=True,
     ),
     xtce_1_1.IntegerDataEncodingTypeEncoding.TWOS_COMPLIMENT: TypeMappingInfo(
-        int, custom_decoder="decode_twos_compliment"
+        int,
+        signed=True,
     ),
     xtce_1_1.IntegerDataEncodingTypeEncoding.ONES_COMPLIMENT: TypeMappingInfo(
-        int, custom_decoder="_decode_ones_complement"
+        int,
+        custom_decoder="_decode_ones_complement",
+        signed=True,
     ),
     xtce_1_1.IntegerDataEncodingTypeEncoding.BCD: TypeMappingInfo(
-        int, custom_decoder="decode_bcd"
+        int,
+        custom_decoder="_decode_unpacked_bcd",
     ),
     xtce_1_1.IntegerDataEncodingTypeEncoding.PACKED_BCD: TypeMappingInfo(
-        int, custom_decoder="_decode_packed_bcd"
+        int,
+        custom_decoder="_decode_packed_bcd",
     ),
     # Float Types
     xtce_1_1.FloatDataEncodingTypeEncoding.IEEE754_1985: TypeMappingInfo(float),
