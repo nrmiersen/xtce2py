@@ -268,8 +268,8 @@ class XtceParser:
         for param_name, param_obj in self.parameter_map.items():
             type_ref = getattr(param_obj, "parameter_type_ref", None)
             if type_ref not in self.parameter_type_map:
-                log.debug(
-                    f"- FAILED: Parameter '{param_name}' has broken reference to '{type_ref}'."
+                log.error(
+                    f"- Parameter '{param_name}' has broken reference to '{type_ref}'."
                 )
                 yield ValidationResult(
                     severity=ValidationSeverity.ERROR,
@@ -286,6 +286,9 @@ class XtceParser:
                 container.base_container
                 and container.base_container.container_ref not in all_container_names
             ):
+                log.error(
+                    f"- Container '{container.name}' has broken reference to BaseContainer '{container.base_container.container_ref}'."
+                )
                 yield ValidationResult(
                     severity=ValidationSeverity.ERROR,
                     message=f"BaseContainer reference to '{container.base_container.container_ref}' not found.",
@@ -300,6 +303,9 @@ class XtceParser:
                 )
                 for entry in param_refs:
                     if entry.parameter_ref not in self.parameter_map:
+                        log.error(
+                            f"- Container '{container.name}' has broken reference to Parameter '{entry.parameter_ref}'."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=f"Contains a reference to an unknown Parameter '{entry.parameter_ref}'.",
@@ -322,6 +328,9 @@ class XtceParser:
         defined_params = set(self.parameter_map.keys())
         unused_params = defined_params - referenced_params
         for param_name in unused_params:
+            log.warning(
+                f"- Parameter '{param_name}' is defined but not used in any container."
+            )
             yield ValidationResult(
                 severity=ValidationSeverity.WARNING,
                 message=f"Parameter '{param_name}' is defined but not used in any container.",
@@ -355,6 +364,9 @@ class XtceParser:
                 encoding_info = XTCE_ENCODING_MAP.get(encoding_type)
                 if encoding_type and encoding_info:
                     if not is_signed_attribute and encoding_info.signed:
+                        log.error(
+                            f"- ParameterType '{type_name}' has inconsistent signedness: marked as unsigned but encoding '{encoding_type.value}' is signed."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=(
@@ -364,6 +376,9 @@ class XtceParser:
                             location=f"ParameterType '{type_name}'",
                         )
                     if is_signed_attribute and not encoding_info.signed:
+                        log.error(
+                            f"- ParameterType '{type_name}' has inconsistent signedness: marked as signed but encoding '{encoding_type.value}' is unsigned."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=(
@@ -386,6 +401,9 @@ class XtceParser:
                     and encoding_size_bits
                     and encoding_size_bits > param_size_bits
                 ):
+                    log.error(
+                        f"- ParameterType '{type_name}' has encoding size ({encoding_size_bits} bits) exceeding parameter size ({param_size_bits} bits)."
+                    )
                     yield ValidationResult(
                         severity=ValidationSeverity.ERROR,
                         message=f"Encoding size ({encoding_size_bits} bits) exceeds parameter size ({param_size_bits} bits).",
@@ -395,6 +413,9 @@ class XtceParser:
                 # Check if size in bits is valid for the encoding type
                 if encoding_type == IntegerDataEncodingTypeEncoding.PACKED_BCD:
                     if effective_size_bits % 4 != 0:
+                        log.error(
+                            f"- ParameterType '{type_name}' has invalid size ({effective_size_bits} bits) for 'packedBCD' encoding (must be multiple of 4)."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=(
@@ -405,6 +426,9 @@ class XtceParser:
                         )
                 elif encoding_type == IntegerDataEncodingTypeEncoding.BCD:
                     if effective_size_bits % 8 != 0:
+                        log.error(
+                            f"- ParameterType '{type_name}' has invalid size ({effective_size_bits} bits) for 'BCD' encoding (must be multiple of 8)."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=(
@@ -422,6 +446,9 @@ class XtceParser:
                     actual_bytes = len(byte_elements)
 
                     if actual_bytes > expected_bytes:
+                        log.error(
+                            f"- ParameterType '{type_name}' has ByteOrderList with {actual_bytes} bytes, but encoding size ({effective_size_bits} bits) only requires {expected_bytes}."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=f"ByteOrderList has {actual_bytes} bytes, but encoding size ({effective_size_bits} bits) only requires {expected_bytes}.",
@@ -434,6 +461,9 @@ class XtceParser:
                         order_indices = [b.byte_significance for b in byte_elements]
                         num_bytes = (effective_size_bits + 7) // 8
                         big_endian_pattern = list(range(num_bytes))[::-1]
+                        log.error(
+                            f"- ParameterType '{type_name}' has non-big-endian ByteOrderList ({order_indices}) for non-byte-aligned parameter ({effective_size_bits} bits)."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=(
@@ -454,18 +484,27 @@ class XtceParser:
                         seen.add(significance)
                         if significance is not None:
                             if significance >= expected_bytes:
+                                log.error(
+                                    f"- ParameterType '{type_name}' has byte at index {i} with significance {significance} exceeding maximum of {expected_bytes - 1}."
+                                )
                                 yield ValidationResult(
                                     severity=ValidationSeverity.ERROR,
                                     message=f"Byte at index {i} has significance {significance}, which exceeds the maximum allowed value of {expected_bytes - 1}.",
                                     location=f"ParameterType '{type_name}'",
                                 )
                             if significance < 0:
+                                log.error(
+                                    f"- ParameterType '{type_name}' has byte at index {i} with invalid negative significance {significance}."
+                                )
                                 yield ValidationResult(
                                     severity=ValidationSeverity.ERROR,
                                     message=f"Byte at index {i} has an invalid negative significance of {significance}.",
                                     location=f"ParameterType '{type_name}'",
                                 )
                     if duplicates:
+                        log.error(
+                            f"- ParameterType '{type_name}' has duplicate byte significance values: {sorted(duplicates)}."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=f"Duplicate byte significance values: {sorted(duplicates)}",
@@ -498,6 +537,9 @@ class XtceParser:
                 seen_params = set()
                 for param in system.telemetry_meta_data.parameter_set.parameter:
                     if param.name in seen_params:
+                        log.error(
+                            f"- Duplicate Parameter '{param.name}' found in SpaceSystem '{system.name}'."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=f"Duplicate Parameter found: '{param.name}'",
@@ -525,6 +567,9 @@ class XtceParser:
                 )
                 for p_type in all_types:
                     if p_type.name in seen_types:
+                        log.error(
+                            f"- Duplicate ParameterType '{p_type.name}' found in SpaceSystem '{system.name}'."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=f"Duplicate ParameterType found: '{p_type.name}'",
@@ -539,6 +584,9 @@ class XtceParser:
                     container
                 ) in system.telemetry_meta_data.container_set.sequence_container:
                     if container.name in seen_containers:
+                        log.error(
+                            f"- Duplicate SequenceContainer '{container.name}' found in SpaceSystem '{system.name}'."
+                        )
                         yield ValidationResult(
                             severity=ValidationSeverity.ERROR,
                             message=f"Duplicate SequenceContainer found: '{container.name}'",

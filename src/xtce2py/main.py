@@ -202,7 +202,7 @@ def generate(
             )
             raise typer.Exit(code=ExitCode.USAGE_ERROR)
     except XtceSemanticValidationError as e:
-        console.print("[bold red]ERROR: XTCE file has semantic errors.[/bold red]")
+        console.print("[bold red]ERROR: XTCE file has semantic errors:[/bold red]")
         for error in e.errors:
             console.print(
                 f"  - [dim]in[/dim] [bold cyan]{error.location}[/bold cyan]: {error.message}"

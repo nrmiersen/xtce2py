@@ -340,6 +340,7 @@
             <xtce:Parameter name="ExtensionCordTemp5" parameterTypeRef="ExtensionCordTemp5_Type"/>
             <xtce:Parameter name="ExtensionCordTemp6" parameterTypeRef="ExtensionCordTemp10_Type"/>
             <xtce:Parameter name="ExtensionCordTemp11" parameterTypeRef="ExtensionCordTemp11_Type"/>
+            <xtce:Parameter name="ExtensionCordTemp11" parameterTypeRef="ExtensionCordTemp0_Type"/>
         </xtce:ParameterSet>
         <xtce:ContainerSet>
             <xtce:SequenceContainer shortDescription="CCSDS Space Packet Primary Header" name="SpacePacket" abstract="true" idlePattern="0x0">

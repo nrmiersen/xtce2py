@@ -320,6 +320,11 @@ parameter_set.parameter.append(
         name="ExtensionCordTemp11", parameter_type_ref="ExtensionCordTemp11_Type"
     )
 )
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="ExtensionCordTemp11", parameter_type_ref="ExtensionCordTemp0_Type"
+    )
+)
 
 # Create a container set
 container_set = ContainerSetType(
