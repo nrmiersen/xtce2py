@@ -188,11 +188,19 @@ def generate_parser(
     parser: xtce_1_1.XtceParser,  # | xtce_1_2.XtceParser | xtce_1_3.XtceParser,
 ):
     """Generate a parser.py file in the output src directory."""
-    template = TEMPLATE_ENV.get_template("parser.py.j2")
+    if parser.is_simple_dispatcher:
+        log.info("Generating simple dispatcher parser.")
+        # template = TEMPLATE_ENV.get_template("simple_parser.py.j2") # TODO
+        template = TEMPLATE_ENV.get_template("tree_parser.py.j2")
+    else:
+        log.info("Generating tree parser.")
+        template = TEMPLATE_ENV.get_template("tree_parser.py.j2")
 
     parser_context = parser.generate_parser_context()
 
-    generated_code = template.render(context=parser_context)
+    generated_code = template.render(
+        context=parser_context, dispatcher_parameter=parser.dispatcher_parameter
+    )
 
     output_filename = package_src_dir / "parser.py"
     with open(output_filename, "w", encoding="utf-8") as f:

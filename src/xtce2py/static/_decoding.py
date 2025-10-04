@@ -4,17 +4,17 @@ import bitstring
 
 
 def _reorder_bytes_by_significance(
-    data: list[bitstring.BitStream], significance_list: list[int]
-) -> list[bitstring.BitStream]:
-    """Rearrange a list of byte-sized BitStream chunks into MSB-first order based on a significance list."""
+    data: list[bitstring.Bits], significance_list: list[int]
+) -> list[bitstring.Bits]:
+    """Rearrange a list of byte-sized Bits chunks into MSB-first order based on a significance list."""
     num_bytes = len(data)
-    result = [None] * num_bytes
+    result: list[bitstring.Bits | None] = [None] * num_bytes
 
     for stream_index, significance in enumerate(significance_list):
         final_position = num_bytes - 1 - significance
         result[final_position] = data[stream_index]
 
-    return result
+    return [chunk for chunk in result if chunk is not None]
 
 
 def _physically_transform_bits(

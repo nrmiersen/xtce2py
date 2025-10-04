@@ -1,5 +1,7 @@
 """Parses an XTCE file."""
 
+import importlib.resources
+import io
 from enum import Enum
 from pathlib import Path
 
@@ -14,17 +16,20 @@ class XtceVersion(Enum):
     V1_1 = (
         "1.1",
         xtce_1_1.dtc_06_11_06.__NAMESPACE__,
-        Path("./src/xtce2py/xtce_1_1/dtc-06-11-06.xsd"),
+        "xtce2py.xtce_1_1",
+        "dtc-06-11-06.xsd",
     )
     V1_2 = (
         "1.2",
         xtce_1_2.dtc_18_02_04.__NAMESPACE__,
-        Path("./src/xtce2py/xtce_1_2/dtc-18-02-04.xsd"),
+        "xtce2py.xtce_1_2",
+        "dtc-18-02-04.xsd",
     )
     V1_3 = (
         "1.3",
         xtce_1_3.dtc_25_02_18.__NAMESPACE__,
-        Path("./src/xtce2py/xtce_1_3/dtc-25-02-18.xsd"),
+        "xtce2py.xtce_1_3",
+        "dtc-25-02-18.xsd",
     )
 
     def __str__(self) -> str:
@@ -37,9 +42,20 @@ class XtceVersion(Enum):
         return self.value[1]
 
     @property
-    def xsd(self) -> Path:
-        """A convenient property to get the path to the schema file."""
+    def xsd_package(self) -> str:
+        """A convenient property to get the package containing the XSD file."""
         return self.value[2]
+
+    @property
+    def xsd_filename(self) -> str:
+        """A convenient property to get the XSD filename."""
+        return self.value[3]
+
+    def get_xsd_bytes(self) -> bytes:
+        """Get the XSD file content as bytes using importlib.resources."""
+        files = importlib.resources.files(self.xsd_package)
+        xsd_resource = files / self.xsd_filename
+        return xsd_resource.read_bytes()
 
     @classmethod
     def from_namespace(cls, namespace: str) -> "XtceVersion":
@@ -70,12 +86,12 @@ def get_xtce_version(xml: Path) -> XtceVersion:
     return XtceVersion.from_namespace(namespace)
 
 
-def validate_xtce_file(xml: Path, xsd: Path) -> tuple[bool, str]:
+def validate_xtce_file(xml: Path, xsd_bytes: bytes) -> tuple[bool, str]:
     """Validate an XML file against an XSD schema using lxml.
 
     Args:
         xml: The path to the XTCE (.xml) file to validate.
-        xsd: The path to the XTCE schema (.xsd) file.
+        xsd_bytes: The XSD schema content as bytes.
 
     Returns:
         A tuple containing:
@@ -84,8 +100,7 @@ def validate_xtce_file(xml: Path, xsd: Path) -> tuple[bool, str]:
 
     """
     try:
-        with open(xsd, "rb") as f:
-            schema_doc = etree.parse(f)
+        schema_doc = etree.parse(io.BytesIO(xsd_bytes))
         xmlschema = etree.XMLSchema(schema_doc)
 
         with open(xml, "rb") as f:
@@ -113,7 +128,8 @@ def get_xtce_parser(
     version = get_xtce_version(xml)
 
     # Validate the file against that version's schema
-    is_valid, errors = validate_xtce_file(xml, version.xsd)
+    xsd_bytes = version.get_xsd_bytes()
+    is_valid, errors = validate_xtce_file(xml, xsd_bytes)
     if not is_valid:
         raise ValueError(f"XTCE file '{xml}' failed validation:\n{errors}")
 

@@ -46,6 +46,10 @@ class XtceParser:
         # Parse the XTCE file
         self.space_system = self._parse_xtce(xml)
         self.metadata = self._get_metadata()
+        self.is_simple_dispatcher, self.dispatcher_parameter = (
+            self._analyze_dispatcher_type()
+        )
+        print(f"Is simple dispatcher: {self.is_simple_dispatcher}")
 
         # Build system hierarchy and maps
         self.all_systems = list(self._get_all_space_systems(self.space_system))
@@ -135,6 +139,60 @@ class XtceParser:
         config = ParserConfig(fail_on_unknown_properties=False)
         parser = XmlParser(config=config)
         return parser.from_path(xml, SpaceSystem)
+
+    def _analyze_dispatcher_type(self) -> tuple[bool, str | None]:
+        """Analyze all container restrictions to determine if a simple, flat dictionary dispatcher can be used.
+
+        Returns:
+            A tuple: (is_simple, discriminator_parameter_name)
+
+        """
+        first_discriminator = None
+        discriminator_values = set()
+
+        all_containers = self._get_sequence_containers()
+
+        for container in all_containers:
+            restrictions = self._get_container_restrictions(container)
+
+            is_abstract = getattr(container, "abstract", False)
+
+            if is_abstract and restrictions:
+                # Condition 3 Failed: An abstract container has restrictions.
+                # We must use the complex tree parser.
+                return False, None
+
+            if not is_abstract and not restrictions:
+                # A concrete packet has no identifier. This is ambiguous.
+                # While this could be a validation error, for this check it means
+                # we can't use a simple dispatcher.
+                return False, None
+
+            if not restrictions:
+                continue
+
+            # Condition 2 Failed: Too many restrictions or not a simple comparison.
+            if len(restrictions) != 1 or restrictions[0].comparison_operator != "==":
+                return False, None
+
+            current_discriminator = restrictions[0].parameter_ref
+            current_value = restrictions[0].value
+
+            if first_discriminator is None:
+                # This is the first discriminator we've seen.
+                first_discriminator = current_discriminator
+            elif current_discriminator != first_discriminator:
+                # Condition 1 Failed: Not all packets use the same discriminator.
+                return False, None
+
+            if current_value in discriminator_values:
+                # Condition 4 Failed: Duplicate restriction value found.
+                return False, None
+
+            discriminator_values.add(current_value)
+
+        # If we made it through the whole loop, the dispatcher is simple.
+        return True, first_discriminator
 
     def _get_metadata(self) -> XtceMetadataContext:
         """Extract metadata from the SpaceSystem object."""

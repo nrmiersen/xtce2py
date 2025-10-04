@@ -1,0 +1,7 @@
+[repository.test-pypi]
+url = "https://test.pypi.org/legacy/"
+username = "__token__"
+
+[repository.pypi]
+url = "https://upload.pypi.org/legacy/"
+username = "__token__"

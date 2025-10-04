@@ -488,10 +488,19 @@ container_set = ContainerSetType(
             base_container=SequenceContainerType.BaseContainer(
                 container_ref="SpacePacket",
                 restriction_criteria=SequenceContainerType.BaseContainer.RestrictionCriteria(
-                    comparison=ComparisonType(
-                        parameter_ref="ApplicationIdentifier",
-                        comparison_operator=ComparisonOperatorsType.EQUALS_SIGN_EQUALS_SIGN,
-                        value="1",
+                    comparison_list=MatchCriteriaType.ComparisonList(
+                        comparison=[
+                            ComparisonType(
+                                parameter_ref="PacketVersion",
+                                comparison_operator=ComparisonOperatorsType.EQUALS_SIGN_EQUALS_SIGN,
+                                value="0",
+                            ),
+                            ComparisonType(
+                                parameter_ref="ApplicationIdentifier",
+                                comparison_operator=ComparisonOperatorsType.EQUALS_SIGN_EQUALS_SIGN,
+                                value="1",
+                            ),
+                        ]
                     )
                 ),
             ),

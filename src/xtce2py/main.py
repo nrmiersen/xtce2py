@@ -173,10 +173,11 @@ def generate(
     console.print(f"  - XTCE version: {xtce_version}")
 
     # Validate the XTCE file
-    is_valid, errors = xtce.validate_xtce_file(xtce_file, xtce_version.xsd)
+    xsd_bytes = xtce_version.get_xsd_bytes()
+    is_valid, errors = xtce.validate_xtce_file(xtce_file, xsd_bytes)
     if is_valid:
         console.print(
-            f"  - XTCE validated against XML schema: '{xtce_version.xsd.name}'"
+            f"  - XTCE validated against XML schema: '{xtce_version.xsd_filename}'"
         )
     else:
         console.print("[bold red]ERROR: XTCE file failed validation.[/bold red]")
@@ -289,7 +290,7 @@ def generate(
     console.print("Formatting generated code...")
     try:
         # Run Ruff to format code, sort imports, and apply all auto-fixes.
-        ruff_format_cmd = ["ruff", "format", str(package_dir)]
+        ruff_format_cmd = ["ruff", "format", "."]
         subprocess.run(
             ruff_format_cmd,
             check=True,
@@ -297,7 +298,7 @@ def generate(
             cwd=package_dir,
         )
 
-        ruff_check_cmd = ["ruff", "check", "--fix", str(package_dir)]
+        ruff_check_cmd = ["ruff", "check", "--fix", "."]
         subprocess.run(
             ruff_check_cmd,
             check=True,

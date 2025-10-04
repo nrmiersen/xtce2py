@@ -400,7 +400,10 @@
                 </xtce:EntryList>
                 <xtce:BaseContainer containerRef="SpacePacket">
                     <xtce:RestrictionCriteria>
-                        <xtce:Comparison parameterRef="ApplicationIdentifier" instance="0" useCalibratedValue="true" comparisonOperator="==" value="1"/>
+                        <xtce:ComparisonList>
+                            <xtce:Comparison parameterRef="PacketVersion" instance="0" useCalibratedValue="true" comparisonOperator="==" value="0"/>
+                            <xtce:Comparison parameterRef="ApplicationIdentifier" instance="0" useCalibratedValue="true" comparisonOperator="==" value="1"/>
+                        </xtce:ComparisonList>
                     </xtce:RestrictionCriteria>
                 </xtce:BaseContainer>
             </xtce:SequenceContainer>

@@ -21,9 +21,9 @@ def _check_is_{{ details.python_name }}(packet: bytes, context: dict) -> bool:
     return context["{{ details.restrictions[0].parameter_ref }}"] {{ details.restrictions[0].comparison_operator }} {{ details.restrictions[0].value }}
     {% else %}
     conditions = [
-        {% for r in details.restrictions %}
-        context["{{ r.parameter_ref }}"] {{ r.comparison_operator }} {{ r.value }}
-        {% endfor %}
+        {%- for r in details.restrictions -%}
+        context["{{ r.parameter_ref }}"] {{ r.comparison_operator }} {{ r.value }},
+        {%- endfor -%}
     ]
     return all(conditions)
     {% endif %}
