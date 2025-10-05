@@ -226,7 +226,6 @@ integer_parameter_type_set.append(
                     ByteOrderType.Byte(byte_significance=0),
                     ByteOrderType.Byte(byte_significance=2),
                     ByteOrderType.Byte(byte_significance=3),
-                    ByteOrderType.Byte(byte_significance=1),
                 ],
             ),
         ),
@@ -255,6 +254,180 @@ integer_parameter_type_set.append(
             bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
             encoding=IntegerDataEncodingTypeEncoding.BCD,
             size_in_bits=16,
+        ),
+    )
+)
+
+float_parameter_type_set = []
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="Float32",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="Float64",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_64,
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="Float128",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_128,
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_CPU_TEMP2_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.IEEE754_1985,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_32,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=2),
+                    ByteOrderType.Byte(byte_significance=3),
+                ],
+            ),
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_FPGA_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.IEEE754_1985,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_32,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=2),
+                    ByteOrderType.Byte(byte_significance=3),
+                ],
+            ),
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_RWA1_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.IEEE754_1985,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_32,
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_RWA2_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.MILSTD_1750_A,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_32,
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_RWA3_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.MILSTD_1750_A,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_32,
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_RWA4_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.MILSTD_1750_A,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_32,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=3),
+                ],
+            ),
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_ETR1_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_64,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.IEEE754_1985,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_64,
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_ETR2_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_128,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.MOST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.IEEE754_1985,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_128,
+        ),
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_ETR3_TEMP_Type",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_128,
+        float_data_encoding=FloatDataEncodingType(
+            bit_order=DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST,
+            encoding=FloatDataEncodingTypeEncoding.IEEE754_1985,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_128,
+            byte_order_list=ByteOrderType(
+                byte=[
+                    ByteOrderType.Byte(byte_significance=0),
+                    ByteOrderType.Byte(byte_significance=1),
+                    ByteOrderType.Byte(byte_significance=2),
+                    ByteOrderType.Byte(byte_significance=3),
+                    ByteOrderType.Byte(byte_significance=4),
+                    ByteOrderType.Byte(byte_significance=5),
+                    ByteOrderType.Byte(byte_significance=6),
+                    ByteOrderType.Byte(byte_significance=7),
+                    ByteOrderType.Byte(byte_significance=8),
+                    ByteOrderType.Byte(byte_significance=9),
+                    ByteOrderType.Byte(byte_significance=10),
+                    ByteOrderType.Byte(byte_significance=11),
+                    ByteOrderType.Byte(byte_significance=12),
+                    ByteOrderType.Byte(byte_significance=13),
+                    ByteOrderType.Byte(byte_significance=14),
+                    ByteOrderType.Byte(byte_significance=15),
+                ],
+            ),
         ),
     )
 )
@@ -382,6 +555,55 @@ parameter_set.parameter.append(
     )
 )
 
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(name="THERM_CPU_TEMP1", parameter_type_ref="Float32")
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_CPU_TEMP2", parameter_type_ref="THERM_CPU_TEMP2_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_FPGA_TEMP", parameter_type_ref="THERM_FPGA_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_RWA1_TEMP", parameter_type_ref="THERM_RWA1_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_RWA2_TEMP", parameter_type_ref="THERM_RWA2_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_RWA3_TEMP", parameter_type_ref="THERM_RWA3_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_RWA4_TEMP", parameter_type_ref="THERM_RWA4_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_ETR1_TEMP", parameter_type_ref="THERM_ETR1_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_ETR2_TEMP", parameter_type_ref="THERM_ETR2_TEMP_Type"
+    )
+)
+parameter_set.parameter.append(
+    ParameterSetType.Parameter(
+        name="THERM_ETR3_TEMP", parameter_type_ref="THERM_ETR3_TEMP_Type"
+    )
+)
+
 # Create a container set
 container_set = ContainerSetType(
     sequence_container=[
@@ -505,6 +727,56 @@ container_set = ContainerSetType(
                 ),
             ),
         ),
+        SequenceContainerType(
+            name="THERMAL_HOUSEKEEPING",
+            short_description="Thermal Housekeeping Telemetry",
+            long_description="This container holds housekeeping telemetry data for the thermal subsystem.",
+            abstract=False,
+            entry_list=EntryListType(
+                parameter_ref_entry=[
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_CPU_TEMP1",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_CPU_TEMP2",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_FPGA_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_RWA1_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_RWA2_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_RWA3_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_RWA4_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_ETR1_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_ETR2_TEMP",
+                    ),
+                    ParameterRefEntryType(
+                        parameter_ref="THERM_ETR3_TEMP",
+                    ),
+                ]
+            ),
+            base_container=SequenceContainerType.BaseContainer(
+                container_ref="SpacePacket",
+                restriction_criteria=SequenceContainerType.BaseContainer.RestrictionCriteria(
+                    comparison=ComparisonType(
+                        parameter_ref="ApplicationIdentifier",
+                        comparison_operator=ComparisonOperatorsType.EQUALS_SIGN_EQUALS_SIGN,
+                        value="2",
+                    ),
+                ),
+            ),
+        ),
     ]
 )
 
@@ -538,7 +810,8 @@ space_system = SpaceSystem(
     ),
     telemetry_meta_data=TelemetryMetaDataType(
         parameter_type_set=ParameterTypeSetType(
-            integer_parameter_type=integer_parameter_type_set
+            integer_parameter_type=integer_parameter_type_set,
+            float_parameter_type=float_parameter_type_set,
         ),
         parameter_set=parameter_set,
         container_set=container_set,

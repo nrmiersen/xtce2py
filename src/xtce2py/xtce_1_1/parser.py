@@ -7,6 +7,7 @@ from typing import Any, Generator, Optional
 from xsdata.formats.dataclass.parsers import XmlParser
 from xsdata.formats.dataclass.parsers.config import ParserConfig
 
+from xtce2py._enums import BitstreamInterpretationToken, Endianness, FinalDataType
 from xtce2py._validation import (
     ValidationResult,
     ValidationSeverity,
@@ -23,8 +24,6 @@ from xtce2py.xtce_1_1 import *
 from xtce2py.xtce_common.context_models import (
     ContainerDetailsContext,
     EncodingContext,
-    Endianness,
-    FinalDataType,
     ParameterContext,
     RestrictionContext,
 )
@@ -49,7 +48,6 @@ class XtceParser:
         self.is_simple_dispatcher, self.dispatcher_parameter = (
             self._analyze_dispatcher_type()
         )
-        print(f"Is simple dispatcher: {self.is_simple_dispatcher}")
 
         # Build system hierarchy and maps
         self.all_systems = list(self._get_all_space_systems(self.space_system))
@@ -93,11 +91,13 @@ class XtceParser:
                 parameters=self._get_container_parameters(container),
             )
 
-        concrete_container_names: set[str] = {
-            name
-            for name, details in container_details_map.items()
-            if not details.is_abstract
-        }
+        concrete_container_names: list[str] = sorted(
+            [
+                name
+                for name, details in container_details_map.items()
+                if not details.is_abstract
+            ]
+        )
 
         return ParserContext(
             container_tree=self.root_containers.copy(),
@@ -141,12 +141,7 @@ class XtceParser:
         return parser.from_path(xml, SpaceSystem)
 
     def _analyze_dispatcher_type(self) -> tuple[bool, str | None]:
-        """Analyze all container restrictions to determine if a simple, flat dictionary dispatcher can be used.
-
-        Returns:
-            A tuple: (is_simple, discriminator_parameter_name)
-
-        """
+        """Analyze all container restrictions to determine if a simple, flat dictionary dispatcher can be used."""
         first_discriminator = None
         discriminator_values = set()
 
@@ -158,20 +153,14 @@ class XtceParser:
             is_abstract = getattr(container, "abstract", False)
 
             if is_abstract and restrictions:
-                # Condition 3 Failed: An abstract container has restrictions.
-                # We must use the complex tree parser.
                 return False, None
 
             if not is_abstract and not restrictions:
-                # A concrete packet has no identifier. This is ambiguous.
-                # While this could be a validation error, for this check it means
-                # we can't use a simple dispatcher.
                 return False, None
 
             if not restrictions:
                 continue
 
-            # Condition 2 Failed: Too many restrictions or not a simple comparison.
             if len(restrictions) != 1 or restrictions[0].comparison_operator != "==":
                 return False, None
 
@@ -179,19 +168,15 @@ class XtceParser:
             current_value = restrictions[0].value
 
             if first_discriminator is None:
-                # This is the first discriminator we've seen.
                 first_discriminator = current_discriminator
             elif current_discriminator != first_discriminator:
-                # Condition 1 Failed: Not all packets use the same discriminator.
                 return False, None
 
             if current_value in discriminator_values:
-                # Condition 4 Failed: Duplicate restriction value found.
                 return False, None
 
             discriminator_values.add(current_value)
 
-        # If we made it through the whole loop, the dispatcher is simple.
         return True, first_discriminator
 
     def _get_metadata(self) -> XtceMetadataContext:
@@ -249,6 +234,7 @@ class XtceParser:
         ):
             self.parameter_map = {}
             self.parameter_type_map = {}
+            log.warning("No telemetry metadata found in the XTCE file.")
             return
 
         self.parameter_map = {
@@ -256,26 +242,25 @@ class XtceParser:
             for param in self.space_system.telemetry_meta_data.parameter_set.parameter
         }
         self.parameter_type_map = {}
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.string_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.enumerated_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.integer_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.binary_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.float_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.boolean_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.relative_time_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.absolute_time_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.array_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
-        for p_type in self.space_system.telemetry_meta_data.parameter_type_set.aggregate_parameter_type:
-            self.parameter_type_map[p_type.name] = p_type
+        type_set = self.space_system.telemetry_meta_data.parameter_type_set
+
+        type_sets = {
+            "string_parameter_type": type_set.string_parameter_type,
+            "enumerated_parameter_type": type_set.enumerated_parameter_type,
+            "integer_parameter_type": type_set.integer_parameter_type,
+            "binary_parameter_type": type_set.binary_parameter_type,
+            "float_parameter_type": type_set.float_parameter_type,
+            "boolean_parameter_type": type_set.boolean_parameter_type,
+            "relative_time_parameter_type": type_set.relative_time_parameter_type,
+            "absolute_time_parameter_type": type_set.absolute_time_parameter_type,
+            "array_parameter_type": type_set.array_parameter_type,
+            "aggregate_parameter_type": type_set.aggregate_parameter_type,
+        }
+
+        for type_name, type_set in type_sets.items():
+            for p_type in type_set:
+                log.debug(f"Mapping parameter type: {p_type.name} ({type_name})")
+                self.parameter_type_map[p_type.name] = p_type
 
     def _build_container_tree(self):
         """Build a hierarchical tree of containers from a flat list."""
@@ -398,6 +383,7 @@ class XtceParser:
 
     def _validate_data_encodings(self) -> Generator[ValidationResult, None, None]:
         """Validate the consistency of DataEncoding definitions for all ParameterTypes."""
+        # TODO probably break these into different methods
         log.debug("Starting data encoding validation...")
         if not self.parameter_type_map:
             return
@@ -416,9 +402,7 @@ class XtceParser:
 
                 # Check if the signed attribute is correct for the encoding type
                 is_signed_attribute = getattr(param_type, "signed", False)
-                encoding_type: IntegerDataEncodingTypeEncoding | None = getattr(
-                    encoding, "encoding", None
-                )
+                encoding_type = getattr(encoding, "encoding", None)
                 encoding_info = XTCE_ENCODING_MAP.get(encoding_type)
                 if encoding_type and encoding_info:
                     if not is_signed_attribute and encoding_info.signed:
@@ -571,7 +555,36 @@ class XtceParser:
             elif isinstance(param_type, ParameterTypeSetType.BinaryParameterType):
                 pass
             elif isinstance(param_type, ParameterTypeSetType.FloatParameterType):
-                pass
+                encoding = getattr(param_type, "float_data_encoding", None)
+                if not encoding:
+                    continue
+
+                # Determine effective size in bits
+                param_size_bits = getattr(param_type, "size_in_bits", None)
+                encoding_size_bits = getattr(encoding, "size_in_bits", None)
+                effective_size_bits = encoding_size_bits or param_size_bits
+                if not effective_size_bits:
+                    continue
+                effective_size_bits = effective_size_bits.value
+
+                encoding_type: FloatDataEncodingTypeEncoding | None = getattr(
+                    encoding, "encoding", None
+                )
+                encoding_info = XTCE_ENCODING_MAP.get(encoding_type)
+                if encoding_type and encoding_info:
+                    if encoding_type == FloatDataEncodingTypeEncoding.MILSTD_1750_A:
+                        if effective_size_bits != 32:
+                            log.error(
+                                f"- ParameterType '{type_name}' has invalid size ({effective_size_bits} bits) for 'MILSTD_1750_A' encoding (must be 32)."
+                            )
+                            yield ValidationResult(
+                                severity=ValidationSeverity.ERROR,
+                                message=(
+                                    f"Invalid size for 'MILSTD_1750_A' encoding. Size ({effective_size_bits} bits) "
+                                    "must be 32."
+                                ),
+                                location=f"ParameterType '{type_name}'",
+                            )
             elif isinstance(param_type, ParameterTypeSetType.BooleanParameterType):
                 pass
             elif isinstance(param_type, ParameterTypeSetType.RelativeTimeParameterType):
@@ -694,8 +707,8 @@ class XtceParser:
         # elif isinstance(param_type_obj, ParameterTypeSetType.BinaryParameterType):
         #     pass
         # check if 1 bit, if not make it complex
-        # elif isinstance(param_type_obj, ParameterTypeSetType.FloatParameterType):
-        #     pass
+        elif isinstance(param_type_obj, ParameterTypeSetType.FloatParameterType):
+            return self._get_float_encoding_context(param_type_obj)
         # elif isinstance(param_type_obj, ParameterTypeSetType.BooleanParameterType):
         #     pass
         # elif isinstance(param_type_obj, ParameterTypeSetType.RelativeTimeParameterType):
@@ -708,9 +721,9 @@ class XtceParser:
         #     pass
 
     def _get_integer_encoding_context(
-        self,
-        param_type_obj: ParameterTypeSetType.IntegerParameterType,
+        self, param_type_obj: ParameterTypeSetType.IntegerParameterType
     ) -> EncodingContext:
+        """Generate an EncodingContext for an IntegerParameterType."""
         log.debug(
             f"Generating encoding context for IntegerParameterType '{param_type_obj.name}'"
         )
@@ -719,6 +732,11 @@ class XtceParser:
         size_in_bits = param_type_obj.size_in_bits
         byte_significance_list = self._complete_byte_significance_list(size_in_bits)
         final_type = FinalDataType.INT
+        interpretation_token = (
+            BitstreamInterpretationToken.INT
+            if signed
+            else BitstreamInterpretationToken.UINT
+        )
         reverse_bits = False
         endianness = Endianness.BIG
         custom_byte_order = False
@@ -731,17 +749,22 @@ class XtceParser:
                 f"- Found IntegerDataEncoding of type '{encoding_obj.encoding}' for ParameterType '{param_type_obj.name}'"
             )
             size_in_bits = encoding_obj.size_in_bits
-            byte_significance_list = self._complete_byte_significance_list(size_in_bits)
-            reverse_bits = (
-                encoding_obj.bit_order
-                == DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST
-            )
-            if encoding_obj.byte_order_list:
-                byte_significance_list = [
+            byte_significance_list = (
+                [
                     byte.byte_significance
                     for byte in encoding_obj.byte_order_list.byte
                     if byte.byte_significance is not None
                 ]
+                if encoding_obj.byte_order_list
+                else None
+            )
+            byte_significance_list = self._complete_byte_significance_list(
+                size_in_bits, byte_significance_list
+            )
+            reverse_bits = (
+                encoding_obj.bit_order
+                == DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST
+            )
 
             # Handle encoding types with custom decoders
             encoding_type = encoding_obj.encoding
@@ -752,6 +775,8 @@ class XtceParser:
                 log.debug(
                     f"- Using custom decoder '{custom_decoder}' for encoding '{encoding_type}'"
                 )
+        else:
+            encoding_type = IntegerDataEncodingTypeEncoding.UNSIGNED
 
         # If byte_significance_list is ordered, just use BE or LE
         if len(byte_significance_list) == 1:
@@ -775,19 +800,34 @@ class XtceParser:
         else:
             needs_byte_reordering = False
 
-        # Determine format specifier
-        needs_transform = reverse_bits or custom_byte_order
+        # Determine format specifier and interpretation token
+        needs_transform = reverse_bits or needs_byte_reordering
+
+        # Interpretation token: custom decoders always use UINT, otherwise use signedness
+        interpretation_token = (
+            BitstreamInterpretationToken.UINT
+            if custom_decoder
+            else (
+                BitstreamInterpretationToken.INT
+                if signed
+                else BitstreamInterpretationToken.UINT
+            )
+        )
+
+        # Format specifier: depends on transformation needs and custom decoders
         if needs_transform:
             log.debug(
                 f"- Detected transformation needs: reverse_bits={reverse_bits}, custom_byte_order={custom_byte_order}"
             )
             format_specifier = f"bits:{size_in_bits}"
         elif custom_decoder:
+            # Custom decoders always use uint format
             if size_in_bits > 8 and size_in_bits % 8 == 0:
                 format_specifier = f"uint{endianness}:{size_in_bits}"
             else:
                 format_specifier = f"uint:{size_in_bits}"
         else:
+            # Standard format based on signedness
             prefix = "int" if signed else "uint"
             if size_in_bits > 8 and size_in_bits % 8 == 0:
                 format_specifier = f"{prefix}{endianness}:{size_in_bits}"
@@ -801,6 +841,123 @@ class XtceParser:
             byte_significance_list=byte_significance_list,
             needs_byte_reordering=needs_byte_reordering,
             final_type=final_type,
+            interpretation_token=interpretation_token,
+            endianness=endianness,
+            needs_transform=needs_transform,
+            reverse_bits=reverse_bits,
+            custom_byte_order=custom_byte_order,
+            custom_decoder=custom_decoder,
+        )
+
+    def _get_float_encoding_context(
+        self, param_type_obj: ParameterTypeSetType.FloatParameterType
+    ) -> EncodingContext:
+        """Generate an EncodingContext for an FloatParameterType."""
+        # Set defaults
+        signed = True
+        size_in_bits = param_type_obj.size_in_bits.value
+        byte_significance_list = self._complete_byte_significance_list(size_in_bits)
+        final_type = FinalDataType.FLOAT
+        reverse_bits = False
+        endianness = Endianness.BIG
+        custom_byte_order = False
+        custom_decoder = None
+
+        # Override if encoding is specified
+        encoding_obj = param_type_obj.float_data_encoding
+        if encoding_obj:
+            log.debug(
+                f"- Found FloatDataEncoding of type '{encoding_obj.encoding}' for ParameterType '{param_type_obj.name}'"
+            )
+            size_in_bits = encoding_obj.size_in_bits.value
+            byte_significance_list = (
+                [
+                    byte.byte_significance
+                    for byte in encoding_obj.byte_order_list.byte
+                    if byte.byte_significance is not None
+                ]
+                if encoding_obj.byte_order_list
+                else None
+            )
+            byte_significance_list = self._complete_byte_significance_list(
+                size_in_bits, byte_significance_list
+            )
+            reverse_bits = (
+                encoding_obj.bit_order
+                == DataEncodingTypeBitOrder.LEAST_SIGNIFICANT_BIT_FIRST
+            )
+
+            # Handle encoding types with custom decoders
+            encoding_type = encoding_obj.encoding
+            log.debug(f"- Encoding type: {encoding_type}")
+            type_info = XTCE_ENCODING_MAP.get(encoding_type)
+            custom_decoder = type_info.custom_decoder if type_info else None
+            if custom_decoder:
+                log.debug(
+                    f"- Using custom decoder '{custom_decoder}' for encoding '{encoding_type}'"
+                )
+        else:
+            encoding_type = FloatDataEncodingTypeEncoding.IEEE754_1985
+
+        # If byte_significance_list is ordered, just use BE or LE
+        if byte_significance_list == list(range(len(byte_significance_list))):
+            log.debug("- Detected little-endian byte order")
+            endianness = Endianness.LITTLE
+            custom_byte_order = False
+        elif byte_significance_list == list(range(len(byte_significance_list)))[::-1]:
+            log.debug("- Detected big-endian byte order")
+            endianness = Endianness.BIG
+            custom_byte_order = False
+        else:
+            log.debug(f"- Detected custom byte order: {byte_significance_list}")
+            custom_byte_order = True
+
+        # If BE, no need to reorder bytes
+        if (endianness == Endianness.LITTLE) or custom_byte_order:
+            needs_byte_reordering = True
+        else:
+            needs_byte_reordering = False
+
+        # Determine format specifier
+        needs_transform = reverse_bits or custom_byte_order
+        if (
+            needs_transform
+            or encoding_type == FloatDataEncodingTypeEncoding.MILSTD_1750_A
+        ):
+            format_specifier = f"bits:{size_in_bits}"
+            if encoding_type == FloatDataEncodingTypeEncoding.MILSTD_1750_A:
+                interpretation_token = BitstreamInterpretationToken.BITS
+            elif size_in_bits == 128:
+                interpretation_token = BitstreamInterpretationToken.BITS
+                custom_decoder = "_decode_float128"
+            else:
+                interpretation_token = (
+                    BitstreamInterpretationToken.FLOATBE
+                )  # Will be BE after byte reordering
+        elif size_in_bits in [32, 64]:
+            format_specifier = f"float{endianness}:{size_in_bits}"
+            interpretation_token = (
+                BitstreamInterpretationToken.FLOATBE
+                if endianness == Endianness.BIG
+                else BitstreamInterpretationToken.FLOATLE
+            )
+        elif size_in_bits == 128:
+            format_specifier = f"bits:{size_in_bits}"
+            interpretation_token = BitstreamInterpretationToken.BITS
+            custom_decoder = "_decode_float128"
+        else:
+            raise ValueError(
+                f"Unsupported float size: {size_in_bits} bits. Only 32, 64, and 128 bits are supported."
+            )  # Should not be possible
+
+        return EncodingContext(
+            signed=signed,
+            size_in_bits=size_in_bits,
+            format_specifier=format_specifier,
+            byte_significance_list=byte_significance_list,
+            needs_byte_reordering=needs_byte_reordering,
+            final_type=final_type,
+            interpretation_token=interpretation_token,
             endianness=endianness,
             needs_transform=needs_transform,
             reverse_bits=reverse_bits,

@@ -42,7 +42,9 @@ XTCE_ENCODING_MAP = {
     ),
     # Float Types
     xtce_1_1.FloatDataEncodingTypeEncoding.IEEE754_1985: TypeMappingInfo(float),
-    xtce_1_1.FloatDataEncodingTypeEncoding.MILSTD_1750_A: TypeMappingInfo(float),
+    xtce_1_1.FloatDataEncodingTypeEncoding.MILSTD_1750_A: TypeMappingInfo(
+        float, custom_decoder="_decode_milstd_1750a"
+    ),
     # String Types
     xtce_1_1.StringDataEncodingTypeEncoding.UTF_8: TypeMappingInfo(str),
     xtce_1_1.StringDataEncodingTypeEncoding.UTF_16: TypeMappingInfo(str),

@@ -4,30 +4,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-
-class Endianness(str, Enum):
-    """Enumeration for byte order (endianness)."""
-
-    BIG = "be"
-    LITTLE = "le"
-
-    def __str__(self) -> str:
-        """Return the string representation of the enum value."""
-        return self.value
-
-
-class FinalDataType(str, Enum):
-    """Enumeration for the final Python data types a parameter can represent."""
-
-    INT = "int"
-    FLOAT = "float"
-    STRING = "str"
-    BINARY = "bytes"
-    BOOLEAN = "bool"
-
-    def __str__(self) -> str:
-        """Return the string representation of the enum value."""
-        return self.value
+from xtce2py._enums import BitstreamInterpretationToken, Endianness, FinalDataType
 
 
 @dataclass
@@ -38,6 +15,7 @@ class EncodingContext:
     size_in_bits: int
     format_specifier: str
     final_type: FinalDataType
+    interpretation_token: BitstreamInterpretationToken
     byte_significance_list: list[int]
     needs_byte_reordering: bool = False
     endianness: Endianness = Endianness.BIG
@@ -89,13 +67,4 @@ class ContainerDetailsContext:
     @property
     def total_bits_at_this_level(self) -> int:
         """Calculates total bits for all parameters defined at this level."""
-        total = 0
-        for p in self.parameters:
-            # Assumes format_specifier is like "uint:16", "pad:4", etc.
-            try:
-                spec_parts = p.encoding.format_specifier.split(":")
-                if len(spec_parts) == 2:
-                    total += int(spec_parts[1])
-            except (ValueError, IndexError):
-                pass  # Handle cases with no ':'
-        return total
+        return sum(p.encoding.size_in_bits for p in self.parameters)

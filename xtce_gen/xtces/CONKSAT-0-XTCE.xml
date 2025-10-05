@@ -316,6 +316,19 @@
                 </xtce:UnitSet>
                 <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="packedBCD" sizeInBits="17"/>
             </xtce:IntegerParameterType>
+            <xtce:FloatParameterType name="Float32" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="Float64" validRangeAppliesToCalibrated="true" sizeInBits="64">
+                <xtce:UnitSet/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="Float128" validRangeAppliesToCalibrated="true" sizeInBits="128">
+                <xtce:UnitSet/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_RWA_TEMP" validRangeAppliesToCalibrated="true" sizeInBits="128">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="mostSignificantBitFirst" encoding="MILSTD_1750A" sizeInBits="64"/>
+            </xtce:FloatParameterType>
         </xtce:ParameterTypeSet>
         <xtce:ParameterSet>
             <xtce:Parameter shortDescription="Packet Version Number (PVN)" name="PacketVersion" parameterTypeRef="UInt3"/>

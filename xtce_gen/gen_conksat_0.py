@@ -223,6 +223,40 @@ integer_parameter_type_set.append(
     )
 )
 
+float_parameter_type_set = []
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="Float32",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_32,
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="Float64",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_64,
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="Float128",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_128,
+    )
+)
+float_parameter_type_set.append(
+    ParameterTypeSetType.FloatParameterType(
+        name="THERM_RWA_TEMP",
+        unit_set=BaseDataType.UnitSet(),
+        size_in_bits=FloatDataTypeSizeInBits.VALUE_128,
+        float_data_encoding=FloatDataEncodingType(
+            encoding=FloatDataEncodingTypeEncoding.MILSTD_1750_A,
+            size_in_bits=FloatDataEncodingTypeSizeInBits.VALUE_64,
+        ),
+    )
+)
+
 # Create parameters that reference each type
 parameter_set = ParameterSetType()
 parameter_set.parameter.append(
@@ -458,7 +492,8 @@ space_system = SpaceSystem(
     ),
     telemetry_meta_data=TelemetryMetaDataType(
         parameter_type_set=ParameterTypeSetType(
-            integer_parameter_type=integer_parameter_type_set
+            integer_parameter_type=integer_parameter_type_set,
+            float_parameter_type=float_parameter_type_set,
         ),
         parameter_set=parameter_set,
         container_set=container_set,

@@ -64,20 +64,14 @@ def _parse_{{ details.python_name }}(packet: bytes, offset_bits: int) -> tuple[d
 
             {%- if param.encoding.needs_transform %}
                 {%- if param.encoding.needs_byte_reordering %}
-                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
                 {%- else %}
-                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
                 {%- endif %}
             {%- endif %}
 
             {%- if param.encoding.needs_transform %}
-                {%- if param.encoding.final_type == "float" %}
-                    {%- set current_expression = current_expression ~ ".floatbe" %}
-                {%- elif param.encoding.signed %}
-                    {%- set current_expression = current_expression ~ ".intbe" %}
-                {%- else %}
-                    {%- set current_expression = current_expression ~ ".uintbe" %}
-                {%- endif %}
+                {%- set current_expression = current_expression ~ param.encoding.interpretation_token %}
             {%- endif %}
 
             {%- if param.encoding.custom_decoder %}
@@ -141,22 +135,14 @@ def _create_{{ details.python_name }}(final_context: dict) -> models.{{ details.
 
             {%- if param.encoding.needs_transform %}
                 {%- if param.encoding.needs_byte_reordering %}
-                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
                 {%- else %}
-                    {%- set current_expression = "_decoding._physically_transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
                 {%- endif %}
             {%- endif %}
 
             {%- if param.encoding.needs_transform %}
-                {%- if param.encoding.final_type == "float" %}
-                    {%- set current_expression = current_expression ~ ".floatbe" %}
-                {%- elif param.encoding.custom_decoder %}
-                    {%- set current_expression = current_expression ~ ".uint" %}
-                {%- elif param.encoding.signed %}
-                    {%- set current_expression = current_expression ~ ".intbe" %}
-                {%- else %}
-                    {%- set current_expression = current_expression ~ ".uintbe" %}
-                {%- endif %}
+                {%- set current_expression = current_expression ~ param.encoding.interpretation_token %}
             {%- endif %}
 
             {%- if param.encoding.custom_decoder %}

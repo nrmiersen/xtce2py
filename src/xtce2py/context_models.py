@@ -70,7 +70,7 @@ class ParserContext:
     """Container for the data needed by the parser template."""
 
     container_tree: dict[str, Any] = field(default_factory=dict)
-    concrete_container_names: set[str] = field(default_factory=set)
+    concrete_container_names: list[str] = field(default_factory=list)
     container_details_map: dict[str, ContainerDetailsContext] = field(
         default_factory=dict
     )

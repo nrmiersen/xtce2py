@@ -315,7 +315,6 @@
                         <xtce:Byte byteSignificance="0"/>
                         <xtce:Byte byteSignificance="2"/>
                         <xtce:Byte byteSignificance="3"/>
-                        <xtce:Byte byteSignificance="1"/>
                     </xtce:ByteOrderList>
                 </xtce:IntegerDataEncoding>
             </xtce:IntegerParameterType>
@@ -331,6 +330,90 @@
                 </xtce:UnitSet>
                 <xtce:IntegerDataEncoding bitOrder="mostSignificantBitFirst" encoding="BCD" sizeInBits="16"/>
             </xtce:IntegerParameterType>
+            <xtce:FloatParameterType name="Float32" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="Float64" validRangeAppliesToCalibrated="true" sizeInBits="64">
+                <xtce:UnitSet/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="Float128" validRangeAppliesToCalibrated="true" sizeInBits="128">
+                <xtce:UnitSet/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_CPU_TEMP2_Type" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="mostSignificantBitFirst" encoding="IEEE754_1985" sizeInBits="32">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                        <xtce:Byte byteSignificance="2"/>
+                        <xtce:Byte byteSignificance="3"/>
+                    </xtce:ByteOrderList>
+                </xtce:FloatDataEncoding>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_FPGA_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="leastSignificantBitFirst" encoding="IEEE754_1985" sizeInBits="32">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                        <xtce:Byte byteSignificance="2"/>
+                        <xtce:Byte byteSignificance="3"/>
+                    </xtce:ByteOrderList>
+                </xtce:FloatDataEncoding>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_RWA1_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="leastSignificantBitFirst" encoding="IEEE754_1985" sizeInBits="32"/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_RWA2_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="mostSignificantBitFirst" encoding="MILSTD_1750A" sizeInBits="32"/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_RWA3_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="leastSignificantBitFirst" encoding="MILSTD_1750A" sizeInBits="32"/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_RWA4_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="32">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="leastSignificantBitFirst" encoding="MILSTD_1750A" sizeInBits="32">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                        <xtce:Byte byteSignificance="3"/>
+                    </xtce:ByteOrderList>
+                </xtce:FloatDataEncoding>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_ETR1_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="64">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="mostSignificantBitFirst" encoding="IEEE754_1985" sizeInBits="64"/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_ETR2_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="128">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="mostSignificantBitFirst" encoding="IEEE754_1985" sizeInBits="128"/>
+            </xtce:FloatParameterType>
+            <xtce:FloatParameterType name="THERM_ETR3_TEMP_Type" validRangeAppliesToCalibrated="true" sizeInBits="128">
+                <xtce:UnitSet/>
+                <xtce:FloatDataEncoding bitOrder="leastSignificantBitFirst" encoding="IEEE754_1985" sizeInBits="128">
+                    <xtce:ByteOrderList>
+                        <xtce:Byte byteSignificance="0"/>
+                        <xtce:Byte byteSignificance="1"/>
+                        <xtce:Byte byteSignificance="2"/>
+                        <xtce:Byte byteSignificance="3"/>
+                        <xtce:Byte byteSignificance="4"/>
+                        <xtce:Byte byteSignificance="5"/>
+                        <xtce:Byte byteSignificance="6"/>
+                        <xtce:Byte byteSignificance="7"/>
+                        <xtce:Byte byteSignificance="8"/>
+                        <xtce:Byte byteSignificance="9"/>
+                        <xtce:Byte byteSignificance="10"/>
+                        <xtce:Byte byteSignificance="11"/>
+                        <xtce:Byte byteSignificance="12"/>
+                        <xtce:Byte byteSignificance="13"/>
+                        <xtce:Byte byteSignificance="14"/>
+                        <xtce:Byte byteSignificance="15"/>
+                    </xtce:ByteOrderList>
+                </xtce:FloatDataEncoding>
+            </xtce:FloatParameterType>
         </xtce:ParameterTypeSet>
         <xtce:ParameterSet>
             <xtce:Parameter shortDescription="Packet Version Number (PVN)" name="PacketVersion" parameterTypeRef="UInt3"/>
@@ -360,6 +443,16 @@
             <xtce:Parameter name="ExtensionCordTemp10" parameterTypeRef="ExtensionCordTemp10_Type"/>
             <xtce:Parameter name="ExtensionCordTemp11" parameterTypeRef="ExtensionCordTemp11_Type"/>
             <xtce:Parameter name="ExtensionCordTemp12" parameterTypeRef="ExtensionCordTemp12_Type"/>
+            <xtce:Parameter name="THERM_CPU_TEMP1" parameterTypeRef="Float32"/>
+            <xtce:Parameter name="THERM_CPU_TEMP2" parameterTypeRef="THERM_CPU_TEMP2_Type"/>
+            <xtce:Parameter name="THERM_FPGA_TEMP" parameterTypeRef="THERM_FPGA_TEMP_Type"/>
+            <xtce:Parameter name="THERM_RWA1_TEMP" parameterTypeRef="THERM_RWA1_TEMP_Type"/>
+            <xtce:Parameter name="THERM_RWA2_TEMP" parameterTypeRef="THERM_RWA2_TEMP_Type"/>
+            <xtce:Parameter name="THERM_RWA3_TEMP" parameterTypeRef="THERM_RWA3_TEMP_Type"/>
+            <xtce:Parameter name="THERM_RWA4_TEMP" parameterTypeRef="THERM_RWA4_TEMP_Type"/>
+            <xtce:Parameter name="THERM_ETR1_TEMP" parameterTypeRef="THERM_ETR1_TEMP_Type"/>
+            <xtce:Parameter name="THERM_ETR2_TEMP" parameterTypeRef="THERM_ETR2_TEMP_Type"/>
+            <xtce:Parameter name="THERM_ETR3_TEMP" parameterTypeRef="THERM_ETR3_TEMP_Type"/>
         </xtce:ParameterSet>
         <xtce:ContainerSet>
             <xtce:SequenceContainer shortDescription="CCSDS Space Packet Primary Header" name="SpacePacket" abstract="true" idlePattern="0x0">
@@ -404,6 +497,26 @@
                             <xtce:Comparison parameterRef="PacketVersion" instance="0" useCalibratedValue="true" comparisonOperator="==" value="0"/>
                             <xtce:Comparison parameterRef="ApplicationIdentifier" instance="0" useCalibratedValue="true" comparisonOperator="==" value="1"/>
                         </xtce:ComparisonList>
+                    </xtce:RestrictionCriteria>
+                </xtce:BaseContainer>
+            </xtce:SequenceContainer>
+            <xtce:SequenceContainer shortDescription="Thermal Housekeeping Telemetry" name="THERMAL_HOUSEKEEPING" abstract="false" idlePattern="0x0">
+                <xtce:LongDescription>This container holds housekeeping telemetry data for the thermal subsystem.</xtce:LongDescription>
+                <xtce:EntryList>
+                    <xtce:ParameterRefEntry parameterRef="THERM_CPU_TEMP1"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_CPU_TEMP2"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_FPGA_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_RWA1_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_RWA2_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_RWA3_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_RWA4_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_ETR1_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_ETR2_TEMP"/>
+                    <xtce:ParameterRefEntry parameterRef="THERM_ETR3_TEMP"/>
+                </xtce:EntryList>
+                <xtce:BaseContainer containerRef="SpacePacket">
+                    <xtce:RestrictionCriteria>
+                        <xtce:Comparison parameterRef="ApplicationIdentifier" instance="0" useCalibratedValue="true" comparisonOperator="==" value="2"/>
                     </xtce:RestrictionCriteria>
                 </xtce:BaseContainer>
             </xtce:SequenceContainer>

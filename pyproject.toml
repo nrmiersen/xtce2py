@@ -4,8 +4,11 @@ build-backend = "pdm.backend"
 
 [project]
 name = "xtce2py"
-version = "0.1.0"
+version = "0.1.1"
 description = "A generator for creating a Python package from an XTCE file."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
 authors = [{ name = "Nathan Miersen", email = "nrmiersen@gmail.com" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -17,15 +20,13 @@ dependencies = [
     "jinja2>=3.1.6",
     "ruff>=0.12.4",
     "docformatter>=1.7.7",
-    "typer[rich]>=0.16.0",
+    "typer>=0.16.0",
+    "rich>=10.0.0",
     "setuptools>=80.9.0",
     "lxml>=6.0.0",
     "lxml-stubs>=0.5.1",
     "pydantic-settings>=2.11.0",
 ]
-requires-python = ">=3.11"
-readme = "README.md"
-license = "MIT"
 
 [project.scripts]
 xtce2py = "xtce2py.main:app"
@@ -35,10 +36,17 @@ Homepage = "https://github.com/nrmiersen/xtce2py"
 Repository = "https://github.com/nrmiersen/xtce2py"
 
 [dependency-groups]
-dev = ["xsdata[cli]>=25.7", "bitstring>=4.3.1"]
+dev = [
+    "xsdata[cli]>=25.7",
+    "bitstring>=4.3.1",
+    "numpy>=2.3.3",
+]
 
 [tool.pdm]
 distribution = true
+
+[tool.pdm.scripts]
+xtce2py = "python -m xtce2py.main"
 
 [tool.setuptools.package-data]
 xtce2py = [
@@ -49,14 +57,11 @@ xtce2py = [
     "xtce_1_3/*.xsd",
 ]
 
-[tool.pdm.scripts]
-xtce2py = "python -m xtce2py.main"
-
 [tool.ruff]
 line-length = 88
 exclude = [
     "src/xtce2py/xtce_1_1/dtc_06_11_06.py",
-    'src/xtce2py/xtce_1_2/dtc_18_02_04.py',
+    "src/xtce2py/xtce_1_2/dtc_18_02_04.py",
     "src/xtce2py/xtce_1_3/dtc_25_02_18.py",
 ]
 
@@ -65,10 +70,9 @@ select = [
     "D", # pydocstyle
     "I", # isort
 ]
-
 ignore = [
     "D203", # Conflicts with D211
-    "D213", # Conflicts with D212
+    "D213", # Conflicts with D212  
 ]
 
 [tool.ruff.lint.isort]
@@ -76,7 +80,3 @@ known-first-party = ["xtce2py"]
 
 [tool.ruff.format]
 docstring-code-format = true
-
-[tool.docformatter]
-wrap-summaries = 72
-wrap-descriptions = 72
