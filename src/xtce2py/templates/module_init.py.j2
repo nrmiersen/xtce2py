@@ -1,0 +1,37 @@
+"""Package: {{ package_name }}."""
+
+{% if subpackages %}
+from . import (
+    {% for sub in subpackages %}
+    {{ sub }},
+    {% endfor %}
+)
+{% endif %}
+
+{% if commands %}
+from .cmd import (
+    {% for cls in commands %}
+    {{ cls }},
+    {% endfor %}
+)
+{% endif %}
+
+{% if telemetry %}
+from .tlm import (
+    {% for cls in telemetry %}
+    {{ cls }},
+    {% endfor %}
+)
+{% endif %}
+
+__all__ = [
+    {% for sub in subpackages %}
+    "{{ sub }}",
+    {% endfor %}
+    {% for cls in commands %}
+    "{{ cls }}",
+    {% endfor %}
+    {% for cls in telemetry %}
+    "{{ cls }}",
+    {% endfor %}
+]

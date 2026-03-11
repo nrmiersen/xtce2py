@@ -1,0 +1,39 @@
+"""Base classes for XTCE packet definitions."""
+
+from abc import ABC, abstractmethod
+
+from pydantic import BaseModel, ConfigDict, ValidationError
+
+
+class XtcePacket(BaseModel, ABC):
+    """Abstract base class for all generated XTCE packets."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        validate_assignment=True,
+        arbitrary_types_allowed=True,
+    )
+
+    def __init__(self, **data):
+        """Initialize."""
+        try:
+            super().__init__(**data)
+        except ValidationError as e:
+            error_msgs = []
+            for err in e.errors():
+                field_name = ".".join(map(str, err.get("loc", [])))
+
+                if err["type"] == "missing":
+                    error_msgs.append(f" - Missing required field: '{field_name}'")
+                else:
+                    error_msgs.append(f" - '{field_name}': {err.get('msg')}")
+
+            class_name = self.__class__.__name__
+            raise ValueError(
+                f"Failed to initialize {class_name}:\n" + "\n".join(error_msgs)
+            ) from None
+
+    @abstractmethod
+    def to_bytes(self) -> bytes:
+        """Encode the packet parameters into bytes."""
+        pass

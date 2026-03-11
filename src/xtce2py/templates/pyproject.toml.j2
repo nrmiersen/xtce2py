@@ -1,11 +1,11 @@
 [project]
 name = "{{ context.dist_name }}"
 version = "{{ context.version }}"
-description = "Python package generated from XTCE space system: {{ context.metadata.name }}"
+description = "Package generated from XTCE space system: {{ context.metadata.name }}"
 dependencies = [
     "pydantic>=2.11.7",
     "setuptools>=80.9.0",
-    "bitstring>=4.3.1",
+    "xtce-codec>=0.0.0",
 ]
 requires-python = ">=3.11"
 readme = "README.md"

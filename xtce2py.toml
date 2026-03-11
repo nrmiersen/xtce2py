@@ -3,13 +3,12 @@ name = "Nathan Miersen"
 email = "nrmiersen@gmail.com"
 
 [package_defaults]
-suffix = "toolkit"
 license = "MIT"
 
 [naming_convention]
-use_existing_names = true
+style = "keep"
 acronyms = ["CCSDS", "EPS"]
 
 [logging]
-level = "DEBUG"
-# file = "~/xtce2py_output/xtce2py.log"
+level = "INFO"
+file = "xtce2py.log"

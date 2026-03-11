@@ -5,7 +5,7 @@ build-backend = "pdm.backend"
 [project]
 name = "xtce2py"
 version = "0.1.1"
-description = "A generator for creating a Python package from an XTCE file."
+description = "A generator for creating a Python package toolkit from an XTCE file."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
@@ -18,9 +18,8 @@ dependencies = [
     "pydantic>=2.11.7",
     "xsdata>=25.7",
     "jinja2>=3.1.6",
-    "ruff>=0.12.4",
-    "docformatter>=1.7.7",
     "typer>=0.16.0",
+    "ruff>=0.12.4",
     "rich>=10.0.0",
     "setuptools>=80.9.0",
     "lxml>=6.0.0",
@@ -36,11 +35,7 @@ Homepage = "https://github.com/nrmiersen/xtce2py"
 Repository = "https://github.com/nrmiersen/xtce2py"
 
 [dependency-groups]
-dev = [
-    "xsdata[cli]>=25.7",
-    "bitstring>=4.3.1",
-    "numpy>=2.3.3",
-]
+dev = ["xsdata[cli]>=25.7", "numpy>=2.3.3"]
 
 [tool.pdm]
 distribution = true
@@ -48,35 +43,30 @@ distribution = true
 [tool.pdm.scripts]
 xtce2py = "python -m xtce2py.main"
 
-[tool.setuptools.package-data]
-xtce2py = [
-    "static/*",
-    "templates/*",
-    "xtce_1_1/*.xsd",
-    "xtce_1_2/*.xsd",
-    "xtce_1_3/*.xsd",
-]
+[tool.pdm.build]
+package-dir = "src"
+includes = ["xtce2py/", "xtce2py/**/*.xsd", "xtce2py/templates/*.j2"]
+source-includes = ["src/xtce2py/", "tests", "resources", "README.md", "LICENSE"]
+
+[tool.pdm.dev-dependencies]
+dev = ["-e file:///home/nrmiersen/xtce-codec#egg=xtce-codec"]
 
 [tool.ruff]
 line-length = 88
 exclude = [
-    "src/xtce2py/xtce_1_1/dtc_06_11_06.py",
-    "src/xtce2py/xtce_1_2/dtc_18_02_04.py",
-    "src/xtce2py/xtce_1_3/dtc_25_02_18.py",
+    "src/xtce2py/xtce_1_1/bindings/models.py",
+    "src/xtce2py/xtce_1_2/bindings/models.py",
+    "src/xtce2py/xtce_1_3/bindings/models.py",
 ]
-
 [tool.ruff.lint]
 select = [
     "D", # pydocstyle
     "I", # isort
+    "F", # pyflakes
 ]
 ignore = [
     "D203", # Conflicts with D211
-    "D213", # Conflicts with D212  
+    "D213", # Conflicts with D212
 ]
-
 [tool.ruff.lint.isort]
 known-first-party = ["xtce2py"]
-
-[tool.ruff.format]
-docstring-code-format = true

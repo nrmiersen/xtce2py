@@ -5,7 +5,7 @@ from typing import Generator, Iterable
 
 import bitstring
 
-from . import _decoding, models
+from . import models
 
 __all__ = ["parse_packet", "parse_packets"]
 
@@ -38,53 +38,73 @@ def _parse_{{ details.python_name }}(packet: bytes, offset_bits: int) -> tuple[d
         return {}, offset_bits
 
     stream = bitstring.ConstBitStream(bytes=packet, offset=offset_bits)
-
-    {% if details.parameters %}
-    format_string = (
-        {{ details.param_formats | map('tojson') | join(', ') }}
-    )
-    field_names = [
-        {{ details.param_names | map('tojson') | join(', ') }}
-    ]
-    raw_values = stream.readlist(format_string)
-
     parsed_data = {}
 
-    for i, name in enumerate(field_names):
-        raw_value = raw_values[i]
-        final_value = raw_value
+    {% for step in details.parsing_steps %}
+    {% if step.step_type == "FIXED_BLOCK" %}
+    {%- set step_index = loop.index0 %}
+    raw_values_{{ loop.index0 }} = stream.readlist(({{ step.param_formats | map('tojson') | join(', ') }}))
 
-        {% for param in details.parameters if param.encoding.needs_transform or param.encoding.custom_decoder %}
-        {%- if loop.first %}
-        if name == "{{ param.name }}":
-        {%- else %}
-        elif name == "{{ param.name }}":
-        {%- endif %}
-            {%- set current_expression = "raw_value" %}
+    {% for param in step.parameters %}
+    {%- set raw_expression = "raw_values_" ~ step_index ~ "[" ~ (loop.index0) ~ "]" %}
+    {%- set current_expression = raw_expression %}
 
-            {%- if param.encoding.needs_transform %}
-                {%- if param.encoding.needs_byte_reordering %}
-                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
+    {%- if param.encoding.needs_transform or param.encoding.custom_decoder %}
+        {%- if param.encoding.needs_transform %}
+            {%- if param.encoding.needs_byte_reordering %}
+                {%- if param.encoding.endianness.value == "le" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", endianness=\"little\")" %}
+                {%- elif param.encoding.endianness.value == "be" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", endianness=\"big\")" %}
                 {%- else %}
-                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
                 {%- endif %}
+            {%- elif param.encoding.final_type == "str" %}
+                {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits_within_bytes=" ~ param.encoding.reverse_bits ~ ")" %}
+            {%- else %}
+                {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
             {%- endif %}
+        {%- endif %}
 
-            {%- if param.encoding.needs_transform %}
-                {%- set current_expression = current_expression ~ param.encoding.interpretation_token %}
-            {%- endif %}
+        {%- if param.encoding.needs_transform %}
+            {%- set current_expression = current_expression ~ param.encoding.interpretation_token %}
+        {%- endif %}
 
-            {%- if param.encoding.custom_decoder %}
-                {%- set current_expression = "_decoders." ~ param.encoding.custom_decoder ~ "(" ~ current_expression ~ ", " ~ param.encoding.size_in_bits ~ ")" %}
-            {%- endif %}
+        {%- if param.encoding.custom_decoder %}
+            {%- set current_expression = "_decoding." ~ param.encoding.custom_decoder ~ "(" ~ current_expression ~ ", " ~ param.encoding.size_in_bits ~ ")" %}
+        {%- endif %}
+    {%- endif -%}
 
-            final_value = {{ current_expression }}
-        {% endfor %}
-        parsed_data[name] = final_value
+    parsed_data["{{ param.name }}"] = {{ current_expression }}
+    {% endfor %}
 
-    {% else %}
-    parsed_data = {}
+    {% elif step.step_type == "TERMINATED_STRING" %}
+    # Variable length string (terminated)
+    final_value, terminator_found = _decoding._read_terminated_string(
+        stream,
+        terminator={{ step.termination_char_hex }},
+        max_bytes=16,
+        encoding="{{ step.text_encoding }}",
+        reverse_bits={{ step.reverse_bits }},
+    )
+
+    if not terminator_found:
+        log.warning("Terminator for '{{ step.name }}' not found within search limit")
+
+    parsed_data["{{ step.name }}"] = final_value
+
+    {% elif step.step_type == "DYNAMIC_STRING" %}
+    # Variable length string (leading size)
+    final_value = _decoding._read_length_prefixed_string(
+        stream,
+        length_format="uint:{{ step.size_in_bits_of_size_tag }}",
+        encoding="{{ step.text_encoding }}",
+        reverse_bits={{ step.reverse_bits }},
+    )
+
+    parsed_data["{{ step.name }}"] = final_value
     {% endif %}
+    {% endfor %}
 
     new_offset_bits = offset_bits + {{ details.total_bits_at_this_level }}
     return parsed_data, new_offset_bits
@@ -97,7 +117,7 @@ def _parse_{{ details.python_name }}(packet: bytes, offset_bits: int) -> tuple[d
 def _create_{{ details.python_name }}(final_context: dict) -> models.{{ details.python_name }}:
     """Create a {{ details.python_name }} model from the final decoded data."""
     {% if details.parameters %}
-    packet_bytes = final_context["raw_packet"]
+    packet_bytes = final_context["raw_packet"] {# TODO: make this unique #}
     offset_bits = final_context["offset_bits"]
 
     expected_bits = {{ details.total_bits_at_this_level }}
@@ -110,48 +130,73 @@ def _create_{{ details.python_name }}(final_context: dict) -> models.{{ details.
         return None
 
     stream = bitstring.ConstBitStream(bytes=packet_bytes, offset=offset_bits)
-
-    format_string = (
-        {{ details.param_formats | map('tojson') | join(', ') }}
-    )
-    field_names = [
-        {{ details.param_names | map('tojson') | join(', ') }}
-    ]
-    raw_values = stream.readlist(format_string)
-
     payload_data = {}
 
-    for i, name in enumerate(field_names):
-        raw_value = raw_values[i]
-        final_value = raw_value
+    {% for step in details.parsing_steps %}
+    {% if step.step_type == "FIXED_BLOCK" %}
+    {%- set step_index = loop.index0 %}
+    raw_values_{{ loop.index0 }} = stream.readlist(({{ step.param_formats | map('tojson') | join(', ') }}))
 
-        {% for param in details.parameters if param.encoding.needs_transform or param.encoding.custom_decoder %}
-        {%- if loop.first %}
-        if name == "{{ param.name }}":
-        {%- else %}
-        elif name == "{{ param.name }}":
-        {%- endif %}
-            {%- set current_expression = "raw_value" %}
+    {% for param in step.parameters %}
+    {%- set raw_expression = "raw_values_" ~ step_index ~ "[" ~ (loop.index0) ~ "]" %}
+    {%- set current_expression = raw_expression %}
 
-            {%- if param.encoding.needs_transform %}
-                {%- if param.encoding.needs_byte_reordering %}
-                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
+    {%- if param.encoding.needs_transform or param.encoding.custom_decoder %}
+        {%- if param.encoding.needs_transform %}
+            {%- if param.encoding.needs_byte_reordering %}
+                {%- if param.encoding.endianness.value == "le" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", endianness=\"little\")" %}
+                {%- elif param.encoding.endianness.value == "be" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", endianness=\"big\")" %}
                 {%- else %}
-                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
+                    {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ", byte_significance_list=" ~ (param.encoding.byte_significance_list | tojson) ~ ")" %}
                 {%- endif %}
+            {%- elif param.encoding.final_type == "str" %}
+                {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits_within_bytes=" ~ param.encoding.reverse_bits ~ ")" %}
+            {%- else %}
+                {%- set current_expression = "_decoding._transform_bits(bits_obj=" ~ current_expression ~ ", reverse_bits=" ~ param.encoding.reverse_bits ~ ")" %}
             {%- endif %}
+        {%- endif %}
 
-            {%- if param.encoding.needs_transform %}
-                {%- set current_expression = current_expression ~ param.encoding.interpretation_token %}
-            {%- endif %}
+        {%- if param.encoding.needs_transform %}
+            {%- set current_expression = current_expression ~ param.encoding.interpretation_token %}
+        {%- endif %}
 
-            {%- if param.encoding.custom_decoder %}
-                {%- set current_expression = "_decoding." ~ param.encoding.custom_decoder ~ "(" ~ current_expression ~ ", " ~ param.encoding.size_in_bits ~ ")" %}
-            {%- endif %}
+        {%- if param.encoding.custom_decoder %}
+            {%- set current_expression = "_decoding." ~ param.encoding.custom_decoder ~ "(" ~ current_expression ~ ", " ~ param.encoding.size_in_bits ~ ")" %}
+        {%- endif %}
+    {%- endif -%}
 
-            final_value = {{ current_expression }}
-        {% endfor %}
-        payload_data[name] = final_value
+    payload_data["{{ param.name }}"] = {{ current_expression }}
+    {% endfor %}
+
+    {% elif step.step_type == "TERMINATED_STRING" %}
+    # Variable length string (terminated)
+    final_value, terminator_found = _decoding._read_terminated_string(
+        stream,
+        terminator={{ step.termination_char_hex }},
+        max_bytes=16,
+        encoding="{{ step.text_encoding }}",
+        reverse_bits={{ step.reverse_bits }},
+    )
+
+    if not terminator_found:
+        log.warning("Terminator for '{{ step.name }}' not found within search limit")
+
+    payload_data["{{ step.name }}"] = final_value
+
+    {% elif step.step_type == "DYNAMIC_STRING" %}
+    # Variable length string (leading size)
+    final_value = _decoding._read_length_prefixed_string(
+        stream,
+        length_format="uint:{{ step.size_in_bits_of_size_tag }}",
+        encoding="{{ step.text_encoding }}",
+        reverse_bits={{ step.reverse_bits }},
+    )
+
+    payload_data["{{ step.name }}"] = final_value
+    {% endif %}
+    {% endfor %}
 
     final_context.update(payload_data)
     {% endif %}

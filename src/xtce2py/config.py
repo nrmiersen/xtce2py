@@ -4,7 +4,7 @@ import functools
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ValidationError, field_validator
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -26,7 +26,6 @@ class LoggingSettings(BaseModel):
         if v is None:
             return v
         if isinstance(v, str):
-            # Expand ~ to user home directory
             return Path(v).expanduser()
         return v
 
@@ -41,6 +40,8 @@ class AuthorSettings(BaseModel):
 class PackageDefaults(BaseModel):
     """Default values for package generation."""
 
+    name_override: str | None = None
+    prefix: str = ""
     suffix: str = "toolkit"
     version: str = "1.0.0"
     license: str = "MIT"
@@ -49,7 +50,7 @@ class PackageDefaults(BaseModel):
 class NamingSettings(BaseModel):
     """Naming conventions for generated package."""
 
-    use_existing_names: bool = True
+    style: Literal["keep", "pascal", "snake", "camel"] = "keep"
     acronyms: list[str] = ["CCSDS"]
 
 
@@ -60,7 +61,6 @@ class Settings(BaseSettings):
     package_defaults: PackageDefaults = PackageDefaults()
     naming_convention: NamingSettings = NamingSettings()
     logging: LoggingSettings = LoggingSettings()
-
     model_config = SettingsConfigDict(toml_file="xtce2py.toml")
 
     @classmethod
@@ -82,7 +82,73 @@ class Settings(BaseSettings):
         )
 
 
+_runtime_settings: Settings | None = None
+
+
 @functools.lru_cache(maxsize=1)
+def _load_base_settings() -> Settings:
+    """Load and validate settings from configured sources, then cache the result.
+
+    Returns:
+        Settings: The validated settings object.
+
+    Raises:
+        ValueError: If the settings fail validation.
+
+    """
+    try:
+        return Settings()
+    except ValidationError as e:
+        # Format validation errors in a more readable way
+        error_messages = []
+        for error in e.errors():
+            field_path = ".".join(str(loc) for loc in error["loc"])
+            msg = error["msg"]
+            input_val = error.get("input", "")
+
+            # Create a user-friendly error message
+            if error["type"] == "literal_error":
+                # Extract expected values from the message or context
+                ctx = error.get("ctx", {})
+                expected = ctx.get("expected", "")
+                error_messages.append(
+                    f"  - {field_path}: '{input_val}' is not valid. Expected one of: {expected}"
+                )
+            else:
+                error_messages.append(f"  - {field_path}: {msg} (got: '{input_val}')")
+
+        formatted_errors = "\n".join(error_messages)
+        raise ValueError(
+            f"Configuration validation failed:\n{formatted_errors}\n\n"
+            f"Please check your xtce2py.toml file."
+        ) from e
+
+
 def get_settings() -> Settings:
-    """Load and validate the settings, then cache the result."""
-    return Settings()
+    """Get the active settings.
+
+    Returns the runtime override if one is set, otherwise returns cached base settings.
+
+    Returns:
+        Settings: The active settings object.
+
+    """
+    return _runtime_settings or _load_base_settings()
+
+
+def set_settings(settings: Settings) -> None:
+    """Set runtime settings override.
+
+    Args:
+        settings: The settings object to use.
+
+    """
+    global _runtime_settings
+    _runtime_settings = settings
+
+
+def clear_runtime_settings() -> None:
+    """Clear runtime settings override and reset cached base settings."""
+    global _runtime_settings
+    _runtime_settings = None
+    _load_base_settings.cache_clear()

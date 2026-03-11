@@ -1,0 +1,15 @@
+"""Enumerations for {{ package_name }}."""
+
+from enum import IntEnum
+
+{% for enum in enums %}
+class {{ enum.name }}(IntEnum):
+    """Enumeration."""
+    {% if enum.description %}
+    """{{ enum.description }}"""
+    {% endif %}
+    {%- for label, value in enum.values.items() %}
+    {{ label }} = {{ value }}
+    {%- endfor %}
+
+{% endfor %}
