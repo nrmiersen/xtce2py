@@ -310,18 +310,19 @@ def _setup_logging(log_level: str | None = None, log_file: Path | None = None) -
 
         # Rotate existing logs
         if log_path.exists():
+            # Delete the oldest log if it exists
+            # TODO make the number of retained logs configurable
+            Path(f"{log_path}5").unlink(missing_ok=True)
+
             # Shift numbered logs backwards
             for i in range(4, 0, -1):
                 src_path = Path(f"{log_path}{i}")
                 dst_path = Path(f"{log_path}{i + 1}")
                 if src_path.exists():
-                    src_path.rename(dst_path)
-
-            # Delete the oldest log if it exists
-            Path(f"{log_path}.log5").unlink(missing_ok=True)
+                    src_path.replace(dst_path)
 
             # Rename current log to log1
-            log_path.rename(Path(f"{log_path}1"))
+            log_path.replace(Path(f"{log_path}1"))
 
         # Log output to a file
         file_handler = logging.FileHandler(log_path)
