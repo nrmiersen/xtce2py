@@ -1,5 +1,6 @@
 """Command processor."""
 
+import keyword
 import re
 from typing import Any
 
@@ -297,7 +298,13 @@ class CommandProcessor(BaseProcessor):
 
 
 def _sanitize(name: str) -> str:
-    return name.replace(" ", "_").replace("-", "_").lower()
+    clean = name.replace(" ", "_").replace("-", "_").lower()
+
+    # If the resulting name is a reserved Python keyword, append an underscore
+    if keyword.iskeyword(clean):
+        return f"{clean}_"
+
+    return clean
 
 
 def _sanitize_class_name(name: str, is_abstract: bool = False) -> str:
