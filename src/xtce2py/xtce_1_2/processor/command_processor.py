@@ -173,10 +173,31 @@ class CommandProcessor(BaseProcessor):
 
         return f'"{raw_val}"', None
 
-    def _extract_encoding(self, type_def) -> dict:
-        info = {"bits": 0, "encoding": "unsigned", "byte_order": "big"}
+    def _extract_encoding(self, type_def) -> dict[str, Any]:
+        info = {
+            "bits": 0,
+            "encoding": "unsigned",
+            "byte_order": "big",
+            "reverse_bits": False,
+        }
 
-        if isinstance(type_def, xtce.IntegerArgumentType):
+        if isinstance(type_def, xtce.StringArgumentType):
+            if type_def.string_data_encoding:
+                enc = type_def.string_data_encoding
+
+                if enc.size_in_bits:
+                    if enc.size_in_bits.fixed:
+                        info["bits"] = enc.size_in_bits.fixed.fixed_value
+
+                enc_val = (
+                    enc.encoding.value
+                    if hasattr(enc.encoding, "value")
+                    else str(enc.encoding)
+                )
+                info["encoding"] = enc_val.lower().replace("_", "").replace("-", "")
+                info["byte_order"] = self._map_endian(enc.byte_order)
+
+        elif isinstance(type_def, xtce.IntegerArgumentType):
             if type_def.integer_data_encoding:
                 enc = type_def.integer_data_encoding
                 info["bits"] = enc.size_in_bits
