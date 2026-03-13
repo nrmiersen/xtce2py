@@ -1,19 +1,25 @@
 """Command processor."""
 
 import keyword
+import logging
 import re
+from functools import singledispatchmethod
 from typing import Any
 
 from xtce2py.xtce import (
     BaseProcessor,
     CodecRecipeItem,
     CommandViewModel,
+    EncodingInfo,
     PydanticField,
     SystemContext,
     unwrap,
 )
 from xtce2py.xtce_1_2.bindings import models as xtce
 from xtce2py.xtce_1_2.context import EffectiveCommand
+from xtce2py.xtce_1_2.utils import map_bit_order, map_byte_order
+
+log = logging.getLogger(__name__)
 
 
 class CommandProcessor(BaseProcessor):
@@ -101,15 +107,13 @@ class CommandProcessor(BaseProcessor):
             if isinstance(item, xtce.ArgumentArgumentRefEntryType):
                 arg_name = unwrap(item.argument_ref)
                 type_def = arg_map.get(arg_name)
-                enc_info = self._extract_encoding(type_def)
+                encoding_info: EncodingInfo = self._extract_encoding(type_def)
 
                 steps.append(
                     CodecRecipeItem(
                         name=arg_name,
                         value_src=f"self.{_sanitize(arg_name)}",
-                        bits=enc_info["bits"],
-                        encoding=enc_info["encoding"],
-                        byte_order=enc_info["byte_order"],
+                        encoding=encoding_info,
                         condition=condition,
                     )
                 )
@@ -174,97 +178,195 @@ class CommandProcessor(BaseProcessor):
 
         return f'"{raw_val}"', None
 
-    def _extract_encoding(self, type_def) -> dict[str, Any]:
-        info = {
-            "bits": 0,
-            "encoding": "unsigned",
-            "byte_order": "big",
-            "reverse_bits": False,
-        }
+    @singledispatchmethod
+    def _extract_encoding(
+        self,
+        type_def: xtce.StringArgumentType
+        | xtce.EnumeratedArgumentType
+        | xtce.IntegerArgumentType
+        | xtce.BinaryArgumentType
+        | xtce.FloatArgumentType
+        | xtce.BooleanArgumentType
+        | xtce.RelativeTimeArgumentType
+        | xtce.AbsoluteTimeArgumentType
+        | xtce.ArrayArgumentType
+        | xtce.AggregateArgumentType,
+    ) -> EncodingInfo:
+        """Dispatch method to extract encoding information based on argument type."""
+        raise TypeError(
+            f"Unsupported argument type for encoding extraction: {type(type_def)}"
+        )
 
-        if isinstance(type_def, xtce.StringArgumentType):
-            if type_def.string_data_encoding:
-                enc = type_def.string_data_encoding
+    @_extract_encoding.register
+    def _(self, string_argument_type: xtce.StringArgumentType) -> EncodingInfo:
+        """Extract encoding information from a StringArgumentType definition."""
+        # Set temporary defaults
+        bits = 0
 
-                if enc.size_in_bits:
-                    if enc.size_in_bits.fixed:
-                        info["bits"] = enc.size_in_bits.fixed.fixed_value
+        if string_argument_type.string_data_encoding:
+            if string_argument_type.string_data_encoding.size_in_bits:
+                if string_argument_type.string_data_encoding.size_in_bits.fixed:
+                    bits = unwrap(
+                        string_argument_type.string_data_encoding.size_in_bits.fixed.fixed_value
+                    )
+            encoding = string_argument_type.string_data_encoding.encoding.value.lower()
+            byte_order = map_byte_order(
+                string_argument_type.string_data_encoding.byte_order
+            )
+            reverse_bits = map_bit_order(
+                string_argument_type.string_data_encoding.bit_order
+            )
 
-                enc_val = (
-                    enc.encoding.value
-                    if hasattr(enc.encoding, "value")
-                    else str(enc.encoding)
-                )
-                info["encoding"] = enc_val.lower().replace("_", "").replace("-", "")
-                info["byte_order"] = self._map_endian(enc.byte_order)
+        else:
+            raise NotImplementedError(
+                "String arguments without explicit encoding are not supported."
+            )
 
-        elif isinstance(type_def, xtce.IntegerArgumentType):
-            if type_def.integer_data_encoding:
-                enc = type_def.integer_data_encoding
-                info["bits"] = enc.size_in_bits
+        return EncodingInfo(
+            bits=bits,
+            encoding=encoding,
+            byte_order=byte_order,
+            reverse_bits=reverse_bits,
+        )
 
-                enc_val = (
-                    enc.encoding.value
-                    if hasattr(enc.encoding, "value")
-                    else str(enc.encoding)
-                )
-                info["encoding"] = enc_val.lower()
-                info["byte_order"] = self._map_endian(enc.byte_order)
+    @_extract_encoding.register
+    def _(self, enumerated_argument_type: xtce.EnumeratedArgumentType) -> EncodingInfo:
+        """Extract encoding information from a EnumeratedArgumentType definition."""
+        # Set temporary defaults
+        bits = 0
 
-            elif hasattr(type_def, "size_in_bits"):
-                info["bits"] = type_def.size_in_bits
+        if enumerated_argument_type.integer_data_encoding:
+            # Override with fields defined in integer data encoding if present
+            bits = enumerated_argument_type.integer_data_encoding.size_in_bits
+            encoding = (
+                enumerated_argument_type.integer_data_encoding.encoding.value.lower()
+            )
+            byte_order = map_byte_order(
+                enumerated_argument_type.integer_data_encoding.byte_order
+            )
+            reverse_bits = map_bit_order(
+                enumerated_argument_type.integer_data_encoding.bit_order
+            )
 
-                is_signed = getattr(type_def, "signed", True)
-                info["encoding"] = "signed" if is_signed else "unsigned"
+        else:
+            raise NotImplementedError(
+                "Enumerated arguments without explicit encoding are not supported."
+            )
 
-                info["byte_order"] = "big"
+        return EncodingInfo(
+            bits=bits,
+            encoding=encoding,
+            byte_order=byte_order,
+            reverse_bits=reverse_bits,
+        )
 
-        elif isinstance(type_def, xtce.EnumeratedArgumentType):
-            if type_def.integer_data_encoding:
-                enc = type_def.integer_data_encoding
-                info["bits"] = enc.size_in_bits
+    @_extract_encoding.register
+    def _(self, integer_argument_type: xtce.IntegerArgumentType) -> EncodingInfo:
+        """Extract encoding information from a IntegerArgumentType definition."""
+        # Extract encoding info from the base type definition
+        bits = integer_argument_type.size_in_bits
+        signed = integer_argument_type.signed
+        encoding = "unsigned"
+        byte_order = "big"
 
-                enc_val = (
-                    enc.encoding.value
-                    if hasattr(enc.encoding, "value")
-                    else str(enc.encoding)
-                )
-                info["encoding"] = enc_val.lower()
-                info["byte_order"] = self._map_endian(enc.byte_order)
+        if integer_argument_type.integer_data_encoding:
+            # Override with fields defined in integer data encoding if present
+            bits = integer_argument_type.integer_data_encoding.size_in_bits
+            encoding = (
+                integer_argument_type.integer_data_encoding.encoding.value.lower()
+            )
+            byte_order = map_byte_order(
+                integer_argument_type.integer_data_encoding.byte_order
+            )
+            reverse_bits = map_bit_order(
+                integer_argument_type.integer_data_encoding.bit_order
+            )
 
-        elif isinstance(type_def, xtce.FloatArgumentType):
-            if type_def.float_data_encoding:
-                enc = type_def.float_data_encoding
-                info["bits"] = (
-                    int(enc.size_in_bits.value)
-                    if hasattr(enc.size_in_bits, "value")
-                    else 32
-                )
-                info["encoding"] = "float"
-                info["byte_order"] = self._map_endian(enc.byte_order)
+        elif signed:
+            # Default to two's complement if signed but no encoding specified
+            arg_name = self.context.get_python_name(integer_argument_type)
+            log.warning(
+                f"Integer argument '{arg_name}' is marked as signed but has no explicit encoding. Defaulting to two's complement."
+            )
+            encoding = "twosComplement"
 
-            elif hasattr(type_def, "size_in_bits"):
-                val = type_def.size_in_bits
-                info["bits"] = int(val.value) if hasattr(val, "value") else 32
-                info["encoding"] = "float"
-                info["byte_order"] = "big"
+        return EncodingInfo(
+            bits=bits,
+            encoding=encoding,
+            byte_order=byte_order,
+            reverse_bits=reverse_bits,
+        )
 
-        elif isinstance(type_def, xtce.BooleanArgumentType):
-            info["bits"] = 1
-            info["encoding"] = "unsigned"
+    @_extract_encoding.register
+    def _(self, type_def: xtce.BinaryArgumentType) -> EncodingInfo:
+        """Extract encoding information from a BinaryArgumentType definition."""
+        return EncodingInfo(
+            bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
+        )  # TODO
 
-        if info["bits"] == 0 and hasattr(type_def, "base_type") and type_def.base_type:
-            try:
-                _, parent = self.context.resolve(type_def.base_type, scope="")
-                parent_info = self._extract_encoding(parent)
-                if info["bits"] == 0:
-                    info["bits"] = parent_info["bits"]
-                if info["encoding"] == "unsigned":
-                    info["encoding"] = parent_info["encoding"]
-            except KeyError:
-                pass
+    @_extract_encoding.register
+    def _(self, float_argument_type: xtce.FloatArgumentType) -> EncodingInfo:
+        """Extract encoding information from a FloatArgumentType definition."""
+        # Extract encoding info from the base type definition
+        bits = float_argument_type.size_in_bits
 
-        return info
+        if float_argument_type.float_data_encoding:
+            # Override with fields defined in float data encoding if present
+            bits = float_argument_type.float_data_encoding.size_in_bits.value
+            encoding = float_argument_type.float_data_encoding.encoding.value.lower()
+            byte_order = map_byte_order(
+                float_argument_type.float_data_encoding.byte_order
+            )
+            reverse_bits = map_bit_order(
+                float_argument_type.float_data_encoding.bit_order
+            )
+
+        else:
+            raise NotImplementedError(
+                "Enumerated arguments without explicit encoding are not supported."
+            )
+
+        return EncodingInfo(
+            bits=bits,
+            encoding=encoding,
+            byte_order=byte_order,
+            reverse_bits=reverse_bits,
+        )
+
+    @_extract_encoding.register
+    def _(self, type_def: xtce.BooleanArgumentType) -> EncodingInfo:
+        """Extract encoding information from a BooleanArgumentType definition."""
+        return EncodingInfo(
+            bits=1, encoding="unsigned", byte_order="big", reverse_bits=False
+        )
+
+    @_extract_encoding.register
+    def _(self, type_def: xtce.RelativeTimeArgumentType) -> EncodingInfo:
+        """Extract encoding information from a RelativeTimeArgumentType definition."""
+        return EncodingInfo(
+            bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
+        )  # TODO
+
+    @_extract_encoding.register
+    def _(self, type_def: xtce.AbsoluteTimeArgumentType) -> EncodingInfo:
+        """Extract encoding information from a AbsoluteTimeArgumentType definition."""
+        return EncodingInfo(
+            bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
+        )  # TODO
+
+    @_extract_encoding.register
+    def _(self, type_def: xtce.ArrayArgumentType) -> EncodingInfo:
+        """Extract encoding information from a ArrayArgumentType definition."""
+        return EncodingInfo(
+            bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
+        )  # TODO
+
+    @_extract_encoding.register
+    def _(self, type_def: xtce.AggregateArgumentType) -> EncodingInfo:
+        """Extract encoding information from a AggregateArgumentType definition."""
+        return EncodingInfo(
+            bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
+        )  # TODO
 
     def _create_field(self, name, type_def) -> PydanticField:
         clean_name = _sanitize(name)
@@ -289,12 +391,6 @@ class CommandProcessor(BaseProcessor):
             is_fixed=False,
             required_import=req_import,
         )
-
-    def _map_endian(self, xtce_endian) -> str:
-        s = str(xtce_endian).lower()
-        if "least" in s:
-            return "little"
-        return "big"
 
 
 def _sanitize(name: str) -> str:

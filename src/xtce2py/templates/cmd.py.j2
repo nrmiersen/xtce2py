@@ -66,10 +66,10 @@ class {{ cmd.class_name }}({{ cmd.parent_class }}):
         {{ indent }}recipe.append({
         {{ indent }}    "name": "{{ step.name }}",
         {{ indent }}    "value": {{ step.value_src }},
-        {{ indent }}    "bits": {{ step.bits }},
-        {{ indent }}    "encoding": "{{ step.encoding }}",
-        {{ indent }}    "byte_order": "{{ step.byte_order }}",
-        {{ indent }}    "reverse_bits": False,
+        {{ indent }}    "bits": {{ step.encoding.bits }},
+        {{ indent }}    "encoding": "{{ step.encoding.encoding }}",
+        {{ indent }}    "byte_order": "{{ step.encoding.byte_order }}",
+        {{ indent }}    "reverse_bits": {{ step.encoding.reverse_bits }},
         {{ indent }}})
         {%- endfor %}
 

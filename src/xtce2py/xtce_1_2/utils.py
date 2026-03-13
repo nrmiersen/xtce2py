@@ -69,3 +69,33 @@ def _parse_comparison(comparison: xtce.ArgumentComparisonType) -> str:
     lhs = "unknown_var"  # TODO placeholder
 
     return f"{lhs} {comparison.comparison_operator.value} {comparison.value}"
+
+
+def map_byte_order(byte_order: xtce.ByteOrderCommonType | str) -> str:
+    """Map XTCE byte order to a string byte order.
+
+    Args:
+        byte_order (xtce.ByteOrderCommonType | str): The XTCE byte order to map.
+
+    Returns:
+        str: The mapped byte order as a string ("big" or "little").
+
+    """
+    return (
+        "big"
+        if byte_order in [xtce.ByteOrderCommonType.MOST_SIGNIFICANT_BYTE_FIRST, "big"]
+        else "little"
+    )
+
+
+def map_bit_order(bit_order: xtce.BitOrderType) -> bool:
+    """Map XTCE bit order to a string bit order.
+
+    Args:
+        bit_order (xtce.BitOrderType): The XTCE bit order to map.
+
+    Returns:
+        bool: The bool indicating if bits should be reversed.
+
+    """
+    return True if bit_order == xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST else False

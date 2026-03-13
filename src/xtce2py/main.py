@@ -172,11 +172,20 @@ def _parse_and_validate_xtce(xtce_file: Path, verbose: bool = False) -> BaseXtce
             )
         raise ValueError("XTCE file has semantic errors.")
 
-    # Process the SpaceSystem
-    parser.process()
-
     log.info("XTCE file passed semantic validation.")
     console.print("  - Semantic Validation: [green]PASS[/green]")
+
+    # Process the SpaceSystem
+    log.info("Processing SpaceSystem...")
+    console.print("Processing SpaceSystem...")
+    try:
+        parser.process()
+    except Exception as e:
+        log.error(f"ERROR during processing: {e}")
+        console.print(f"  [bold red]ERROR during processing: {e}[/bold red]")
+        if verbose:
+            console.print_exception()
+        raise ValueError(f"Failed to process XTCE: {e}")
 
     return parser
 
@@ -428,7 +437,14 @@ def generate(
         console.print(f"  - Package name: '{generator.package_name}'")
 
     # Generate the package
-    generator.generate()
+    try:
+        generator.generate()
+    except Exception as e:
+        log.error(f"ERROR during generation: {e}")
+        console.print(f"  [bold red]ERROR during generation: {e}[/bold red]")
+        if verbose:
+            console.print_exception()
+        raise ValueError(f"Failed to generate package: {e}")
     log.info(
         f"Successfully generated package '{generator.dist_name}' at '{output_dir / generator.package_name}'"
     )

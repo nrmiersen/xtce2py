@@ -44,14 +44,22 @@ class BaseEffectiveCommand(Generic[T_Argument, T_ExecutionStep]):
 
 
 @dataclass
+class EncodingInfo:
+    """Container for encoding information."""
+
+    bits: int
+    encoding: str
+    byte_order: str = "big"
+    reverse_bits: bool = False
+
+
+@dataclass
 class CodecRecipeItem:
     """A single entry in an encoding recipe."""
 
     name: str
     value_src: str
-    bits: int
-    encoding: str
-    byte_order: str
+    encoding: EncodingInfo
     condition: Optional[str] = None
 
 

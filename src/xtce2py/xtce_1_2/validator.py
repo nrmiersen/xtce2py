@@ -10,6 +10,7 @@ need to check that all references actually exist
 need to check recursion in command hierarchy (e.g., A inherits from B, B inherits from A)
 need to validate that encoding types are actually valid (BCD has valid number of bits, etc.)
 need to check that arguments don't collide (raise warning)
+need to check that string arguments actually have enough defined to encode them
 """
 
 
