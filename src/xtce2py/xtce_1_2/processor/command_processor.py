@@ -106,6 +106,10 @@ class CommandProcessor(BaseProcessor):
 
             if isinstance(item, xtce.ArgumentArgumentRefEntryType):
                 arg_name = unwrap(item.argument_ref)
+
+                if arg_name not in own_arg_names:
+                    continue
+
                 type_def = arg_map.get(arg_name)
                 encoding_info: EncodingInfo = self._extract_encoding(type_def)
 

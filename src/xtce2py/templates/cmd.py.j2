@@ -2,7 +2,6 @@
 from enum import IntEnum
 from typing import Annotated, Any, Literal, Optional, Type, TypeVar, Union
 
-import xtce_codec
 from pydantic import BaseModel, BeforeValidator, Field
 
 from {{ base_module }} import XtcePacket
@@ -38,6 +37,7 @@ def fuzzy_validator(enum_cls: Type[T]):
 {% for cmd in commands %}
 class {{ cmd.class_name }}({{ cmd.parent_class }}):
     """{{ cmd.docstring }}"""
+
     {%- for field in cmd.fields %}
     {{ field.name }}: {{ field.type_hint }}{% if field.default %} = {{ field.default }}{% endif %}
     {%- endfor %}
@@ -50,13 +50,13 @@ class {{ cmd.class_name }}({{ cmd.parent_class }}):
 
     # Overridden inherited defaults
     {%- for key, data in cmd.inherited_defaults.items() %}
-    {{ key }}: {{ data.type_hint }} = {{ data.value }}
+    {{ key }}: Literal[{{ data.value }}] = {{ data.value }}
     {%- endfor %}
     {%- endif %}
 
-    def to_bytes(self) -> bytes:
-        """Encode the command parameters into bytes."""
-        recipe = []
+    def _build_recipe(self) -> list[dict]:
+        """Append this command's fields to the encoding recipe."""
+        recipe = super()._build_recipe()
 
         {%- for step in cmd.encode_steps %}
         {%- if step.condition %}
@@ -73,6 +73,6 @@ class {{ cmd.class_name }}({{ cmd.parent_class }}):
         {{ indent }}})
         {%- endfor %}
 
-        return xtce_codec.pack_parameters(recipe)
+        return recipe
 
 {% endfor %}

@@ -1,7 +1,8 @@
 """Base classes for XTCE packet definitions."""
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
+import xtce_codec
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 
@@ -33,7 +34,11 @@ class XtcePacket(BaseModel, ABC):
                 f"Failed to initialize {class_name}:\n" + "\n".join(error_msgs)
             ) from None
 
-    @abstractmethod
+    def _build_recipe(self) -> list[dict]:
+        """Returns the encoding recipe for this specific layer of the packet."""
+        return []
+
     def to_bytes(self) -> bytes:
         """Encode the packet parameters into bytes."""
-        pass
+        full_recipe = self._build_recipe()
+        return xtce_codec.pack_parameters(full_recipe)
