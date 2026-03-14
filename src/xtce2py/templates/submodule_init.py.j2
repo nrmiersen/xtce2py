@@ -1,13 +1,15 @@
 """Facade for easy importing."""
 
-{% for module_name, symbols in exports.items() %}
-{% if symbols %}
+{% for mod in module_exports | sort %}
+from . import {{ mod }}
+{% endfor %}
+
+{%- for module_name, symbols in class_exports.items() %}
 from .{{ module_name }} import (
     {%- for sym in symbols | sort %}
     {{ sym }},
     {%- endfor %}
 )
-{% endif %}
 {% endfor %}
 
 __all__ = [

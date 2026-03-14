@@ -319,10 +319,24 @@ class PackageGenerator:
 
     def _write_facade(self, domain_dir: Path, exports: dict[str, list[str]]) -> None:
         all_symbols = []
-        for symbols in exports.values():
-            all_symbols.extend(symbols)
+        class_exports = {}
+        module_exports = []
 
-        context = {"exports": exports, "all_symbols": all_symbols}
+        for module_name, symbols in exports.items():
+            if module_name == "enums":
+                # Export the module itself instead of the individual enum classes
+                module_exports.append("enums")
+                all_symbols.append("enums")
+            elif symbols:
+                # Export the individual command classes
+                class_exports[module_name] = symbols
+                all_symbols.extend(symbols)
+
+        context = {
+            "module_exports": module_exports,
+            "class_exports": class_exports,
+            "all_symbols": all_symbols,
+        }
 
         rel_output_path = domain_dir.relative_to(self.package_dir) / "__init__.py"
 

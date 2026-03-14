@@ -9,6 +9,7 @@ from . import (
 {% endif %}
 
 {% if commands %}
+from . import cmd
 from .cmd import (
     {% for cls in commands %}
     {{ cls }},
@@ -17,6 +18,7 @@ from .cmd import (
 {% endif %}
 
 {% if telemetry %}
+from . import tlm
 from .tlm import (
     {% for cls in telemetry %}
     {{ cls }},
@@ -28,9 +30,15 @@ __all__ = [
     {% for sub in subpackages %}
     "{{ sub }}",
     {% endfor %}
+    {% if commands %}
+    "cmd",
+    {% endif %}
     {% for cls in commands %}
     "{{ cls }}",
     {% endfor %}
+    {% if telemetry %}
+    "tlm",
+    {% endif %}
     {% for cls in telemetry %}
     "{{ cls }}",
     {% endfor %}
