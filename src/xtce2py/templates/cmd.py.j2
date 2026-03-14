@@ -1,38 +1,14 @@
 """Contains pydantic models for command containers."""
-from enum import IntEnum
-from typing import Annotated, Any, Literal, Optional, Type, TypeVar, Union
 
-from pydantic import BaseModel, BeforeValidator, Field
+from typing import Annotated, Literal, Union
 
-from {{ base_module }} import XtcePacket
+from pydantic import BeforeValidator, Field
+
+from {{ base_module }} import XtcePacket, enum_validator
 
 {% for imp in extra_imports %}
 {{ imp }}
 {% endfor %}
-
-T = TypeVar("T", bound=IntEnum)
-
-def fuzzy_validator(enum_cls: Type[T]):
-    """Return a Pydantic validator function for the specific Enum class."""
-
-    def validate(v: Any) -> T:
-        if isinstance(v, enum_cls):
-            return v
-
-        if isinstance(v, str):
-            try:
-                return enum_cls[v.upper()]
-            except KeyError:
-                valid = [e.name for e in enum_cls]
-                raise ValueError(f"Invalid label '{v}'. Expected: {valid}")
-
-        try:
-            return enum_cls(v)
-        except ValueError:
-            valid = [e.value for e in enum_cls]
-            raise ValueError(f"Invalid value {v}. Expected: {valid}")
-
-    return validate
 
 {% for cmd in commands %}
 class {{ cmd.class_name }}({{ cmd.parent_class }}):

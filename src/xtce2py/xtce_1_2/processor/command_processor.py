@@ -70,8 +70,11 @@ class CommandProcessor(BaseProcessor):
             type_def = arg_map.get(arg.name)
             pydantic_field = self._create_field(arg.name, type_def)
 
-            if arg.name in cmd.argument_assignments:
-                raw_val = cmd.argument_assignments[arg.name]
+            raw_initial = getattr(arg, "initial_value", None)
+            raw_assign = cmd.argument_assignments.get(unwrap(arg.name))
+            raw_val = raw_assign if raw_assign is not None else raw_initial
+
+            if raw_val is not None:
                 val_str, enum_name = self._coerce_default(
                     raw_val, type_def, pydantic_field
                 )
@@ -302,11 +305,35 @@ class CommandProcessor(BaseProcessor):
         )
 
     @_extract_encoding.register
-    def _(self, type_def: xtce.BinaryArgumentType) -> EncodingInfo:
+    def _(self, binary_argument_type: xtce.BinaryArgumentType) -> EncodingInfo:
         """Extract encoding information from a BinaryArgumentType definition."""
+        # Set temporary defaults
+        bits = 0
+
+        if binary_argument_type.binary_data_encoding:
+            if binary_argument_type.binary_data_encoding.size_in_bits:
+                bits = (
+                    binary_argument_type.binary_data_encoding.size_in_bits.fixed_value
+                    or 0
+                )
+            byte_order = map_byte_order(
+                binary_argument_type.binary_data_encoding.byte_order
+            )
+            reverse_bits = map_bit_order(
+                binary_argument_type.binary_data_encoding.bit_order
+            )
+
+        else:
+            raise NotImplementedError(
+                "Binary arguments without explicit encoding are not supported."
+            )
+
         return EncodingInfo(
-            bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
-        )  # TODO
+            bits=bits,
+            encoding="binary",
+            byte_order=byte_order,
+            reverse_bits=reverse_bits,
+        )
 
     @_extract_encoding.register
     def _(self, float_argument_type: xtce.FloatArgumentType) -> EncodingInfo:
@@ -385,8 +412,10 @@ class CommandProcessor(BaseProcessor):
             py_type = "str"
         elif isinstance(type_def, xtce.EnumeratedArgumentType):
             enum_name = _sanitize_class_name(unwrap(type_def.name))
-            py_type = f"Annotated[Union[{enum_name}, int, str], BeforeValidator(fuzzy_validator({enum_name}))]"
+            py_type = f"Annotated[Union[{enum_name}, int, str], BeforeValidator(enum_validator({enum_name}))]"
             req_import = f"from .enums import {enum_name}"
+        elif isinstance(type_def, xtce.BinaryArgumentType):
+            py_type = "bytes"
 
         return PydanticField(
             name=clean_name,
