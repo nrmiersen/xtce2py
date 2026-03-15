@@ -20,6 +20,7 @@ from xtce2py.xtce.parser import BaseXtceParser
 
 app = typer.Typer()
 console = Console()
+log = logging.getLogger(__name__)
 
 
 class ExitCode(IntEnum):
@@ -312,6 +313,8 @@ def _setup_logging(log_level: str | None = None, log_file: Path | None = None) -
         logging.disable(logging.CRITICAL)
         return
 
+    logging.disable(logging.NOTSET)
+
     handlers = []
 
     if log_file:
@@ -356,9 +359,6 @@ def _setup_logging(log_level: str | None = None, log_file: Path | None = None) -
         format="%(message)s",
         handlers=handlers,
     )
-
-    global log
-    log = logging.getLogger(__name__)
 
 
 def generate(
@@ -449,7 +449,7 @@ def generate(
         f"Successfully generated package '{generator.dist_name}' at '{output_dir / generator.package_name}'"
     )
     console.print(
-        f"\n[bold green]Success![/bold green] Generated '{generator.dist_name}'"
+        f"\n[bold green]Success![/bold green] Generated '{generator.dist_name}' [bold cyan]{package_context.package_version}[/bold cyan]"
     )
 
     # Format the generated package
@@ -464,8 +464,8 @@ def cli_generate(
         help="Path to input XTCE file.",
     ),
     output_dir: Path = typer.Argument(
-        ...,
-        help="Destination directory.",
+        Path("."),
+        help="Destination directory. Defaults to current directory.",
     ),
     clean: bool = typer.Option(
         False,

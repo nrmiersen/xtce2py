@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = []
 lock_version = "4.5.0"
-content_hash = "sha256:eeb62f25fa59eac2c42a77eb1f43edd53aff368274809f938ce3c6c7d8dac4f5"
+content_hash = "sha256:fbb7d129fef8950620a3d5b4405871eb78838b3d40e25e2bcc6a740eb0afdade"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -17,6 +17,20 @@ summary = ""
 files = [
     {file = "annotated_types-0.7.0-py3-none-any.whl", hash = "sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53"},
     {file = "annotated_types-0.7.0.tar.gz", hash = "sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89"},
+]
+
+[[package]]
+name = "build"
+version = "1.4.0"
+summary = ""
+dependencies = [
+    "colorama; os_name == \"nt\"",
+    "packaging",
+    "pyproject-hooks",
+]
+files = [
+    {file = "build-1.4.0-py3-none-any.whl", hash = "sha256:6a07c1b8eb6f2b311b96fcbdbce5dab5fe637ffda0fd83c9cac622e927501596"},
+    {file = "build-1.4.0.tar.gz", hash = "sha256:f1b91b925aa322be454f8330c6fb48b465da993d1e7e7e6fa35027ec49f3c936"},
 ]
 
 [[package]]
@@ -170,6 +184,15 @@ files = [
 ]
 
 [[package]]
+name = "packaging"
+version = "26.0"
+summary = ""
+files = [
+    {file = "packaging-26.0-py3-none-any.whl", hash = "sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529"},
+    {file = "packaging-26.0.tar.gz", hash = "sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4"},
+]
+
+[[package]]
 name = "pydantic"
 version = "2.11.7"
 summary = ""
@@ -242,6 +265,15 @@ files = [
 ]
 
 [[package]]
+name = "pyproject-hooks"
+version = "1.2.0"
+summary = ""
+files = [
+    {file = "pyproject_hooks-1.2.0-py3-none-any.whl", hash = "sha256:9e5c6bfa8dcc30091c74b0cf803c81fdd29d94f01992a7707bc97babb1141913"},
+    {file = "pyproject_hooks-1.2.0.tar.gz", hash = "sha256:1e859bd5c40fae9448642dd871adf459e5e2084186e8d2c2a79a824c970da1f8"},
+]
+
+[[package]]
 name = "python-dotenv"
 version = "1.1.1"
 summary = ""
@@ -286,15 +318,6 @@ files = [
     {file = "ruff-0.12.4-py3-none-win_amd64.whl", hash = "sha256:fe0b9e9eb23736b453143d72d2ceca5db323963330d5b7859d60d101147d461a"},
     {file = "ruff-0.12.4-py3-none-win_arm64.whl", hash = "sha256:0618ec4442a83ab545e5b71202a5c0ed7791e8471435b94e655b570a5031a98e"},
     {file = "ruff-0.12.4.tar.gz", hash = "sha256:13efa16df6c6eeb7d0f091abae50f58e9522f3843edb40d56ad52a5a4a4b6873"},
-]
-
-[[package]]
-name = "setuptools"
-version = "80.9.0"
-summary = ""
-files = [
-    {file = "setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922"},
-    {file = "setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c"},
 ]
 
 [[package]]
@@ -392,7 +415,31 @@ files = [
 
 [[package]]
 name = "xtce-codec"
-version = "0.1.1"
-editable = true
-path = "../xtce-codec"
+version = "0.1.0a5"
 summary = ""
+files = [
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:33353bfdabd4c2da50aad59d689a8a4316d625fd675d9ba0724ea028d8d07860"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:6a34e141278cb9d8bf71a7be41a9cdc12e795959dab59d01856829242a0836f8"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4f6b82f01523281cabb92c40d9308745a6e079138d5f780a9cf62c50059b3b25"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:691a18a8a8e3023a1667c210bf6c02b650fbf8da745ac7c78d690bfd61c97f82"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:11d5e0b030dfe232ea092a8f2a46f2509d7e100d94da4c7ac597017ab69af0ea"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:64bd138bdd767397f52eecb53be7dbe7591ae452c06b4369a02d8c04c4c93c98"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2bf58b83af9769600d1245ddf705fc82b14aaf41c7c2747d2e6cc8f8f7c7fbd2"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:624b779a264fdac643db7b98026832f432fd659d2f4e9eedfaacbce9d897ee44"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:04e11f1c52be43d4225453dadc5013059bbb0eeae4a7e51ea9037f1c1a29a34e"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-musllinux_1_2_armv7l.whl", hash = "sha256:23bc99973d962a43e649d276f1a4f7dd41d045ce52dfbc80b874b11f0b232044"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:335382eacc1873775da31e8c74c25b64425a5a2610176cfd2c474c5f0406c3b7"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:6f97c2a77e7739742bd93623ad50c3dc9a18cb08b459db246b7388d985f6bf19"},
+    {file = "xtce_codec-0.1.0a5-cp311-cp311-win_amd64.whl", hash = "sha256:d0384c54c3b76ea96725ebdeda2e7b8602647a3900e73b6568a6a013a67df0e6"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3a225363d659bc5affffd9549d19d8680d6731e397ddb655d90c0324c2ad44e2"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d1b8a3cc11c67435bddbc7592dbac83ae36afdfc7f1333bfeab9a0a7548b46b5"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:c74192a25638324230e23833e2976e960f7e727fbf3ee7bc5aec08ebb781868c"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:6e72e8cf4b12157277bda138fb6311504f896ad9c780e527d44be50ee9d789cb"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a5c7ec045c2fb775edf0112b2deed864d5efc41197af06a94c7516d6bc8df9de"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:0d0ef89005b0f037a96e9925edac037305d113808e574458b86ca20ed0fe8faf"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-musllinux_1_2_aarch64.whl", hash = "sha256:79e6ee5f6ae34843147b183c47b5386e202a9dde45d4c9eadfb50ff3313734d1"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-musllinux_1_2_armv7l.whl", hash = "sha256:6a620e9c69aa1d2e53c40964b9be9895f7c722bea996e9764b71386b57a8abb0"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-musllinux_1_2_i686.whl", hash = "sha256:900c7256c75a166f318128279e1c10f9597571f518dbf3eab280168f7ad02130"},
+    {file = "xtce_codec-0.1.0a5-pp311-pypy311_pp73-musllinux_1_2_x86_64.whl", hash = "sha256:30912e9c1d0ae555567076e6fd45c659b1eacfd32c2c5f8b706882f670bd8dfd"},
+    {file = "xtce_codec-0.1.0a5.tar.gz", hash = "sha256:8ada972ab901a922c283d5068bbfce6ea6587efdd14bda395e98c7e959537907"},
+]

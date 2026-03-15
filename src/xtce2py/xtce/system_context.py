@@ -12,22 +12,24 @@ class SystemContext:
     def __init__(self):
         """Maintain a mapping of all XTCE definitions by their full absolute path."""
         self.definitions: dict[str, Any] = {}
+        self.path_map: dict[int, str] = {}
         self._python_names: dict[int, str] = {}
 
-    def register(self, path: str, obj: Any) -> None:
+    def register(self, path: str, xtce_obj: Any) -> None:
         """Register an object with its full absolute path.
 
         Args:
             path (str): The full absolute path of the object.
-            obj (Any): The object to register.
+            xtce_obj (Any): The object to register.
 
         """
         if path in self.definitions:
             log.warning(f"Overwriting definition for {path}")
 
-        self.definitions[path] = obj
+        self.definitions[path] = xtce_obj
+        self.path_map[id(xtce_obj)] = path
         log.debug(
-            f"Registered path {path} -> {type(obj).__name__}{'(' + getattr(obj, 'name', '') + ')' if hasattr(obj, 'name') else ''}"
+            f"Registered path '{path}' -> {type(xtce_obj).__name__}{'(' + getattr(xtce_obj, 'name', '') + ')' if hasattr(xtce_obj, 'name') else ''} ({hex(id(xtce_obj))})"
         )
 
     def register_python_name(self, xtce_obj: object, name: str) -> None:
@@ -40,7 +42,7 @@ class SystemContext:
         """
         self._python_names[id(xtce_obj)] = name
         log.debug(
-            f"Registered Python name for {type(xtce_obj).__name__}{'(' + getattr(xtce_obj, 'name', '') + ')' if hasattr(xtce_obj, 'name') else ''}: {name}"
+            f"Registered Python name for {type(xtce_obj).__name__}{'(' + getattr(xtce_obj, 'name', '') + ')' if hasattr(xtce_obj, 'name') else ''} ({hex(id(xtce_obj))}): '{name}'"
         )
 
     def resolve(self, ref: str, scope: str = "") -> tuple[str, Any]:
@@ -109,7 +111,28 @@ class SystemContext:
 
         return name
 
-    def _lookup(self, path: str) -> Any:
+    def get_path(self, xtce_obj: object) -> str:
+        """Get the registered absolute path for an XTCE object.
+
+        Args:
+            xtce_obj (object): The XTCE object to look up.
+
+        Returns:
+            str: The registered absolute path.
+
+        Raises:
+            KeyError: If no path is registered for the object.
+
+        """
+        path = self.path_map.get(id(xtce_obj))
+        if path is None:
+            raise KeyError(
+                f"No path registered for object of type {type(xtce_obj).__name__}"
+            )
+
+        return path
+
+    def lookup(self, path: str) -> Any:
         """Lookup an object by its absolute path.
 
         Args:

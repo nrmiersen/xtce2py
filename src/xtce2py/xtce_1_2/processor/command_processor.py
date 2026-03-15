@@ -1,4 +1,7 @@
-"""Command processor."""
+"""Command processor.
+
+This module defines the CommandProcessor class, which processes EffectiveCommand objects to produce CommandViewModel instances for code generation. The processor maps argument definitions to Python types, extracts encoding information, and constructs a view model that captures the structure and encoding of the command for use in generating Python code.
+"""
 
 import keyword
 import logging
@@ -130,14 +133,14 @@ class CommandProcessor(BaseProcessor):
                     f"Unsupported codec recipe item type: {type(item)}"
                 )
 
-        class_obj: xtce.MetaCommandType = self.context._lookup(cmd.path)
+        class_obj: xtce.MetaCommandType = self.context.lookup(cmd.path)
         class_name = self.context.get_python_name(class_obj)
 
         # Determine parent class name
         parent_class = "XtcePacket"
         if cmd.parent_path:
             # Get the parent object
-            parent_obj: xtce.MetaCommandType = self.context._lookup(cmd.parent_path)
+            parent_obj: xtce.MetaCommandType = self.context.lookup(cmd.parent_path)
             parent_class = self.context.get_python_name(parent_obj)
 
         return CommandViewModel(
@@ -200,6 +203,8 @@ class CommandProcessor(BaseProcessor):
         | xtce.AggregateArgumentType,
     ) -> EncodingInfo:
         """Dispatch method to extract encoding information based on argument type."""
+        # TODO add support for units (maybe not here?)
+        # TODO add support for base type resolution
         raise TypeError(
             f"Unsupported argument type for encoding extraction: {type(type_def)}"
         )
@@ -207,26 +212,21 @@ class CommandProcessor(BaseProcessor):
     @_extract_encoding.register
     def _(self, string_argument_type: xtce.StringArgumentType) -> EncodingInfo:
         """Extract encoding information from a StringArgumentType definition."""
-        # Set temporary defaults
-        bits = 0
-
-        if string_argument_type.string_data_encoding:
-            if string_argument_type.string_data_encoding.size_in_bits:
-                if string_argument_type.string_data_encoding.size_in_bits.fixed:
-                    bits = unwrap(
-                        string_argument_type.string_data_encoding.size_in_bits.fixed.fixed_value
-                    )
-            encoding = string_argument_type.string_data_encoding.encoding.value.lower()
-            byte_order = map_byte_order(
-                string_argument_type.string_data_encoding.byte_order
+        # Parse string encoding
+        if enc := string_argument_type.string_data_encoding:
+            # TODO add support for variable length encodings and encodings with size defined by another parameter
+            bits = (
+                unwrap(enc.size_in_bits.fixed.fixed_value)
+                if enc.size_in_bits and enc.size_in_bits.fixed
+                else 0
             )
-            reverse_bits = map_bit_order(
-                string_argument_type.string_data_encoding.bit_order
-            )
+            encoding = enc.encoding.value.lower()
+            byte_order = map_byte_order(enc.byte_order)
+            reverse_bits = map_bit_order(enc.bit_order)
 
         else:
             raise NotImplementedError(
-                "String arguments without explicit encoding are not supported."
+                f"Unsupported string argument encoding at {self.context.get_path(string_argument_type)}: expected StringDataEncodingType. Other encoding elements for StringArgumentType are not implemented yet."
             )
 
         return EncodingInfo(
@@ -239,25 +239,16 @@ class CommandProcessor(BaseProcessor):
     @_extract_encoding.register
     def _(self, enumerated_argument_type: xtce.EnumeratedArgumentType) -> EncodingInfo:
         """Extract encoding information from a EnumeratedArgumentType definition."""
-        # Set temporary defaults
-        bits = 0
-
-        if enumerated_argument_type.integer_data_encoding:
-            # Override with fields defined in integer data encoding if present
-            bits = enumerated_argument_type.integer_data_encoding.size_in_bits
-            encoding = (
-                enumerated_argument_type.integer_data_encoding.encoding.value.lower()
-            )
-            byte_order = map_byte_order(
-                enumerated_argument_type.integer_data_encoding.byte_order
-            )
-            reverse_bits = map_bit_order(
-                enumerated_argument_type.integer_data_encoding.bit_order
-            )
+        # Parse integer encoding
+        if enc := enumerated_argument_type.integer_data_encoding:
+            bits = enc.size_in_bits
+            encoding = enc.encoding.value.lower()
+            byte_order = map_byte_order(enc.byte_order)
+            reverse_bits = map_bit_order(enc.bit_order)
 
         else:
             raise NotImplementedError(
-                "Enumerated arguments without explicit encoding are not supported."
+                f"Unsupported enumerated argument encoding at {self.context.get_path(enumerated_argument_type)}: expected IntegerDataEncodingType. Other encoding elements for EnumeratedArgumentType are not implemented yet."
             )
 
         return EncodingInfo(
@@ -270,32 +261,17 @@ class CommandProcessor(BaseProcessor):
     @_extract_encoding.register
     def _(self, integer_argument_type: xtce.IntegerArgumentType) -> EncodingInfo:
         """Extract encoding information from a IntegerArgumentType definition."""
-        # Extract encoding info from the base type definition
-        bits = integer_argument_type.size_in_bits
-        signed = integer_argument_type.signed
-        encoding = "unsigned"
-        byte_order = "big"
+        # Parse integer encoding
+        if enc := integer_argument_type.integer_data_encoding:
+            bits = enc.size_in_bits
+            encoding = enc.encoding.value.lower()
+            byte_order = map_byte_order(enc.byte_order)
+            reverse_bits = map_bit_order(enc.bit_order)
 
-        if integer_argument_type.integer_data_encoding:
-            # Override with fields defined in integer data encoding if present
-            bits = integer_argument_type.integer_data_encoding.size_in_bits
-            encoding = (
-                integer_argument_type.integer_data_encoding.encoding.value.lower()
+        else:
+            raise NotImplementedError(
+                f"Unsupported integer argument encoding at {self.context.get_path(integer_argument_type)}: expected IntegerDataEncodingType. Other encoding elements for IntegerArgumentType are not implemented yet."
             )
-            byte_order = map_byte_order(
-                integer_argument_type.integer_data_encoding.byte_order
-            )
-            reverse_bits = map_bit_order(
-                integer_argument_type.integer_data_encoding.bit_order
-            )
-
-        elif signed:
-            # Default to two's complement if signed but no encoding specified
-            arg_name = self.context.get_python_name(integer_argument_type)
-            log.warning(
-                f"Integer argument '{arg_name}' is marked as signed but has no explicit encoding. Defaulting to two's complement."
-            )
-            encoding = "twosComplement"
 
         return EncodingInfo(
             bits=bits,
@@ -307,25 +283,20 @@ class CommandProcessor(BaseProcessor):
     @_extract_encoding.register
     def _(self, binary_argument_type: xtce.BinaryArgumentType) -> EncodingInfo:
         """Extract encoding information from a BinaryArgumentType definition."""
-        # Set temporary defaults
-        bits = 0
-
-        if binary_argument_type.binary_data_encoding:
-            if binary_argument_type.binary_data_encoding.size_in_bits:
-                bits = (
-                    binary_argument_type.binary_data_encoding.size_in_bits.fixed_value
-                    or 0
-                )
-            byte_order = map_byte_order(
-                binary_argument_type.binary_data_encoding.byte_order
+        # Parse binary encoding
+        if enc := binary_argument_type.binary_data_encoding:
+            # TODO add support for variable length encoding
+            bits = (
+                enc.size_in_bits.fixed_value
+                if enc.size_in_bits and enc.size_in_bits.fixed_value
+                else 0
             )
-            reverse_bits = map_bit_order(
-                binary_argument_type.binary_data_encoding.bit_order
-            )
+            byte_order = map_byte_order(enc.byte_order)
+            reverse_bits = map_bit_order(enc.bit_order)
 
         else:
             raise NotImplementedError(
-                "Binary arguments without explicit encoding are not supported."
+                f"Unsupported binary argument encoding at {self.context.get_path(binary_argument_type)}: expected BinaryDataEncodingType. Other encoding elements for BinaryArgumentType are not implemented yet."
             )
 
         return EncodingInfo(
@@ -338,23 +309,16 @@ class CommandProcessor(BaseProcessor):
     @_extract_encoding.register
     def _(self, float_argument_type: xtce.FloatArgumentType) -> EncodingInfo:
         """Extract encoding information from a FloatArgumentType definition."""
-        # Extract encoding info from the base type definition
-        bits = float_argument_type.size_in_bits
-
-        if float_argument_type.float_data_encoding:
-            # Override with fields defined in float data encoding if present
-            bits = float_argument_type.float_data_encoding.size_in_bits.value
-            encoding = float_argument_type.float_data_encoding.encoding.value.lower()
-            byte_order = map_byte_order(
-                float_argument_type.float_data_encoding.byte_order
-            )
-            reverse_bits = map_bit_order(
-                float_argument_type.float_data_encoding.bit_order
-            )
+        # Parse float encoding
+        if enc := float_argument_type.float_data_encoding:
+            bits = enc.size_in_bits.value
+            encoding = enc.encoding.value.lower()
+            byte_order = map_byte_order(enc.byte_order)
+            reverse_bits = map_bit_order(enc.bit_order)
 
         else:
             raise NotImplementedError(
-                "Enumerated arguments without explicit encoding are not supported."
+                f"Unsupported float argument encoding at {self.context.get_path(float_argument_type)}: expected FloatDataEncodingType. Other encoding elements for FloatArgumentType are not implemented yet."
             )
 
         return EncodingInfo(
@@ -367,6 +331,8 @@ class CommandProcessor(BaseProcessor):
     @_extract_encoding.register
     def _(self, type_def: xtce.BooleanArgumentType) -> EncodingInfo:
         """Extract encoding information from a BooleanArgumentType definition."""
+        # TODO add support for one_string_value and zero_string_value
+        # TODO add support for bit length > 1
         return EncodingInfo(
             bits=1, encoding="unsigned", byte_order="big", reverse_bits=False
         )

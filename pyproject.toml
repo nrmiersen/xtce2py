@@ -1,13 +1,13 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling>=1.27.0", "packaging>=24.2"]
+build-backend = "hatchling.build"
 
 [project]
 name = "xtce2py"
-version = "0.1.1"
+version = "0.1.0a1"
 description = "A generator for creating a Python package toolkit from an XTCE file."
 readme = "README.md"
-license = "MIT"
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
 authors = [{ name = "Nathan Miersen", email = "nrmiersen@gmail.com" }]
 classifiers = [
@@ -21,21 +21,24 @@ dependencies = [
     "typer>=0.16.0",
     "ruff>=0.12.4",
     "rich>=10.0.0",
-    "setuptools>=80.9.0",
     "lxml>=6.0.0",
     "lxml-stubs>=0.5.1",
     "pydantic-settings>=2.11.0",
 ]
 
 [project.scripts]
-xtce2py = "xtce2py.main:app"
+xtce2py = "xtce2py.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/nrmiersen/xtce2py"
 Repository = "https://github.com/nrmiersen/xtce2py"
 
 [dependency-groups]
-dev = ["xsdata[cli]>=25.7"]
+dev = [
+    "xsdata[cli]>=25.7",
+    "xtce-codec==0.1.0a5",
+    "build>=1.4.0",
+]
 
 [tool.pdm]
 distribution = true
@@ -43,13 +46,11 @@ distribution = true
 [tool.pdm.scripts]
 xtce2py = "python -m xtce2py.main"
 
-[tool.pdm.build]
-package-dir = "src"
-includes = ["xtce2py/", "xtce2py/**/*.xsd", "xtce2py/templates/*.j2"]
-source-includes = ["src/xtce2py/", "tests", "resources", "README.md", "LICENSE"]
+[tool.hatch.build.targets.wheel]
+packages = ["src/xtce2py"]
 
-[tool.pdm.dev-dependencies]
-dev = ["-e file:///home/nrmiersen/xtce-codec#egg=xtce-codec"]
+[tool.hatch.build.targets.sdist]
+include = ["src/xtce2py", "README.md", "LICENSE", "pyproject.toml"]
 
 [tool.ruff]
 line-length = 88

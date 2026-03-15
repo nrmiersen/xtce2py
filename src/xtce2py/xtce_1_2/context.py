@@ -2,18 +2,8 @@
 
 from xtce2py.xtce.context import BaseEffectiveCommand, BaseExecutionStep
 from xtce2py.xtce_1_2.bindings import models as xtce
+from xtce2py.xtce_1_2.types import AnyArgumentEntryType
 
-ExecutionStep = BaseExecutionStep[
-    xtce.ArgumentParameterRefEntryType
-    | xtce.ArgumentParameterSegmentRefEntryType
-    | xtce.ArgumentContainerRefEntryType
-    | xtce.ArgumentContainerSegmentRefEntryType
-    | xtce.ArgumentStreamSegmentEntryType
-    | xtce.ArgumentIndirectParameterRefEntryType
-    | xtce.ArgumentArrayParameterRefEntryType
-    | xtce.ArgumentArgumentRefEntryType
-    | xtce.ArgumentArrayArgumentRefEntryType
-    | xtce.ArgumentFixedValueEntryType
-]
+ExecutionStep = BaseExecutionStep[AnyArgumentEntryType]
 
 EffectiveCommand = BaseEffectiveCommand[xtce.ArgumentType, ExecutionStep]

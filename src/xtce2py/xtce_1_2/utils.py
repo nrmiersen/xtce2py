@@ -1,6 +1,9 @@
 """XTCE 1.2 utilities."""
 
+from collections.abc import Iterator
+
 import xtce2py.xtce_1_2.bindings as xtce
+from xtce2py.xtce_1_2 import types
 
 
 def get_description(xtce_obj: xtce.NameDescriptionType) -> str:
@@ -99,3 +102,42 @@ def map_bit_order(bit_order: xtce.BitOrderType) -> bool:
 
     """
     return True if bit_order == xtce.BitOrderType.LEAST_SIGNIFICANT_BIT_FIRST else False
+
+
+def iter_space_systems(space_system: xtce.SpaceSystem) -> Iterator[xtce.SpaceSystem]:
+    """Yield a SpaceSystem and all nested child SpaceSystems depth-first.
+
+    Args:
+        space_system: Root XTCE space system to traverse.
+
+    Yields:
+        The root SpaceSystem first, then each descendant SpaceSystem.
+
+    """
+    yield space_system
+    for child in space_system.space_system or []:
+        yield from iter_space_systems(child)
+
+
+def iter_argument_types(
+    space_system: xtce.SpaceSystem,
+) -> Iterator[types.AnyArgumentType]:
+    """Yield command argument types defined directly on one SpaceSystem.
+
+    Args:
+        space_system: XTCE space system to inspect.
+
+    Yields:
+        Each argument type entry from command_meta_data.argument_type_set.entries.
+        Yields nothing if command metadata or argument type set is absent.
+
+    """
+    cmd_md = space_system.command_meta_data
+    if not cmd_md:
+        return
+
+    arg_set = cmd_md.argument_type_set
+    if not arg_set:
+        return
+
+    yield from arg_set.entries or []
