@@ -30,6 +30,19 @@ AnyArgumentEntryType: TypeAlias = (
     | xtce.ArgumentFixedValueEntryType
 )
 
+AnyCommandContainerEntryType: TypeAlias = (
+    xtce.ArgumentParameterRefEntryType
+    | xtce.ArgumentParameterSegmentRefEntryType
+    | xtce.ArgumentContainerRefEntryType
+    | xtce.ArgumentContainerSegmentRefEntryType
+    | xtce.ArgumentStreamSegmentEntryType
+    | xtce.ArgumentIndirectParameterRefEntryType
+    | xtce.ArgumentArrayParameterRefEntryType
+    | xtce.ArgumentArgumentRefEntryType
+    | xtce.ArgumentArrayArgumentRefEntryType
+    | xtce.ArgumentFixedValueEntryType
+)
+
 AnyEncodingType: TypeAlias = (
     xtce.BinaryDataEncodingType
     | xtce.FloatDataEncodingType

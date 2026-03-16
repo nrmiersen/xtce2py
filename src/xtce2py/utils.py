@@ -32,6 +32,25 @@ def to_pascal_case(name: str) -> str:
     return name
 
 
+def sanitize_name(name: str) -> str:
+    """Sanitize a string to be a valid Python identifier.
+
+    Args:
+        name: The raw string name from the XTCE file.
+
+    Returns:
+        A sanitized, syntax-compliant string.
+
+    """
+    clean = name.replace(" ", "_").replace("-", "_").lower()
+
+    # If the resulting name is a reserved Python keyword, append an underscore
+    if keyword.iskeyword(clean):
+        return f"{clean}_"
+
+    return clean
+
+
 def sanitize_description(description: str | None) -> Optional[str]:
     """Verify a description is formatted correctly.
 

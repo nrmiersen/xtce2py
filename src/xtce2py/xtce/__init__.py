@@ -17,15 +17,12 @@ from .validation import get_xtce_parser, validate_xtce_file
 from .validator import BaseXtceValidator, XtceValidationError
 from .version import XtceVersion, get_xtce_version
 
-ExecutionStep = BaseExecutionStep
-
 __all__ = [
     "BaseExecutionStep",
     "CodecRecipeItem",
     "CommandViewModel",
     "EncodingInfo",
     "EnumViewModel",
-    "ExecutionStep",
     "PydanticField",
     "XtceMetadataContext",
     "BaseXtceParser",

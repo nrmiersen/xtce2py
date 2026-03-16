@@ -3,12 +3,10 @@
 This module defines the CommandProcessor class, which processes EffectiveCommand objects to produce CommandViewModel instances for code generation. The processor maps argument definitions to Python types, extracts encoding information, and constructs a view model that captures the structure and encoding of the command for use in generating Python code.
 """
 
-import keyword
 import logging
-import re
 from functools import singledispatchmethod
-from typing import Any
 
+from xtce2py.utils import sanitize_class_name
 from xtce2py.xtce import (
     BaseProcessor,
     CodecRecipeItem,
@@ -19,8 +17,9 @@ from xtce2py.xtce import (
     unwrap,
 )
 from xtce2py.xtce_1_2.bindings import models as xtce
-from xtce2py.xtce_1_2.context import EffectiveCommand
-from xtce2py.xtce_1_2.utils import map_bit_order, map_byte_order
+from xtce2py.xtce_1_2.context import EffectiveArgument, EffectiveCommand
+from xtce2py.xtce_1_2.types import AnyArgumentType
+from xtce2py.xtce_1_2.utils import get_description, map_bit_order, map_byte_order
 
 log = logging.getLogger(__name__)
 
@@ -38,170 +37,186 @@ class CommandProcessor(BaseProcessor):
         self.context = context
 
     def process(self, cmd: EffectiveCommand) -> CommandViewModel:
-        """Generate a CommandViewModel from an EffectiveCommand.
+        """Generate a CommandViewModel from an EffectiveCommand."""
+        required_enums = set()
 
-        Args:
-            cmd (EffectiveCommand): The command to process.
-
-        Returns:
-            CommandViewModel: The generated view model for the command.
-
-        """
-        # Map argument names to types
-        arg_map = {}
-        all_args_map = {}
-
-        for arg in cmd.all_arguments:
-            all_args_map[arg.name] = arg
-            if arg.argument_type_ref:
-                try:
-                    _, resolved_type = self.context.resolve(
-                        arg.argument_type_ref, scope=cmd.path
-                    )
-                    arg_map[arg.name] = resolved_type
-                except KeyError:
-                    arg_map[arg.name] = arg
-
-        fields: list[PydanticField] = []
-        steps: list[CodecRecipeItem] = []
+        # Resolve argument types
+        type_map = self._resolve_types(cmd)
+        all_args_map = {arg.name: arg for arg in cmd.all_arguments}
         own_arg_names = {arg.name for arg in cmd.own_arguments}
 
-        # Create fields for own arguments
-        fields = []
-        required_enums = set()
-        for arg in cmd.own_arguments:
-            type_def = arg_map.get(arg.name)
-            pydantic_field = self._create_field(arg.name, type_def)
+        # Extract data from the arguments
+        fields = self._process_own_arguments(cmd, type_map, required_enums)
+        encode_steps = self._process_execution_steps(
+            cmd, type_map, all_args_map, own_arg_names
+        )
+        inherited_defaults = self._process_inherited_arguments(
+            cmd, type_map, all_args_map, own_arg_names, required_enums
+        )
 
-            raw_initial = getattr(arg, "initial_value", None)
-            raw_assign = cmd.argument_assignments.get(unwrap(arg.name))
-            raw_val = raw_assign if raw_assign is not None else raw_initial
-
-            if raw_val is not None:
-                val_str, enum_name = self._coerce_default(
-                    raw_val, type_def, pydantic_field
-                )
-                pydantic_field.default = val_str
-                if enum_name:
-                    required_enums.add(enum_name)
-
-            fields.append(pydantic_field)
-
-        # Get inherited defaults
-        inherited_defaults = {}
-        for arg_name, raw_val in cmd.argument_assignments.items():
-            if arg_name not in own_arg_names and arg_name in all_args_map:
-                parent_arg = all_args_map[arg_name]
-                type_def = arg_map.get(arg_name)
-                temp_field = self._create_field(parent_arg.name, type_def)
-                sanitized_name = _sanitize(arg_name)
-                val_str, enum_name = self._coerce_default(raw_val, type_def, temp_field)
-                inherited_defaults[sanitized_name] = {
-                    "value": val_str,
-                    "type_hint": temp_field.type_hint,
-                }
-                if enum_name:
-                    required_enums.add(enum_name)
-
-        fields.sort(key=lambda f: f.default is not None and f.default != "")
-
-        # Create recipe from all steps
-        for step in cmd.execution_steps:
-            item = step.item
-            condition = step.python_condition
-
-            if isinstance(item, xtce.ArgumentArgumentRefEntryType):
-                arg_name = unwrap(item.argument_ref)
-
-                if arg_name not in own_arg_names:
-                    continue
-
-                type_def = arg_map.get(arg_name)
-                encoding_info: EncodingInfo = self._extract_encoding(type_def)
-
-                steps.append(
-                    CodecRecipeItem(
-                        name=arg_name,
-                        value_src=f"self.{_sanitize(arg_name)}",
-                        encoding=encoding_info,
-                        condition=condition,
-                    )
-                )
-
-            else:
-                raise NotImplementedError(
-                    f"Unsupported codec recipe item type: {type(item)}"
-                )
-
-        class_obj: xtce.MetaCommandType = self.context.lookup(cmd.path)
-        class_name = self.context.get_python_name(class_obj)
-
-        # Determine parent class name
-        parent_class = "XtcePacket"
-        if cmd.parent_path:
-            # Get the parent object
-            parent_obj: xtce.MetaCommandType = self.context.lookup(cmd.parent_path)
-            parent_class = self.context.get_python_name(parent_obj)
+        # Resolve class hierarchy
+        class_name, parent_class = self._resolve_class_hierarchy(cmd)
 
         return CommandViewModel(
             class_name=class_name,
             parent_class=parent_class,
             docstring=f"XTCE Path: {cmd.path}.",
             fields=fields,
-            encode_steps=steps,
+            encode_steps=encode_steps,
             inherited_defaults=inherited_defaults,
             required_enums=required_enums,
         )
 
-    def _coerce_default(
-        self, raw_val: str, type_def: Any, pydantic_field: "PydanticField"
-    ) -> tuple[str, str | None]:
-        if isinstance(type_def, xtce.BooleanArgumentType):
-            one_str = getattr(type_def, "one_string_value", "True")
-            if str(raw_val) == str(one_str):
-                return "1", None
+    def _resolve_types(self, cmd: EffectiveCommand) -> dict[str, AnyArgumentType]:
+        """Resolve argument type references."""
+        type_map: dict[str, AnyArgumentType] = {}
+        for arg in cmd.all_arguments:
+            type_ref = unwrap(arg.raw_arg.argument_type_ref)
+            _, type_def = self.context.resolve(type_ref, scope=cmd.path)
+
+            type_map[arg.name] = type_def
+
+        return type_map
+
+    def _process_own_arguments(
+        self,
+        cmd: EffectiveCommand,
+        type_map: dict[str, AnyArgumentType],
+        required_enums: set[str],
+    ) -> list[PydanticField]:
+        """Process the command's own arguments."""
+        fields: list[PydanticField] = []
+        for arg in cmd.own_arguments:
+            type_def = type_map.get(arg.name, arg.raw_arg)
+
+            # Generate the Pydantic field
+            pydantic_field = self._create_field(arg.clean_name, type_def)
+
+            # Get the initial/default value if present
+            raw_initial = arg.initial_value
+            raw_assign = cmd.argument_assignments.get(arg.name)
+            raw_val = raw_assign if raw_assign is not None else raw_initial
+
+            if raw_val is not None:
+                val_str, enum_name = self._coerce_default(raw_val, type_def)
+                pydantic_field.default = val_str
+                if enum_name:
+                    required_enums.add(enum_name)
+
+            fields.append(pydantic_field)
+
+        # Sort so fixed fields are last
+        fields.sort(key=lambda f: f.default is not None and f.default != "")
+
+        return fields
+
+    def _process_inherited_arguments(
+        self,
+        cmd: EffectiveCommand,
+        type_map: dict[str, AnyArgumentType],
+        all_args_map: dict[str, EffectiveArgument],
+        own_arg_names: set[str],
+        required_enums: set[str],
+    ) -> dict[str, dict[str, str]]:
+        """Process inherited arguments."""
+        inherited_defaults: dict[str, dict[str, str]] = {}
+        for raw_name, raw_val in cmd.argument_assignments.items():
+            if raw_name not in own_arg_names and raw_name in all_args_map:
+                parent_arg = all_args_map[raw_name]
+                type_def = type_map.get(raw_name, parent_arg.raw_arg)
+
+                # Create the inherited field and set the default
+                temp_field = self._create_field(parent_arg.clean_name, type_def)
+                val_str, enum_name = self._coerce_default(raw_val, type_def)
+
+                inherited_defaults[parent_arg.clean_name] = {
+                    "value": val_str,
+                    "type_hint": temp_field.type_hint,
+                }
+
+                if enum_name:
+                    required_enums.add(enum_name)
+
+        return inherited_defaults
+
+    def _process_execution_steps(
+        self,
+        cmd: EffectiveCommand,
+        type_map: dict[str, AnyArgumentType],
+        all_args_map: dict[str, EffectiveArgument],
+        own_arg_names: set[str],
+    ) -> list[CodecRecipeItem]:
+        """Process the command's execution steps."""
+        steps: list[CodecRecipeItem] = []
+        for step in cmd.execution_steps:
+            item = step.item
+            if isinstance(item, xtce.ArgumentArgumentRefEntryType):
+                raw_name = unwrap(item.argument_ref)
+
+                if raw_name not in own_arg_names:
+                    continue
+
+                arg = all_args_map[raw_name]
+                type_def = type_map.get(raw_name, arg.raw_arg)
+                encoding_info = self._extract_encoding(type_def)
+
+                steps.append(
+                    CodecRecipeItem(
+                        name=raw_name,
+                        value_src=f"self.{arg.clean_name}",
+                        encoding=encoding_info,
+                        condition=step.python_condition,
+                    )
+                )
+
             else:
-                return "0", None
+                raise NotImplementedError(
+                    f"Unsupported CommandContainerEntryListType entry type: {type(item).__name__}"
+                )
 
-        val_lower = str(raw_val).lower()
-        if val_lower == "true":
-            return "1", None
-        if val_lower == "false":
-            return "0", None
+        return steps
 
-        try:
-            float(raw_val)
-            return raw_val, None
-        except ValueError:
-            pass
+    def _resolve_class_hierarchy(self, cmd: EffectiveCommand) -> tuple[str, str]:
+        """Determine the Python class name and its parent class name."""
+        class_obj: xtce.MetaCommandType = self.context.lookup(cmd.path)
+        class_name = self.context.get_python_name(class_obj)
 
-        enum_class = None
-        match = re.search(r"Union\[(\w+),\s*int,\s*str\]", pydantic_field.type_hint)
-        if match:
-            enum_class = match.group(1)
-        elif type_def and "Enumerated" in type_def.__class__.__name__:
-            enum_class = _sanitize_class_name(type_def.name, False)
+        parent_class = "XtcePacket"
+        if cmd.parent_path:
+            parent_obj: xtce.MetaCommandType = self.context.lookup(cmd.parent_path)
+            parent_class = self.context.get_python_name(parent_obj)
 
-        if enum_class:
-            clean_label = raw_val.upper()
+        return class_name, parent_class
+
+    def _create_field(
+        self, clean_name: str, type_def: xtce.NameDescriptionType
+    ) -> PydanticField:
+        """Create a Pydantic field."""
+        builder = FieldBuilder(clean_name, type_def)
+        return builder.build()
+
+    def _coerce_default(
+        self, raw_val: str, type_def: AnyArgumentType | xtce.ArgumentType
+    ) -> tuple[str, str | None]:
+        """Convert an XTCE raw value into a safe Python literal string."""
+        if isinstance(type_def, xtce.EnumeratedArgumentType):
+            enum_class = sanitize_class_name(unwrap(type_def.name))
+            clean_label = str(raw_val).upper().replace(" ", "_")
             return f"{enum_class}.{clean_label}", enum_class
+
+        if isinstance(type_def, xtce.BooleanArgumentType):
+            return "1" if str(raw_val) == str(type_def.one_string_value) else "0", None
+
+        if isinstance(type_def, (xtce.IntegerArgumentType, xtce.FloatArgumentType)):
+            return str(raw_val), None
+
+        if isinstance(type_def, (xtce.StringArgumentType, xtce.BinaryArgumentType)):
+            return f'"{raw_val}"', None
 
         return f'"{raw_val}"', None
 
     @singledispatchmethod
-    def _extract_encoding(
-        self,
-        type_def: xtce.StringArgumentType
-        | xtce.EnumeratedArgumentType
-        | xtce.IntegerArgumentType
-        | xtce.BinaryArgumentType
-        | xtce.FloatArgumentType
-        | xtce.BooleanArgumentType
-        | xtce.RelativeTimeArgumentType
-        | xtce.AbsoluteTimeArgumentType
-        | xtce.ArrayArgumentType
-        | xtce.AggregateArgumentType,
-    ) -> EncodingInfo:
+    def _extract_encoding(self, type_def: AnyArgumentType) -> EncodingInfo:
         """Dispatch method to extract encoding information based on argument type."""
         # TODO add support for units (maybe not here?)
         # TODO add support for base type resolution
@@ -365,44 +380,71 @@ class CommandProcessor(BaseProcessor):
             bits=0, encoding="unsigned", byte_order="big", reverse_bits=False
         )  # TODO
 
-    def _create_field(self, name, type_def) -> PydanticField:
-        clean_name = _sanitize(name)
-        desc = getattr(type_def, "short_description", "") or ""
 
-        py_type = "int"
-        req_import = None
+class FieldBuilder:
+    """Pydantic Field constructor."""
 
-        if isinstance(type_def, xtce.FloatArgumentType):
-            py_type = "float"
-        elif isinstance(type_def, xtce.StringArgumentType):
-            py_type = "str"
-        elif isinstance(type_def, xtce.EnumeratedArgumentType):
-            enum_name = _sanitize_class_name(unwrap(type_def.name))
-            py_type = f"Annotated[Union[{enum_name}, int, str], BeforeValidator(enum_validator({enum_name}))]"
-            req_import = f"from .enums import {enum_name}"
-        elif isinstance(type_def, xtce.BinaryArgumentType):
-            py_type = "bytes"
+    def __init__(self, clean_name: str, type_def: xtce.NameDescriptionType):
+        """Initialize the FieldBuilder."""
+        self.clean_name = clean_name
+        self.type_def = type_def
+        self.raw_name = unwrap(type_def.name)
+
+        self.py_type = "int"
+        self.req_import: str | None = None
+        self.field_kwargs: dict[str, str] = {}
+
+    def _resolve_python_type(self) -> None:
+        """Determine the base Python type and any required imports."""
+        if isinstance(self.type_def, xtce.FloatArgumentType):
+            self.py_type = "float"
+
+        elif isinstance(self.type_def, xtce.StringArgumentType):
+            self.py_type = "str"
+
+        elif isinstance(self.type_def, xtce.BinaryArgumentType):
+            self.py_type = "bytes"
+
+        elif isinstance(self.type_def, xtce.EnumeratedArgumentType):
+            enum_name = sanitize_class_name(unwrap(self.type_def.name))
+            self.py_type = f"Annotated[Union[{enum_name}, int, str], BeforeValidator(enum_validator({enum_name}))]"
+            self.req_import = f"from .enums import {enum_name}"
+
+        # TODO support remaining types
+
+    def _resolve_metadata(self) -> None:
+        """Extract metadata from the XTCE type definition."""
+        # Description
+        desc = get_description(self.type_def)
+        if desc:
+            self.field_kwargs["description"] = f'"{desc}"'
+
+        # Alias
+        if self.raw_name != self.clean_name:
+            self.field_kwargs["alias"] = f'"{self.raw_name}"'
+
+    def build(self) -> PydanticField:
+        """Compile the resolved data into a final PydanticField."""
+        self._resolve_python_type()
+        self._resolve_metadata()
+
+        # Wrap in Annotated and Field if there is metadata
+        if self.field_kwargs:
+            kwargs_str = ", ".join(f"{k}={v}" for k, v in self.field_kwargs.items())
+
+            if self.py_type.startswith("Annotated["):
+                type_hint = self.py_type[:-1] + f", Field({kwargs_str})]"
+            else:
+                type_hint = f"Annotated[{self.py_type}, Field({kwargs_str})]"
+
+        # Just the base type if no metadata
+        else:
+            type_hint = self.py_type
 
         return PydanticField(
-            name=clean_name,
-            type_hint=f"Annotated[{py_type}, Field(description='{desc}')]",
+            name=self.clean_name,
+            type_hint=type_hint,
             default=None,
             is_fixed=False,
-            required_import=req_import,
+            required_import=self.req_import,
         )
-
-
-def _sanitize(name: str) -> str:
-    clean = name.replace(" ", "_").replace("-", "_").lower()
-
-    # If the resulting name is a reserved Python keyword, append an underscore
-    if keyword.iskeyword(clean):
-        return f"{clean}_"
-
-    return clean
-
-
-def _sanitize_class_name(name: str, is_abstract: bool = False) -> str:
-    clean = name.replace(" ", "").replace("-", "_")
-    base = clean[0].upper() + clean[1:]
-    return f"_{base}" if is_abstract else base

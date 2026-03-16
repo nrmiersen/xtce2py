@@ -11,14 +11,13 @@ from xtce2py.xtce import (
     BaseXtceParser,
     CommandViewModel,
     EnumViewModel,
-    ExecutionStep,
     SystemContext,
     XtceMetadataContext,
     XtceValidationError,
     unwrap,
 )
 from xtce2py.xtce_1_2 import bindings as xtce
-from xtce2py.xtce_1_2.context import EffectiveCommand
+from xtce2py.xtce_1_2.context import EffectiveArgument, EffectiveCommand, ExecutionStep
 from xtce2py.xtce_1_2.processor import CommandProcessor, EnumProcessor
 from xtce2py.xtce_1_2.utils import parse_match_criteria
 from xtce2py.xtce_1_2.validator import SemanticValidator
@@ -234,11 +233,15 @@ class XtceParser(BaseXtceParser):
         for anc_path, ancestor in chain_tuples:
             # Get all arguments from ancestors
             if ancestor.argument_list:
-                effective_cmd.all_arguments.extend(ancestor.argument_list.argument)
+                effective_cmd.all_arguments.extend(
+                    [EffectiveArgument(arg) for arg in ancestor.argument_list.argument]
+                )
 
             # Get all own arguments from the current command
             if anc_path == path and ancestor.argument_list:
-                effective_cmd.own_arguments.extend(ancestor.argument_list.argument)
+                effective_cmd.own_arguments.extend(
+                    [EffectiveArgument(arg) for arg in ancestor.argument_list.argument]
+                )
 
             # Get argument assignments
             if ancestor.base_meta_command:
