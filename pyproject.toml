@@ -34,11 +34,7 @@ Homepage = "https://github.com/nrmiersen/xtce2py"
 Repository = "https://github.com/nrmiersen/xtce2py"
 
 [dependency-groups]
-dev = [
-    "xsdata[cli]>=25.7",
-    "xtce-codec==0.1.0a5",
-    "build>=1.4.0",
-]
+dev = ["xsdata[cli]>=25.7", "xtce-codec==0.1.0a5", "build>=1.4.0"]
 
 [tool.pdm]
 distribution = true

@@ -5,7 +5,7 @@ from typing import Any, Generic, Optional, TypeVar
 
 from xtce2py.utils import sanitize_name
 
-T_AnyArgumentType = TypeVar("T_AnyArgumentType")
+T_ArgumentType = TypeVar("T_ArgumentType")
 T_AnyCommandContainerEntryType = TypeVar("T_AnyCommandContainerEntryType")
 T_EffectiveArgument = TypeVar("T_EffectiveArgument", bound="BaseEffectiveArgument[Any]")
 T_ExecutionStep = TypeVar("T_ExecutionStep", bound="BaseExecutionStep[Any]")
@@ -26,10 +26,10 @@ class XtceMetadataContext:
 
 
 @dataclass(frozen=True)
-class BaseEffectiveArgument(Generic[T_AnyArgumentType]):
+class BaseEffectiveArgument(Generic[T_ArgumentType]):
     """Wraps an XTCE ArgumentType."""
 
-    raw_arg: T_AnyArgumentType
+    raw_arg: T_ArgumentType
     clean_name: str = field(init=False)
 
     def __post_init__(self):

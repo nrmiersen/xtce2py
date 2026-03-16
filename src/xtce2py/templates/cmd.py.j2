@@ -44,8 +44,10 @@ class {{ cmd.class_name }}({{ cmd.parent_class }}):
         {{ indent }}    "value": {{ step.value_src }},
         {{ indent }}    "bits": {{ step.encoding.bits }},
         {{ indent }}    "encoding": "{{ step.encoding.encoding }}",
-        {{ indent }}    "byte_order": "{{ step.encoding.byte_order }}",
+        {{ indent }}    "byte_order": "{{ step.encoding.byte_order }}",\
+        {# {%- if step.encoding.reverse_bits %} #}
         {{ indent }}    "reverse_bits": {{ step.encoding.reverse_bits }},
+        {# {%- endif %} #}
         {{ indent }}})
         {%- endfor %}
 

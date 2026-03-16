@@ -90,7 +90,7 @@ class CommandProcessor(BaseProcessor):
             type_def = type_map.get(arg.name, arg.raw_arg)
 
             # Generate the Pydantic field
-            pydantic_field = self._create_field(arg.clean_name, type_def)
+            pydantic_field = self._create_field(arg, type_def)
 
             # Get the initial/default value if present
             raw_initial = arg.initial_value
@@ -126,7 +126,7 @@ class CommandProcessor(BaseProcessor):
                 type_def = type_map.get(raw_name, parent_arg.raw_arg)
 
                 # Create the inherited field and set the default
-                temp_field = self._create_field(parent_arg.clean_name, type_def)
+                temp_field = self._create_field(parent_arg, type_def)
                 val_str, enum_name = self._coerce_default(raw_val, type_def)
 
                 inherited_defaults[parent_arg.clean_name] = {
@@ -189,10 +189,10 @@ class CommandProcessor(BaseProcessor):
         return class_name, parent_class
 
     def _create_field(
-        self, clean_name: str, type_def: xtce.NameDescriptionType
+        self, arg: EffectiveArgument, type_def: xtce.NameDescriptionType
     ) -> PydanticField:
         """Create a Pydantic field."""
-        builder = FieldBuilder(clean_name, type_def)
+        builder = FieldBuilder(arg, type_def)
         return builder.build()
 
     def _coerce_default(
@@ -384,9 +384,9 @@ class CommandProcessor(BaseProcessor):
 class FieldBuilder:
     """Pydantic Field constructor."""
 
-    def __init__(self, clean_name: str, type_def: xtce.NameDescriptionType):
+    def __init__(self, arg: EffectiveArgument, type_def: xtce.NameDescriptionType):
         """Initialize the FieldBuilder."""
-        self.clean_name = clean_name
+        self.arg = arg
         self.type_def = type_def
         self.raw_name = unwrap(type_def.name)
 
@@ -420,8 +420,8 @@ class FieldBuilder:
             self.field_kwargs["description"] = f'"{desc}"'
 
         # Alias
-        if self.raw_name != self.clean_name:
-            self.field_kwargs["alias"] = f'"{self.raw_name}"'
+        if self.raw_name != self.arg.clean_name:
+            self.field_kwargs["alias"] = f'"{self.arg.name}"'
 
     def build(self) -> PydanticField:
         """Compile the resolved data into a final PydanticField."""
@@ -442,7 +442,7 @@ class FieldBuilder:
             type_hint = self.py_type
 
         return PydanticField(
-            name=self.clean_name,
+            name=self.arg.clean_name,
             type_hint=type_hint,
             default=None,
             is_fixed=False,
