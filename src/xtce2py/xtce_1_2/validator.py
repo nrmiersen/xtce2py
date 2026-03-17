@@ -13,6 +13,8 @@ need to check recursion in command hierarchy (e.g., A inherits from B, B inherit
 need to validate that encoding types are actually valid (BCD has valid number of bits, etc.)
 need to check that arguments don't collide (raise warning)
 need to check that string arguments actually have enough defined to encode them
+need to check that float ranges don't set both inclusive and exclusive bounds
+need to check that ranges don't set min > max
 """
 
 

@@ -87,7 +87,7 @@ class CommandProcessor(BaseProcessor):
         """Process the command's own arguments."""
         fields: list[PydanticField] = []
         for arg in cmd.own_arguments:
-            type_def = type_map.get(arg.name, arg.raw_arg)
+            type_def = type_map[arg.name]
 
             # Generate the Pydantic field
             pydantic_field = self._create_field(arg, type_def)
@@ -123,7 +123,7 @@ class CommandProcessor(BaseProcessor):
         for raw_name, raw_val in cmd.argument_assignments.items():
             if raw_name not in own_arg_names and raw_name in all_args_map:
                 parent_arg = all_args_map[raw_name]
-                type_def = type_map.get(raw_name, parent_arg.raw_arg)
+                type_def = type_map[raw_name]
 
                 # Create the inherited field and set the default
                 temp_field = self._create_field(parent_arg, type_def)
@@ -189,7 +189,7 @@ class CommandProcessor(BaseProcessor):
         return class_name, parent_class
 
     def _create_field(
-        self, arg: EffectiveArgument, type_def: xtce.NameDescriptionType
+        self, arg: EffectiveArgument, type_def: AnyArgumentType
     ) -> PydanticField:
         """Create a Pydantic field."""
         builder = FieldBuilder(arg, type_def)
@@ -384,7 +384,9 @@ class CommandProcessor(BaseProcessor):
 class FieldBuilder:
     """Pydantic Field constructor."""
 
-    def __init__(self, arg: EffectiveArgument, type_def: xtce.NameDescriptionType):
+    # TODO potentially add a singledispatchmethod that handles all field arguments for each specific type
+
+    def __init__(self, arg: EffectiveArgument, type_def: AnyArgumentType):
         """Initialize the FieldBuilder."""
         self.arg = arg
         self.type_def = type_def
@@ -422,6 +424,52 @@ class FieldBuilder:
         # Alias
         if self.raw_name != self.arg.clean_name:
             self.field_kwargs["alias"] = f'"{self.arg.name}"'
+
+        # Range
+        # TODO figure out a better way to do this
+        if (
+            isinstance(self.type_def, xtce.IntegerArgumentType)
+            and self.type_def.valid_range_set
+        ):
+            if len(self.type_def.valid_range_set.valid_range) > 1:
+                raise NotImplementedError(
+                    f"Multiple valid ranges are not yet supported at {self.type_def.name}."
+                )
+            if (
+                min_val := self.type_def.valid_range_set.valid_range[0].min_inclusive
+            ) is not None:
+                self.field_kwargs["ge"] = str(min_val)
+            if (
+                max_val := self.type_def.valid_range_set.valid_range[0].max_inclusive
+            ) is not None:
+                self.field_kwargs["le"] = str(max_val)
+
+        elif (
+            isinstance(self.type_def, xtce.FloatArgumentType)
+            and self.type_def.valid_range_set
+        ):
+            if len(self.type_def.valid_range_set.valid_range) > 1:
+                raise NotImplementedError(
+                    f"Multiple valid ranges are not yet supported at {self.type_def.name}."
+                )
+
+            # Checking for all four types is valid because semantic validation will only allow inclusive or exclusive, not both
+            if (
+                min_val := self.type_def.valid_range_set.valid_range[0].min_inclusive
+            ) is not None:
+                self.field_kwargs["ge"] = str(min_val)
+            if (
+                max_val := self.type_def.valid_range_set.valid_range[0].max_inclusive
+            ) is not None:
+                self.field_kwargs["le"] = str(max_val)
+            if (
+                min_val := self.type_def.valid_range_set.valid_range[0].min_exclusive
+            ) is not None:
+                self.field_kwargs["gt"] = str(min_val)
+            if (
+                max_val := self.type_def.valid_range_set.valid_range[0].max_exclusive
+            ) is not None:
+                self.field_kwargs["lt"] = str(max_val)
 
     def build(self) -> PydanticField:
         """Compile the resolved data into a final PydanticField."""
